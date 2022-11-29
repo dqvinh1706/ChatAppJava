@@ -1,0 +1,23 @@
+FontIcon {
+    -fx-icon-color: #808080;
+}
+
+FontIcon:hover{
+    -fx-icon-color: #008ae6;
+}
+
+#addFriendIcon {
+    -fx-icon-code: mdi2a-account-plus-outline;
+    -fx-icon-size: 24;
+}
+
+#createGroupIcon{
+    -fx-icon-code: mdi2g-google-circles-extended;
+    -fx-icon-size: 24;
+}
+
+#searchIcon {
+    -fx-icon-code: mdi2m-magnify;
+    -fx-icon-size: 24;
+    -fx-icon-color: #808080;
+}

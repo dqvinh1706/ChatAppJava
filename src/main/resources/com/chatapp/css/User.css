@@ -1,0 +1,157 @@
+* > Button {
+    -fx-background-color: transparent;
+}
+
+#sidebar {
+    -fx-border-style: hidden solid hidden hidden;
+    -fx-border-width: 1;
+    -fx-border-color: #b3b3b3;
+}
+
+#sidebar Button {
+    -fx-background-radius: 6;
+    -fx-border-radius: 2;
+}
+
+#sidebar Button:hover {
+    -fx-background-color: #f2f2f2;
+}
+
+#sidebar Button FontIcon {
+    -fx-icon-color: #808080;
+}
+
+#sidebar .is-active {
+    -fx-background-color: #e6e6e6;
+}
+
+#sidebar .is-active FontIcon {
+    -fx-icon-color: #333333;
+}
+
+#tabContainer {
+    -fx-border-style: hidden solid hidden hidden;
+    -fx-border-width: 1;
+    -fx-border-color: #b3b3b3;
+}
+
+#tabHeader Label {
+    -fx-font-size: 24;
+    -fx-font-weight: 900;
+}
+
+#tabHeader Button{
+    -fx-min-width: 24;
+    -fx-min-height: 24;
+    -fx-max-height: 24;
+    -fx-max-width: 24;
+    -fx-pref-width: 24;
+    -fx-pref-height: 24;
+}
+
+#tabHeader #searchContainer {
+    -fx-background-radius: 50;
+    -fx-background-color: #f2f2f2;
+}
+
+#searchContainer #searchField {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-font-size: 14;
+    -fx-padding: 8 0 8 0;
+}
+
+#tabContent .scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+#tabContent .scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+#tabContent .scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+#tabContent .scroll-pane .thumb {
+    -fx-effect: null;
+    -fx-background-color: #bebebe;
+    -fx-background-radius: 15;
+    -fx-background-insets: 0, 0, 0;
+    -fx-border-radius: 15;
+}
+
+#tabContent .scroll-pane .thumb {
+    -fx-effect: null;
+    -fx-background-color: #bebebe;
+    -fx-background-radius: 15;
+    -fx-background-insets: 0, 0, 0;
+    -fx-border-radius: 15;
+}
+
+#tabContent .scroll-pane .thumb:pressed {
+    -fx-background-color: #707070;
+}
+
+#tabContent .scroll-pane .track-background{
+    -fx-background-color: transparent;
+}
+
+#tabContent .scroll-pane .increment-arrow,
+#tabContent .scroll-pane .decrement-arrow
+{
+    -fx-shape: " ";
+    -fx-padding: 0 4 0 4;
+}
+
+#tabContent .scroll-pane .increment-button,
+#tabContent .scroll-pane .decrement-button
+{
+    -fx-padding: 0 0 0 0;
+    -fx-background-insets: 0, 0, 0;
+}
+
+#chatContainer {
+
+}
+
+.btn-in-chat {
+    -fx-min-width: 36;
+    -fx-min-height: 36;
+    -fx-max-width: 36;
+    -fx-max-height: 36;
+    -fx-background-radius: 5em;
+}
+
+.btn-in-chat:hover {
+    -fx-background-color: #f2f2f2;
+}
+
+.btn-in-chat FontIcon{
+    -fx-icon-color: #72B3FE;
+}
+
+
+#chatContainer #chatFooter Button {
+    -fx-min-width: 36;
+    -fx-min-height: 36;
+    -fx-max-width: 36;
+    -fx-max-height: 36;
+    -fx-background-radius: 5em;
+}
+
+#chatContainer #chatFooter Button:hover {
+    -fx-background-color: #f2f2f2;
+}
+
+#chatContainer #chatFooter FontIcon {
+    -fx-icon-color: #72B3FE;
+}
+
+#messageText{
+    -fx-background-radius: 20;
+    -fx-background-color: #f2f2f2;
+    -fx-font-size: 15;
+}

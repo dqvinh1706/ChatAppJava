@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chatapp.controllers.UserController">
+   <children>
+      <GridPane prefHeight="183.0" prefWidth="1025.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="64.0" minWidth="64.0" />
+          <ColumnConstraints fx:id="mainColumnConstraints" halignment="CENTER" hgrow="ALWAYS" maxWidth="320.0" minWidth="72.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="730.6666259765625" minWidth="10.0" prefWidth="497.333292643229" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <VBox fx:id="sidebar" alignment="TOP_CENTER" prefHeight="600.0" prefWidth="39.0" spacing="4.0" GridPane.hgrow="ALWAYS">
+               <children>
+                  <Button fx:id="messageTabBtn" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchToChatTap" prefHeight="44.0" styleClass="is-active">
+                     <graphic>
+                        <FontIcon iconLiteral="mdi2c-chat-processing" iconSize="24" />
+                     </graphic>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <tooltip>
+                        <Tooltip text="Chat" />
+                     </tooltip>
+                  </Button>
+                  <Button fx:id="friendsTabBtn" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#switchToFriendsTab" prefHeight="44.0">
+                     <graphic>
+                        <FontIcon iconLiteral="mdi2a-account-multiple" iconSize="24" />
+                     </graphic>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <tooltip>
+                        <Tooltip text="Friends" />
+                     </tooltip>
+                  </Button>
+                  <Pane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                  <Button fx:id="accountBtn" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="44.0">
+                     <graphic>
+                        <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true" />
+                     </graphic>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets bottom="16.0" left="4.0" right="4.0" top="16.0" />
+               </padding>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+            </VBox>
+            <VBox fx:id="tabContainer" alignment="TOP_CENTER" minWidth="72.0" GridPane.columnIndex="1">
+               <children>
+                  <VBox fx:id="tabHeader" spacing="8.0">
+                     <children>
+                        <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="36.0" spacing="8.0">
+                           <children>
+                              <Label fx:id="tabTitle" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="36.0" prefWidth="186.0" text="Chat" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="addFriendBtn" mnemonicParsing="false">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <graphic>
+                                    <FontIcon fx:id="addFriendIcon" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip text="Add friends" />
+                                 </tooltip>
+                              </Button>
+                              <Button fx:id="createGroupBtn" mnemonicParsing="false">
+                                 <graphic>
+                                    <FontIcon fx:id="createGroupIcon" />
+                                 </graphic>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <tooltip>
+                                    <Tooltip text="Create group" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <HBox fx:id="searchContainer" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="32.0">
+                           <children>
+                              <FontIcon fx:id="searchIcon" />
+                              <TextField fx:id="searchField" maxHeight="1.7976931348623157E308" promptText="Tìm bạn bè, tin nhắn trên Chatapp" HBox.hgrow="ALWAYS" />
+                           </children>
+                           <padding>
+                              <Insets left="4.0" right="24.0" />
+                           </padding>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </HBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="16.0" left="16.0" right="16.0" top="8.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <StackPane fx:id="tabContent" VBox.vgrow="ALWAYS">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <children>
+                        <ScrollPane fx:id="conversationContainer" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                           <content>
+                              <BorderPane>
+                                 <center>
+                                    <VBox fx:id="conversationList" />
+                                 </center>
+                                 <padding>
+                                    <Insets left="6.0" right="6.0" />
+                                 </padding>
+                              </BorderPane>
+                           </content>
+                        </ScrollPane>
+                        <ScrollPane fx:id="friendsContainer" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                           <content>
+                              <BorderPane>
+                                 <center>
+                                    <VBox fx:id="friendList" />
+                                 </center>
+                                 <padding>
+                                    <Insets left="6.0" right="6.0" />
+                                 </padding>
+                              </BorderPane>
+                           </content>
+                        </ScrollPane>
+                     </children>
+                  </StackPane>
+               </children>
+            </VBox>
+            <StackPane GridPane.columnIndex="2" GridPane.valignment="CENTER">
+               <children>
+                  <VBox fx:id="chatContainer" prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <HBox fx:id="chatHeader" alignment="CENTER_LEFT" minHeight="68.0">
+                           <padding>
+                              <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
+                           </padding>
+                           <children>
+                              <HBox fx:id="chatInfoContainer" alignment="CENTER_LEFT" spacing="8.0">
+                                 <children>
+                                    <VBox alignment="CENTER_LEFT">
+                                       <children>
+                                          <Label fx:id="chatTitle" contentDisplay="BOTTOM" styleClass="primary_text" text="Label" />
+                                          <Label fx:id="isActiveDisplay" styleClass="secondary_text" text="Content" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                              <Pane HBox.hgrow="ALWAYS" />
+                              <Button contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2m-magnify" iconSize="20" styleClass="btn-in-chat" />
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <ScrollPane fx:id="chatContent" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                           <content>
+                              <BorderPane prefHeight="200.0" prefWidth="200.0" />
+                           </content>
+                        </ScrollPane>
+                        <HBox fx:id="chatFooter" alignment="CENTER_LEFT" spacing="8.0">
+                           <children>
+                              <TextField fx:id="messageText" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onAction="#sendMessage" promptText="Aa" HBox.hgrow="ALWAYS">
+                                 <padding>
+                                    <Insets bottom="8.0" left="12.0" right="12.0" top="8.0" />
+                                 </padding>
+                              </TextField>
+                              <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#sendMessage" textAlignment="CENTER">
+                                 <graphic>
+                                    <FontIcon iconLiteral="mdi2s-send" iconSize="20" textAlignment="CENTER" />
+                                 </graphic>
+                              </Button>
+                           </children>
+                           <padding>
+                              <Insets bottom="12.0" left="8.0" right="8.0" top="12.0" />
+                           </padding>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </StackPane>
+         </children>
+      </GridPane>
+   </children>
+   <stylesheets>
+      <URL value="@../css/User.css" />
+      <URL value="@../css/Icon.css" />
+   </stylesheets>
+</AnchorPane>

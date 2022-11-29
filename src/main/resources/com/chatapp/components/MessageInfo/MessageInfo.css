@@ -1,0 +1,13 @@
+#summaryBox {
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+}
+
+#summaryBox:hover {
+    -fx-background-color: #e6e6e6;
+}
+
+
+#summaryBox #avatarContainer {
+
+}

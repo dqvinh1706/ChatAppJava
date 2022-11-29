@@ -1,0 +1,8 @@
+#activeSymbol {
+    -fx-background-color: #66ff66;
+    -fx-background-radius: 25;
+
+    -fx-border-color: #fff;
+    -fx-border-width: 2;
+    -fx-border-radius: 25;
+}
