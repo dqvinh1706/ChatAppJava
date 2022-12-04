@@ -1,5 +1,6 @@
 package com.chatapp.controllers;
 
+import com.chatapp.Main;
 import com.chatapp.components.CustomPasswordField.CustomPasswordField;
 import com.chatapp.components.CustomTextField.CustomTextField;
 import com.chatapp.validations.EmailValidator;
@@ -7,6 +8,7 @@ import com.chatapp.validations.PasswordValidator;
 import com.chatapp.validations.UsernameValidator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -16,6 +18,7 @@ import net.synedra.validatorfx.Decoration;
 import net.synedra.validatorfx.ValidationMessage;
 import net.synedra.validatorfx.Validator;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -27,12 +30,6 @@ public class SignupController  implements Initializable {
     private CustomTextField username;
     private CustomPasswordField password;
     private CustomPasswordField confirmPassword;
-
-    @FXML
-    private Button signInBtn;
-
-    @FXML
-    private Button signUpBtn;
 
     private Validator validator = new Validator();
 
@@ -52,8 +49,6 @@ public class SignupController  implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ScreenController screenController = ScreenController.getInstance();
-
         email = createTextField();
         email.setBeforeIcon("mdi-email:32");
         email.getPromptText().set("Email");
@@ -140,7 +135,13 @@ public class SignupController  implements Initializable {
 
     @FXML
     private void goToLogin(ActionEvent event) {
-        ScreenController.getInstance().switchToScreen("login");
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/LoginView.fxml"));
+
+        try {
+            container.getScene().setRoot(loader.load());
+        } catch (IOException err) {
+            throw new RuntimeException(err);
+        }
     }
 
     @FXML

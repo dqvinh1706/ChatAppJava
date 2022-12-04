@@ -1,7 +1,9 @@
 package com.chatapp.components.Avatar;
 
+import com.chatapp.Main;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -9,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 
 import java.io.IOException;
@@ -21,6 +24,8 @@ public class Avatar extends AnchorPane implements Initializable {
     @FXML
     private ImageView image;
 
+    private SimpleBooleanProperty isActive = new SimpleBooleanProperty(false);
+
     public Avatar() {
         FXMLLoader loader = new FXMLLoader(Avatar.class.getResource("Avatar.fxml"));
         loader.setRoot(this);
@@ -28,6 +33,8 @@ public class Avatar extends AnchorPane implements Initializable {
 
         try{
             loader.load();
+
+            this.getStyleClass().add("user-avatar");
             this.prefHeightProperty().bind(this.heightProperty());
             this.prefWidthProperty().bind(this.widthProperty());
 
@@ -37,6 +44,7 @@ public class Avatar extends AnchorPane implements Initializable {
             this.activeSymbol.prefWidthProperty().bind(Bindings.multiply(0.25, this.widthProperty()));
             this.activeSymbol.prefHeightProperty().bind(this.activeSymbol.prefWidthProperty());
 
+            this.activeSymbol.visibleProperty().bind(isActive);
         }catch (IOException exc) {
             throw new RuntimeException(exc);
         }
@@ -46,7 +54,12 @@ public class Avatar extends AnchorPane implements Initializable {
         this();
         setAvatarWidth(width);
         setAvatarHeight(height);
-        setImage("C:\\Users\\duong\\Downloads\\download.jpg");
+        setImage(Main.class.getResource("imgs/default_avatar.jpg").toString());
+    }
+
+    public Avatar(Image avatar) {
+        this(48, 48);
+        setImage(avatar);
     }
 
     @Override
@@ -75,8 +88,17 @@ public class Avatar extends AnchorPane implements Initializable {
         this.setHeight(height);
     }
 
-    public void setActive(boolean isActive) {
-        this.activeSymbol.setVisible(isActive);
+    public void setSize(double width, double height) {
+        this.setAvatarWidth(width);
+        this.setAvatarHeight(height);
+    }
+
+    public void setActiveStatus(boolean isActive) {
+        this.isActive.set(isActive);
+    }
+
+    public SimpleBooleanProperty isActiveProperty() {
+        return isActive;
     }
 
     public Image getImage() {
@@ -88,5 +110,7 @@ public class Avatar extends AnchorPane implements Initializable {
         return this.image.imageProperty();
     }
 
-
+    public void disabledActiveSymbol() {
+        ((Pane) activeSymbol.getParent()).getChildren().remove(activeSymbol);
+    }
 }

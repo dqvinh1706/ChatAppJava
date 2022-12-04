@@ -7,7 +7,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<fx:root fx:id="summaryBox" maxWidth="1.7976931348623157E308" minWidth="76.0" styleClass="conversation_box" stylesheets="@MessageInfo.css" type="HBox" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+
+<fx:root fx:id="summaryBox" maxWidth="1.7976931348623157E308" minWidth="76.0" styleClass="conversation_box" stylesheets="@ConversationBox.css" type="HBox" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
    <children>
 
    </children>
@@ -25,7 +26,11 @@
                   <Label fx:id="time" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="secondary_text" text="Timeeeeee" />
                </children>
             </HBox>
-            <Label fx:id="content" styleClass="secondary_text" text="Message" />
+            <Label fx:id="content" styleClass="secondary_text" text="Messageaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa">
+               <padding>
+                  <Insets right="8.0" />
+               </padding>
+            </Label>
          </children>
       </VBox>
    </children>

@@ -10,7 +10,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="root" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1024.0" styleClass="root" stylesheets="@../css/authLayout.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chatapp.controllers.LoginController">
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1024.0" styleClass="root" stylesheets="@../css/authLayout.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chatapp.controllers.LoginController">
    <children>
       <VBox fx:id="loginTab" alignment="CENTER" prefHeight="600.0" prefWidth="704.0" styleClass="main">
          <children>
@@ -24,12 +24,12 @@
                   <Insets bottom="30.0" top="16.0" />
                </VBox.margin>
             </Rectangle>
-            <Button fx:id="forgotPassword" alignment="CENTER_RIGHT" contentDisplay="TEXT_ONLY" mnemonicParsing="false" prefHeight="36.0" prefWidth="343.0" text="Forgot password?" textAlignment="RIGHT" textFill="BLUE" underline="true" VBox.vgrow="ALWAYS">
+            <Button fx:id="forgotPassword" alignment="CENTER_RIGHT" contentDisplay="TEXT_ONLY" mnemonicParsing="false" onAction="#goToForgotPassword" prefHeight="36.0" prefWidth="343.0" text="Forgot password?" textAlignment="RIGHT" textFill="BLUE" underline="true" VBox.vgrow="ALWAYS">
                <font>
                   <Font size="16.0" />
                </font>
             </Button>
-            <Button fx:id="signInBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="44.0" prefWidth="243.0" text="Sign in">
+            <Button fx:id="signInBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onLogin" prefHeight="44.0" prefWidth="243.0" text="Sign in">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
@@ -50,7 +50,7 @@
                   <Insets bottom="8.0" />
                </VBox.margin>
             </Label>
-            <Button fx:id="signUpBtn" alignment="CENTER" focusTraversable="false" mnemonicParsing="false" prefHeight="44.0" prefWidth="180.0" text="Sign up">
+            <Button fx:id="signUpBtn" alignment="CENTER" focusTraversable="false" mnemonicParsing="false" onAction="#goToSignupView" prefHeight="44.0" prefWidth="180.0" text="Sign up">
                <font>
                   <Font size="16.0" />
                </font>

@@ -1,31 +1,29 @@
 package com.chatapp;
 
-import com.chatapp.controllers.ScreenController;
-import com.chatapp.models.DbContext;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-
-import java.io.IOException;
+import javafx.stage.StageStyle;
+import org.kordamp.bootstrapfx.BootstrapFX;
 
 public class Main extends Application {
 
-    private void loadAllScreen(Stage stage) throws Exception {
-        ScreenController screenController = ScreenController.getInstance();
-        screenController.configStage(stage);
-        screenController.addScreen("login", FXMLLoader.load(Main.class.getResource("views/LoginView.fxml")));
-        screenController.addScreen("signup", FXMLLoader.load(Main.class.getResource("views/SignupView.fxml")));
-        screenController.addScreen("forgotPassword", FXMLLoader.load(Main.class.getResource("views/ForgotPasswordView.fxml")));
-        screenController.addScreen("userView", FXMLLoader.load(Main.class.getResource("views/UserView.fxml")));
+    private void configStage(Stage stage) {
+        stage.initStyle(StageStyle.DECORATED);
+        stage.setResizable(false);
     }
 
     @Override
-    public void start(Stage stage) throws IOException, Exception {
-        ScreenController screenController = ScreenController.getInstance();
-        loadAllScreen(stage);
-        screenController.setResizable(false);
-        screenController.switchToScreen("login");
+    public void start(Stage stage) throws Exception {
+        configStage(stage);
+
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/UserView.fxml"));
+        Scene scene = new Scene(loader.load());
+        scene.getStylesheets().add(String.valueOf(Main.class.getResource("css/GlobalStyle.css")));
+        scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());
+
+        stage.setScene(scene);
         stage.show();
     }
 

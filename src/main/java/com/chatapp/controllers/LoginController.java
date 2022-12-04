@@ -1,19 +1,25 @@
 package com.chatapp.controllers;
 
+import com.chatapp.Main;
+import com.chatapp.StoreContext;
+import com.chatapp.components.Avatar.Avatar;
 import com.chatapp.components.CustomPasswordField.CustomPasswordField;
 import com.chatapp.components.CustomTextField.CustomTextField;
+import com.chatapp.models.User;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import net.synedra.validatorfx.Validator;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class LoginController implements Initializable {
-
     @FXML
     private VBox loginTab;
 
@@ -21,16 +27,11 @@ public class LoginController implements Initializable {
     private CustomPasswordField password;
 
     @FXML
-    private Button signInBtn;
-    @FXML
-    private Button forgotPassword;
-    @FXML
     private Button signUpBtn;
 
     private Validator validator;
 
-    public LoginController() {
-    }
+    public LoginController() {}
 
     private CustomTextField createUsernameField() {
         CustomTextField usernameField = new CustomTextField();
@@ -57,14 +58,33 @@ public class LoginController implements Initializable {
         loginTab.getChildren().add(3, password);
 
         VBox.setMargin(username, new Insets(0, 0, 10, 0));
+    }
 
-        ScreenController screenController = ScreenController.getInstance();
-        signUpBtn.setOnAction(e -> {
-            screenController.switchToScreen("signup");
-        });
-        forgotPassword.setOnAction(e -> {
-            screenController.switchToScreen("forgotPassword");
-        });
+    @FXML
+    public void goToSignupView(ActionEvent e) {
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/SignupView.fxml"));
 
+        try {
+            signUpBtn.getScene().setRoot(loader.load());
+        } catch (IOException err) {
+            throw new RuntimeException(err);
+        }
+    }
+
+    @FXML
+    public void goToForgotPassword(ActionEvent e) {
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/ForgotPasswordView.fxml"));
+
+        try {
+            signUpBtn.getScene().setRoot(loader.load());
+        } catch (IOException err) {
+            throw new RuntimeException(err);
+        }
+    }
+
+    @FXML
+    private void onLogin() {
+        StoreContext store = StoreContext.getInstance();
+        store.getMainUser().set(new User(username.getTextProperty().get(), password.getTextProperty().get()));
     }
 }
