@@ -16,6 +16,15 @@ Button {
     -fx-font-size: 16;
 }
 
+FontIcon {
+    -fx-icon-color: #808080;
+}
+
+FontIcon:hover{
+    -fx-icon-color: #008ae6;
+}
+
+
 .custom-text-field HBox,
 .custom-password-field HBox {
     -fx-background-color: #C4F1E4;

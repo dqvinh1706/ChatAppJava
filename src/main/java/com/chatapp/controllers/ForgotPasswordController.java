@@ -85,7 +85,6 @@ public class ForgotPasswordController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ScreenController screenController = ScreenController.getInstance();
         firstStep();
     }
 
