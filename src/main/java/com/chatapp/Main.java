@@ -18,7 +18,7 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         configStage(stage);
 
-        FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/UserView.fxml"));
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/AdminView.fxml"));
         Scene scene = new Scene(loader.load());
         scene.getStylesheets().add(String.valueOf(Main.class.getResource("css/GlobalStyle.css")));
         scene.getStylesheets().add(BootstrapFX.bootstrapFXStylesheet());

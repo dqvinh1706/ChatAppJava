@@ -14,6 +14,7 @@ import java.sql.Date;
 public final class User {
     private String username;
     private String password;
+    private Boolean gender;
     private String email;
     private Date createdAt;
     private Date updatedAt;
@@ -31,6 +32,16 @@ public final class User {
         this.username = username;
         this.password = password;
     }
+    @Builder
+    public User(String username, String password, String Address, Date DOB, boolean gender, String email){
+        this.username = username;
+        this.password = password;
+        this.address = Address;
+        this.DOB = DOB;
+        this.gender = gender;
+        this.email = email;
+    }
+    public User getUser(){return this;}
 
     public User(ResultSet rs) throws SQLException {
         setId(rs.getInt("id"));
