@@ -17,5 +17,4 @@ module com.chatapp.chatapp {
     opens com.chatapp.components.CustomTextField to javafx.fxml;
     opens com.chatapp.components.ConversationBox to javafx.fxml;
     exports com.chatapp;
-
 }
