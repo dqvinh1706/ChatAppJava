@@ -1,0 +1,52 @@
+.root {
+    -message-bg-color: #E4E6EB;
+    -message-text-alignment: center-left;
+    -message-stack-alignment: bottom-left;
+    -message-text-color: #050505;
+    -fx-alignment: -message-stack-alignment;
+}
+
+.avatar-container {
+    -fx-max-height: 28;
+}
+
+#messageStackContainer {
+    -fx-alignment: -message-stack-alignment;
+}
+
+.message {
+    -fx-alignment: -message-text-alignment;
+    -fx-padding: 8 12 8 12;
+    -fx-background-color: -message-bg-color;
+    -fx-background-radius: 18;
+    -fx-font-size: 15;
+    -fx-text-fill: -message-text-color;
+    -fx-wrap-text: true;
+}
+
+.middle-receive-message {
+    -fx-background-radius: 4 18 18 4;
+}
+
+.first-receive-message {
+    -fx-background-radius: 18 18 18 4;
+}
+
+.last-receive-message {
+    -fx-background-radius: 4 18 18 18;
+}
+
+.middle-sender-message {
+    -fx-background-radius: 18 4 4 18;
+}
+
+.first-sender-message {
+    -fx-background-radius: 18 18 4 18;
+}
+
+.last-sender-message {
+    -fx-background-radius: 18 4 18 18;
+}
+
+
+

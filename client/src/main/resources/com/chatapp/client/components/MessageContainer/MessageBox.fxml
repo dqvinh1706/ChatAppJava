@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root alignment="BOTTOM_LEFT" maxWidth="1.7976931348623157E308" spacing="8.0" stylesheets="@MessageContainer.css" type="HBox" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox fx:id="messageStackContainer" alignment="BOTTOM_LEFT" spacing="2.0" HBox.hgrow="ALWAYS" />
+   </children>
+</fx:root>
