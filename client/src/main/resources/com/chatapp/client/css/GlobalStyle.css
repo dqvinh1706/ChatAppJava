@@ -1,0 +1,82 @@
+@font-face {
+    src: url('../font/Roboto-Regular.ttf');
+}
+
+.root {
+    -fx-font-family: "Roboto";
+    -fx-background-color: #fff;
+}
+
+Button {
+    -fx-text-fill: #000;
+    -fx-background-color: #fff;
+    -fx-background-radius: 50;
+    -fx-border-radius: 50;
+    -fx-font-weight: 900;
+    -fx-font-size: 16;
+}
+
+FontIcon {
+    -fx-icon-color: #808080;
+}
+
+
+
+.custom-text-field HBox,
+.custom-password-field HBox {
+    -fx-background-color: #C4F1E4;
+    -fx-background-radius: 25;
+    -fx-border-radius: 25;
+    -fx-border-width: 1;
+    -fx-border-color: transparent;
+}
+
+.custom-text-field > Button,
+.custom-password-field > Button {
+    -fx-background-color: transparent;
+}
+
+.custom-text-field TextField,
+.custom-password-field PasswordField,
+.custom-password-field TextField {
+    -fx-font-size: 16;
+    -fx-alignment: center-left;
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+    -fx-min-height: 56;
+    -fx-max-height: 56;
+    -fx-padding: 0;
+}
+
+.error-text {
+    -fx-text-fill: red;
+}
+
+.is-focus {
+    -fx-background-color: transparent;
+    -fx-border-color: grey;
+}
+
+.primary_text {
+    -fx-text-fill: #050505;
+    -fx-font-weight: 500;
+    -fx-font-size: 16;
+}
+
+.secondary_text {
+    -fx-font-weight: 300;
+    -fx-font-size: 13;
+    -fx-opacity: 0.6;
+}
+
+.conversation_box {
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+}
+
+.conversation_box:hover {
+    -fx-background-color: #e6e6e6;
+}
+
+
+

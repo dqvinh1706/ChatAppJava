@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="scenePane" prefHeight="600.0" prefWidth="1024.0" styleClass="root" stylesheets="@../css/adminView.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chatapp.client.controllers.AdminLoginListController">
+   <children>
+      <TableView fx:id="LoginList" layoutX="39.0" layoutY="28.0" prefHeight="552.0" prefWidth="948.0" />
+   </children>
+</AnchorPane>

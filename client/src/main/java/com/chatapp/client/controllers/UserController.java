@@ -1,0 +1,105 @@
+package com.chatapp.client.controllers;
+
+import com.chatapp.client.SocketClient;
+import com.chatapp.client.components.Avatar.Avatar;
+import com.chatapp.client.components.UserTabs.UserTabs;
+import com.chatapp.client.workers.UserSocketService;
+import com.chatapp.commons.models.User;
+
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class UserController implements Initializable {
+    private final SimpleObjectProperty<User> currUser = new SimpleObjectProperty<>();
+
+    // Sidebar
+    @FXML
+    private Button accountBtn;
+
+    @FXML
+    private StackPane mainContainer;
+    private final UserTabs userTabs = new UserTabs();
+
+    public UserController() {}
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        UserSocketService userSocketService = UserSocketService.getInstance();
+        userSocketService.start();
+        mainContainer.getChildren().add(userTabs);
+
+        currUser.set(new User());
+        currUser.get().setId(5);
+
+        userTabs.toFront();
+        userTabs.loadData();
+        userTabs.initTab();
+
+        configSidebar();
+        currUser.addListener(new ChangeListener<User>() {
+            @Override
+            public void changed(ObservableValue<? extends User> observableValue, User user, User t1) {
+                if (t1 != null) {
+                }
+            }
+        });
+    }
+
+    private void configSidebar() {
+        Avatar userAvatar = new Avatar(36, 36);
+        userAvatar.disabledActiveSymbol();
+        accountBtn.setGraphic(userAvatar);
+    }
+
+    private void activeStyleToggle(Node ins) {
+        Node oldActive = (Node) ins.getParent().lookup(".is-active");
+        if (oldActive != null) {
+            if(oldActive.equals(ins)){
+                return;
+            }
+            oldActive.getStyleClass().remove("is-active");
+        }
+        ins.getStyleClass().add("is-active");
+    }
+
+    @FXML
+    void onChatTabAction(ActionEvent event) {
+        activeStyleToggle((Node) event.getSource());
+        userTabs.toFront();
+        userTabs.loadConversationTab();
+    }
+
+    @FXML
+    void onFriendTabAction(ActionEvent event) {
+        activeStyleToggle((Node) event.getSource());
+        userTabs.toFront();
+        userTabs.loadFriendTab();
+    }
+
+    @FXML
+    void onPendingFriendsList(ActionEvent event) {
+        activeStyleToggle((Node) event.getSource());
+        userTabs.toFront();
+        userTabs.loadPendingFriendsTab();
+    }
+
+    @FXML
+    void onProfileTabAction(ActionEvent event) {
+        activeStyleToggle((Node) event.getSource());
+    }
+
+    @FXML
+    public void onLogout(ActionEvent e) {
+
+    }
+}

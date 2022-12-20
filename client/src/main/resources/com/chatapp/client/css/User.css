@@ -1,0 +1,182 @@
+* > Button {
+    -fx-background-color: transparent;
+}
+
+.sidebar {
+    -fx-border-style: hidden solid hidden hidden;
+    -fx-border-width: 1;
+    -fx-border-color: #b3b3b3;
+}
+
+.sidebar .sidebar-btn {
+    -fx-background-radius: 6;
+    -fx-border-radius: 2;
+    -fx-alignment: center;
+    -fx-content-display: graphic-only;
+}
+
+.sidebar .sidebar-btn:hover
+{
+    -fx-background-color: #f2f2f2;
+}
+
+.sidebar .sidebar-btn FontIcon {
+    -fx-icon-color: #808080;
+}
+
+.sidebar .user-avatar:hover{
+    -fx-effect: dropshadow(three-pass-box, #808080, 5, 0, 0, 0);
+}
+
+.is-active {
+    -fx-background-color: #e6e6e6!important;
+}
+
+.is-active FontIcon {
+    -fx-icon-color: #333333;
+}
+
+.unseen-message #message {
+    -fx-text-fill: #000;
+    -fx-opacity: 0.9;
+}
+
+.box {
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+}
+
+.box:hover {
+    -fx-background-color: #e6e6e6;
+}
+
+.tab-container {
+    -fx-border-style: hidden solid hidden hidden;
+    -fx-border-width: 1;
+    -fx-border-color: #b3b3b3;
+}
+
+.tab-container Button{
+    -fx-min-width: 24;
+    -fx-min-height: 24;
+    -fx-max-height: 24;
+    -fx-max-width: 24;
+    -fx-pref-width: 24;
+    -fx-pref-height: 24;
+}
+
+.tab-container #tabTitle {
+    -fx-font-size: 24;
+    -fx-font-weight: 900;
+}
+
+.tab-container .accept-btn:hover {
+    -fx-icon-color: #1ec51e !important;
+}
+
+.tab-container .cancel-btn:hover {
+    -fx-icon-color: #d44848 !important;
+}
+
+.tab-header FontIcon:hover {
+    -fx-icon-color: #008ae6;
+}
+.search-global,
+.search-message
+{
+    -fx-background-radius: 50;
+    -fx-background-color: #f2f2f2;
+}
+
+.search-global TextField,
+.search-message TextField
+{
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-font-size: 14;
+    -fx-padding: 8 0 8 0;
+}
+
+.chat-header {
+    -fx-border-style: hidden hidden solid hidden;
+    -fx-border-width: 1;
+    -fx-border-color: #b3b3b3;
+}
+
+#deleteConversationBtn FontIcon{
+    -fx-icon-color: red!important;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .thumb {
+    -fx-effect: null;
+    -fx-background-color: #bebebe;
+    -fx-background-radius: 15;
+    -fx-background-insets: 0, 0, 0;
+    -fx-border-radius: 15;
+}
+
+.scroll-pane .thumb {
+    -fx-effect: null;
+    -fx-background-color: #bebebe;
+    -fx-background-radius: 15;
+    -fx-background-insets: 0, 0, 0;
+    -fx-border-radius: 15;
+}
+
+.scroll-pane .thumb:pressed {
+    -fx-background-color: #707070;
+}
+
+.scroll-pane .track-background{
+    -fx-background-color: transparent;
+}
+
+.scroll-pane .increment-arrow,
+.scroll-pane .decrement-arrow
+{
+    -fx-shape: " ";
+    -fx-padding: 0 4 0 4;
+}
+
+.scroll-pane .increment-button,
+.scroll-pane .decrement-button
+{
+    -fx-padding: 0 0 0 0;
+    -fx-background-insets: 0, 0, 0;
+}
+
+.chat-container Button {
+    -fx-min-width: 36;
+    -fx-min-height: 36;
+    -fx-max-width: 36;
+    -fx-max-height: 36;
+    -fx-background-radius: 5em;
+}
+
+.chat-container Button:hover {
+    -fx-background-color: #f2f2f2;
+}
+
+.chat-container Button FontIcon{
+    -fx-icon-color: #0084ff;
+}
+
+.chat-footer TextField {
+    -fx-background-radius: 20;
+    -fx-background-color: #f2f2f2;
+    -fx-font-size: 15;
+}
