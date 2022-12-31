@@ -18,7 +18,7 @@ public abstract class DAO<T> {
     @Synchronized
     public Connection getConnection() {
         Connection conn = null;
-        String db_url = DB_PREFIX + ":" + DB_PORT + ";databaseName=" + DB_NAME + ";encrypt=true;trustServerCertificate=true;";
+            String db_url = DB_PREFIX + ":" + DB_PORT + ";databaseName=" + DB_NAME + ";encrypt=true;trustServerCertificate=true;";
         try {
             DriverManager.registerDriver(new SQLServerDriver());
             conn = DriverManager.getConnection(db_url, USERNAME, PASSWORD);
