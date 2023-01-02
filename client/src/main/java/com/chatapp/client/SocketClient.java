@@ -8,6 +8,7 @@ import lombok.Synchronized;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.net.Socket;
 
 public class SocketClient {
@@ -46,7 +47,7 @@ public class SocketClient {
             Platform.runLater(() -> {
                 Alert error = new Alert(Alert.AlertType.ERROR);
                 error.setTitle("Connection Error!");
-                error.setContentText("Không thể kết nối đến Server!!!");
+                error.setContentText("Can't connect to server!!!");
                 error.setHeaderText(null);
                 error.show();
             });

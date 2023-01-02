@@ -14,6 +14,7 @@ import com.chatapp.commons.enums.StatusCode;
 import com.chatapp.commons.request.AuthRequest;
 import com.chatapp.commons.response.AuthResponse;
 import com.chatapp.commons.response.Response;
+import com.chatapp.commons.utils.PasswordUtil;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -33,6 +34,8 @@ import net.synedra.validatorfx.Validator;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.*;
+import java.util.Calendar;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
@@ -144,65 +147,139 @@ public class LoginController implements Initializable {
     public void onLogin() {
         if (!validator.validate()) return;
 
-        ProgressIndicator progressBar = new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS);
-        progressBar.setMaxSize(36,  36);
-        signInBtn.setText("");
-        signInBtn.setGraphic(progressBar);
-        signInBtn.setOnAction(null);
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        PreparedStatement psInsert = null;
+        ResultSet rs = null;
 
-        Properties formData = new Properties();
-        formData.put("username", username.getText());
-        formData.put("password", password.getText());
+        try {
+            connection = DriverManager.getConnection("jdbc:sqlserver://localhost;" +
+                    "databaseName=Chatapp;encrypt=true;trustServerCertificate=true;",
+                    "sa", "dqv1");
+            preparedStatement = connection.prepareStatement("SELECT password FROM [user] " +
+                    "WHERE username = ?");
+            preparedStatement.setString(1, username.getText());
+            rs = preparedStatement.executeQuery();
 
-        SocketClient socketClient = SocketClient.getInstance();
-        AuthSocketService authSocketService = AuthSocketService.getInstance(socketClient);
+            if (!rs.isBeforeFirst()) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Login error");
+                alert.setHeaderText(null);
+                alert.setContentText("User does not exists!");
+                alert.show();
+            } else {
+                while (rs.next()) {
+                    String retrievedPassword = rs.getString("password");
+                    if(PasswordUtil.checkMatch(password.getText(), retrievedPassword)) {
+                        psInsert = connection.prepareStatement("UPDATE [user] SET is_active = ? WHERE username = ?");
+                        psInsert.setBoolean(1, true);
+                        psInsert.setString(2, username.getText());
+                        psInsert.executeUpdate();
 
-        Task waitResponse = new Task() {
-            @Override
-            protected Response call() throws Exception {
-                authSocketService.addRequest(
-                        AuthRequest.builder()
-                                .action(Action.LOGIN)
-                                .formData(formData)
-                                .build()
-                );
-                return (Response) authSocketService.getResponse();
-            }
-        };
+                        ProgressIndicator progressBar = new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS);
+                        progressBar.setMaxSize(36,  36);
+                        signInBtn.setText("");
+                        signInBtn.setGraphic(progressBar);
+                        signInBtn.setOnAction(null);
 
-        waitResponse.setOnSucceeded(e -> {
-            AuthResponse res = (AuthResponse) waitResponse.getValue();
-            System.out.println(res);
-            if (res.getStatusCode() == StatusCode.AUTHENTICATED) {
-                authSocketService.cancel();
+                        Properties formData = new Properties();
+                        formData.put("username", username.getText());
+                        formData.put("password", password.getText());
 
-                UserSocketService userSocketService = UserSocketService.getInstance(socketClient);
-                userSocketService.setLoggedUser(res.getUser());
+                        SocketClient socketClient = SocketClient.getInstance();
+                        AuthSocketService authSocketService = AuthSocketService.getInstance(socketClient);
 
-                FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/UserView.fxml"));
-                try {
-                    signUpBtn.getScene().setRoot(loader.load());
-                } catch (IOException err) {
-                    throw new RuntimeException(err);
+                        Task waitResponse = new Task() {
+                            @Override
+                            protected Response call() throws Exception {
+                                authSocketService.addRequest(
+                                        AuthRequest.builder()
+                                                .action(Action.LOGIN)
+                                                .formData(formData)
+                                                .build()
+                                );
+                                return (Response) authSocketService.getResponse();
+                            }
+                        };
+
+                        waitResponse.setOnSucceeded(e -> {
+                            AuthResponse res = (AuthResponse) waitResponse.getValue();
+                            System.out.println(res);
+                            if (res.getStatusCode() == StatusCode.AUTHENTICATED) {
+                                authSocketService.cancel();
+
+                                UserSocketService userSocketService = UserSocketService.getInstance(socketClient);
+                                userSocketService.setLoggedUser(res.getUser());
+
+                                FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/UserView.fxml"));
+                                try {
+                                    signUpBtn.getScene().setRoot(loader.load());
+                                } catch (IOException err) {
+                                    throw new RuntimeException(err);
+                                }
+                            }
+                            else {
+                                Alert errAlert = new Alert(Alert.AlertType.ERROR);
+                                errAlert.setTitle("Login error");
+                                errAlert.setHeaderText(null);
+                                if (res.getErr() != null) {
+                                    errAlert.setContentText(res.getErr().getMessage());
+                                } else {
+                                    errAlert.setContentText("Authentication error!");
+                                }
+                                errAlert.showAndWait();
+
+                                Platform.runLater(() -> {
+                                    signInBtn.setGraphic(null);
+                                    signInBtn.setText("Sign in");
+                                    signInBtn.setOnAction(e1 -> onLogin());
+                                });
+                            }
+                        });
+
+                        Thread th = new Thread(waitResponse);
+                        th.setDaemon(true);
+                        th.start();
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Login error");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Incorrect password!");
+                        alert.show();
+                    }
                 }
             }
-            else {
-                Alert errAlert = new Alert(Alert.AlertType.ERROR);
-                errAlert.setTitle("Lỗi khi đăng nhập");
-                errAlert.setHeaderText(null);
-                errAlert.setContentText(res.getErr().getMessage());
-                errAlert.showAndWait();
-
-                Platform.runLater(() -> {
-                    signInBtn.setGraphic(null);
-                    signInBtn.setText("Sign in");
-                    signInBtn.setOnAction(e1 -> onLogin());
-                });
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
-        });
-
-        Thread th = new Thread(waitResponse);
-        th.setDaemon(true);
-        th.start();
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (psInsert != null) {
+                try {
+                    psInsert.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
