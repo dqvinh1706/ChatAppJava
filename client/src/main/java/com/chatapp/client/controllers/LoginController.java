@@ -152,7 +152,7 @@ public class LoginController implements Initializable {
     }
     @FXML
     public void onLogin() {
-        if (!validator.validate()) return;
+//        if (!validator.validate()) return;
 
         ProgressIndicator progressBar = new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS);
         progressBar.setMaxSize(36,  36);
@@ -166,7 +166,6 @@ public class LoginController implements Initializable {
         try{
             SocketClient socketClient = SocketClient.getInstance();
             AuthSocketService authSocketService = AuthSocketService.getInstance(socketClient);
-
             Task waitResponse = new Task() {
                 @Override
                 protected Response call() throws Exception {

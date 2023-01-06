@@ -36,5 +36,4 @@ public class FriendDialog extends DialogPane implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
     }
-
 }
