@@ -181,15 +181,7 @@ public class LoginController implements Initializable {
 
             waitResponse.setOnSucceeded(e -> {
                 AuthResponse res = (AuthResponse) waitResponse.getValue();
-                System.out.println(res);
                 if (res.getStatusCode() == StatusCode.AUTHENTICATED) {
-//                    try {
-//                        socketClient.renewStream();
-//                    } catch (IOException ex) {
-//                        System.out.println("ERROR");
-//                        ex.printStackTrace();
-//                    }
-                    System.out.println(res.getUser());
                     authSocketService.cancel();
                     UserSocketService userSocketService = UserSocketService.getInstance(socketClient);
                     userSocketService.setLoggedUser(res.getUser());

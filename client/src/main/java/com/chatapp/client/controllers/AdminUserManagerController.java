@@ -13,6 +13,7 @@ import com.chatapp.commons.response.AuthResponse;
 import com.chatapp.commons.response.Response;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -46,39 +47,75 @@ public class AdminUserManagerController implements Initializable {
     private TableView usersTable = new TableView();
 
     private void getData(){
-        SocketClient socketClient = SocketClient.getInstance();
-        UserSocketService userSocketService = UserSocketService.getInstance(socketClient);
+        try {
+            SocketClient socketClient = SocketClient.getInstance();
+            UserSocketService userSocketService = UserSocketService.getInstance(socketClient);
 
-        Task waitResponse = new Task() {
-            @Override
-            protected Response call() throws Exception {
-                userSocketService.addRequest(
-                        ManageUsersRequest.builder()
-                                .action(Action.GET_ALL_USERS)
-                                .build()
-                );
-                return (Response) userSocketService.getResponse();
-            }
-        };
+            Task waitResponse = new Task() {
+                @Override
+                protected Response call() throws Exception {
+                    userSocketService.addRequest(
+                            ManageUsersRequest.builder()
+                                    .action(Action.GET_ALL_USERS)
+                                    .build()
+                    );
+                    return (Response) userSocketService.getResponse();
+                }
+            };
 
-        waitResponse.setOnSucceeded(e->{
-            AllUsersResponse res = (AllUsersResponse) waitResponse.getValue();
-            System.out.println(res);
-        });
+            waitResponse.setOnSucceeded(e -> {
+                AllUsersResponse res = (AllUsersResponse) waitResponse.getValue();
+                System.out.println(res);
+            });
 
-        Thread th = new Thread(waitResponse);
-        th.setDaemon(true);
-        th.start();
+            Thread th = new Thread(waitResponse);
+            th.setDaemon(true);
+            th.start();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle){
-        this.getData();
+        //this.getData();
+        data = FXCollections.observableArrayList(
+                new UserClone(
+                        1,
+                        "user1",
+                        "one",
+                        "abc",
+                        "20/10/2002",
+                        true,
+                        "abc@gmail.com"
+                ),
+                new UserClone(
+                        2,
+                        "user2",
+                        "one",
+                        "abc",
+                        "20/10/2002",
+                        true,
+                        "abc@gmail.com"
+                ),
+                new UserClone(
+                        3,
+                        "user3",
+                        "one",
+                        "abc",
+                        "20/10/2002",
+                        true,
+                        "abc@gmail.com"
+                )
+
+        );
+
         TableColumn<UserClone, String> userNameColumn = new TableColumn<UserClone, String>("User Name");
         TableColumn<UserClone, String> nameColumn = new TableColumn<UserClone, String>("Name");
         TableColumn<UserClone, String> addressColumn = new TableColumn<UserClone, String>("Address");
         TableColumn<UserClone, String> DOBColumn = new TableColumn<UserClone, String>("Birthday");
-        TableColumn<UserClone, Boolean> genderColumn = new TableColumn<UserClone, Boolean>("User Name");
+        TableColumn<UserClone, Boolean> genderColumn = new TableColumn<UserClone, Boolean>("Gender");
         TableColumn<UserClone, String> emailColumn = new TableColumn<UserClone, String>("Email");
 
         userNameColumn.setCellValueFactory(new PropertyValueFactory<UserClone, String>("username"));
@@ -97,6 +134,7 @@ public class AdminUserManagerController implements Initializable {
 
         usersTable.setItems(data);
         usersTable.getColumns().addAll(userNameColumn, nameColumn, addressColumn, DOBColumn, genderColumn, emailColumn);
+        usersTable.setEditable(false);
 
         usersTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -124,6 +162,7 @@ public class AdminUserManagerController implements Initializable {
     }
 
     public static class UserClone{
+        public SimpleIntegerProperty id;
         public SimpleStringProperty username;
         public SimpleStringProperty name;
         public SimpleStringProperty birthday;
@@ -135,7 +174,8 @@ public class AdminUserManagerController implements Initializable {
             return new SimpleDateFormat("dd/MM/yyyy").parse(date);
         }
 
-        public UserClone(String username, String Name, String address, String birthday, Boolean gender, String email){
+        public UserClone(int ID, String username, String Name, String address, String birthday, Boolean gender, String email){
+            this.id = new SimpleIntegerProperty(ID);
             this.username = new SimpleStringProperty(username);
             this.name = new SimpleStringProperty(Name);
             this.address = new SimpleStringProperty(address);
@@ -143,6 +183,8 @@ public class AdminUserManagerController implements Initializable {
             this.gender = new SimpleBooleanProperty(gender);
             this.email = new SimpleStringProperty(email);
         }
+
+        public int getID(){return this.id.get();}
 
         public String getUsername() {
             return this.username.get();

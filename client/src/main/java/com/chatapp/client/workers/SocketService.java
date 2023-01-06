@@ -61,10 +61,7 @@ public abstract class SocketService extends Service {
             return;
         }
         socketClient.sendRequest(req);
-    }
-
-    ;
-
+    };
     @Override
     protected Task createTask() {
         return new Task() {

@@ -64,7 +64,6 @@ public class AuthHandler extends ClientHandler {
 
     public void login(AuthRequest req) throws IOException {
         Properties data = req.getFormData();
-        System.out.println(req);
         String username = (String) data.get("username");
         String rawPassword = (String) data.get("password");
         try {

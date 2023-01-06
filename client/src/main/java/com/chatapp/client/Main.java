@@ -20,7 +20,6 @@ public class Main extends Application {
         stage.initStyle(StageStyle.DECORATED);
         stage.setResizable(false);
     }
-
     @Override
     public void start(Stage stage) throws Exception {
         configStage(stage);
