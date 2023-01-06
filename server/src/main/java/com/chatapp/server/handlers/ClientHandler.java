@@ -2,6 +2,7 @@ package com.chatapp.server.handlers;
 
 import com.chatapp.commons.models.User;
 import com.chatapp.commons.response.Response;
+import com.chatapp.server.services.AdminService;
 import com.chatapp.server.services.ConversationService;
 import com.chatapp.server.services.MessageService;
 import com.chatapp.server.services.UserService;
@@ -23,6 +24,7 @@ public abstract class ClientHandler extends Service {
     protected ConversationService conversationService = ConversationService.getInstance();
     protected MessageService messageService = MessageService.getInstance();
     protected UserService userService = UserService.getInstance();
+    protected AdminService adminService = AdminService.getInstance();
 
     public ClientHandler(Socket socket, Map<String, ClientHandler> clientHandlers) throws IOException {
         this.clientSocket = socket;

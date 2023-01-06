@@ -26,4 +26,5 @@ public enum Action {
     SEND_MESSAGE, REMOVE_ADD_FRIEND,
 
     // Admin action
+    GET_ALL_USERS,
 }

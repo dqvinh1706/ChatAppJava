@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 public abstract class DAO<T> {
-    private static String DB_PREFIX = "jdbc:sqlserver://localhost";
+    private static String DB_PREFIX = "jdbc:sqlserver://localhost\\SQLEXPRESS";
     private static String DB_PORT = "1433";
     private static String DB_NAME = "Chatapp";
     private static String USERNAME = "sa";

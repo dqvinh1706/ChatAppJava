@@ -12,7 +12,6 @@ import java.util.Date;
 import java.util.ResourceBundle;
 
 public class AdminLoginListController implements Initializable {
-
     @FXML
     private TableView<User> LoginList;
 

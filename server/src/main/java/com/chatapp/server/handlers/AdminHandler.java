@@ -1,4 +1,64 @@
 package com.chatapp.server.handlers;
 
-public class AdminHandler {
+
+import com.chatapp.commons.enums.StatusCode;
+import com.chatapp.commons.models.User;
+import com.chatapp.commons.request.*;
+import com.chatapp.commons.response.AllUsersResponse;
+import com.chatapp.server.services.AdminService;
+import javafx.concurrent.Task;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.ObjectUtils;
+
+import java.io.IOException;
+import java.net.Socket;
+import java.util.List;
+import java.util.Map;
+
+@Getter
+public class AdminHandler extends ClientHandler{
+    @Setter
+    private User loggedUser;
+    public AdminHandler(Socket socket, Map<String, ClientHandler> clientHandlers) throws IOException {
+        super(socket, clientHandlers);
+    }
+
+    private void handleManageUsersRequest(ManageUsersRequest req) throws IOException{
+        switch (req.getAction()){
+            case GET_ALL_USERS:
+                List<User> allUsers = adminService.getAllUsers();
+                sendResponse(
+                        AllUsersResponse.builder()
+                                .statusCode(StatusCode.OK)
+                                .allUsers(allUsers)
+                                .build()
+                );
+                break;
+        }
+    }
+    @Override
+    protected Task createTask() {
+        return new Task() {
+            @Override
+            protected Void call() throws Exception {
+                try {
+                    while (!isCancelled()) {
+                        Object input = receiveRequest();
+                        if (ObjectUtils.isEmpty(input))
+                            continue;
+
+                        Request request = (Request) input;
+                        if (request instanceof ManageUsersRequest) {
+                            handleManageUsersRequest((ManageUsersRequest) request);
+                        }
+                    }
+                } catch (IOException | ClassNotFoundException e) {
+                    close();
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        };
+    }
 }
