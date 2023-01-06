@@ -6,12 +6,16 @@ import com.chatapp.commons.models.Message;
 import com.chatapp.commons.models.User;
 import com.chatapp.commons.request.*;
 import com.chatapp.commons.response.*;
+import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.Synchronized;
 import org.apache.commons.lang3.ObjectUtils;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,14 +24,16 @@ import java.util.stream.Collectors;
 public class UserHandler extends ClientHandler {
     @Setter
     private User loggedUser;
+    public void setLoggedUser(User loggedUser) {
+        this.loggedUser = loggedUser;
+        clientHandlers.put(loggedUser.getUsername(), this);
+    }
 
     public UserHandler(Socket socket, Map<String, ClientHandler> clientHandlers) throws IOException {
         super(socket, clientHandlers);
-//        loggedUser.setId(5);
-//        clientHandlers.put("1", this);
     }
 
-    private void handlerConversationRequest(ConversationRequest req) throws IOException {
+    private void handlerConversationRequest(ConversationRequest req) throws IOException, InterruptedException {
         switch (req.getAction()) {
             case CREATE_CONVERSATION:
                 User friend = userService.getUserById((Integer) req.getBody());
@@ -46,13 +52,15 @@ public class UserHandler extends ClientHandler {
                 break;
             case GET_ALL_CONVERSATION:
                 List<Conversation> conversationList = conversationService.getAllConversationOfUser(loggedUser.getId());
-                Map<Conversation, Message> result = conversationList
-                        .stream()
-                        .collect(Collectors.toMap(
-                                conversation -> conversation,
-                                conversation -> messageService.getNewestMessage(conversation.getId())
-                        ));
-
+                Map<Conversation, Message> result = null;
+                if (conversationList != null) {
+                    result = conversationList
+                            .stream()
+                            .collect(Collectors.toMap(
+                                    conversation -> conversation,
+                                    conversation -> messageService.getNewestMessage(conversation.getId())
+                            ));
+                }
                 sendResponse(
                         ConversationListResponse.builder()
                                 .statusCode(conversationList == null ? StatusCode.BAD_REQUEST : StatusCode.OK)
@@ -89,6 +97,7 @@ public class UserHandler extends ClientHandler {
                 break;
             case GET_ALL_FRIENDS:
                 List<User> users = userService.getAllFriends(loggedUser.getId());
+                System.out.println(users);
                 sendResponse(
                         FriendListResponse.builder()
                                 .statusCode(users == null ? StatusCode.BAD_REQUEST : StatusCode.OK)
@@ -163,8 +172,10 @@ public class UserHandler extends ClientHandler {
             @Override
             protected Void call() throws Exception {
                 try{
-                    while (!isCancelled()) {
+                    while (true) {
+                        System.out.println("Wait user req");
                         Object input = receiveRequest();
+                        System.out.println(input);
                         if (ObjectUtils.isEmpty(input))
                             continue;
 
@@ -181,7 +192,10 @@ public class UserHandler extends ClientHandler {
                     }
                 }catch (IOException | ClassNotFoundException e){
                     close();
+                    clientHandlers.remove(loggedUser.getUsername());
                     e.printStackTrace();
+                }catch (Exception err) {
+                    err.printStackTrace();
                 }
                 return null;
             }

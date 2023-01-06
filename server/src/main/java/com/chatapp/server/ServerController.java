@@ -16,6 +16,7 @@ public class ServerController implements Initializable {
     public ServerController() {
 
     }
+
     @FXML
     protected void onStartServer() {
         if (!server.isRunning())

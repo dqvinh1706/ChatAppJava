@@ -36,7 +36,7 @@ public class UserSocketService extends SocketService {
     @Override
     protected void listenResponse() {
         try {
-            while (isRunning()) {
+            while (true) {
                 Object object = socketClient.getResponse();
                 if (ObjectUtils.isEmpty(object)) {
                     continue;

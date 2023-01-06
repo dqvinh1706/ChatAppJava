@@ -10,6 +10,7 @@ import lombok.Synchronized;
 import org.apache.commons.lang3.ObjectUtils;
 
 import java.io.IOException;
+import java.io.StreamCorruptedException;
 
 public class AuthSocketService extends SocketService {
     private static volatile AuthSocketService INSTANCE;
@@ -35,19 +36,25 @@ public class AuthSocketService extends SocketService {
     }
 
     @Override
-    protected void listenResponse() {
-        try {
-            while (isAlive.get()) {
+    protected void listenResponse() throws Exception {
+        while (isAlive.get()) {
+            try {
+                System.out.println(isAlive.get());
+                if (!isAlive.get()) return;
+                System.out.println("Wait res");
                 Object input = socketClient.getResponse();
                 if (ObjectUtils.isEmpty(input)) {
                     continue;
                 }
                 resQueue.put((Response) input);
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+                throw new Exception("ListenError");
+            } catch (Exception err) {
+                System.out.println("ERROR");
+//            err.printStackTrace();
             }
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }catch (Exception err) {
-            err.printStackTrace();
         }
+
     }
 }
