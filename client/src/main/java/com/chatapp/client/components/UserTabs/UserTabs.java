@@ -8,6 +8,7 @@ import com.chatapp.commons.request.ConversationRequest;
 import com.chatapp.commons.request.FriendRequest;
 import com.chatapp.commons.request.InformationRequest;
 import com.chatapp.commons.response.*;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
@@ -41,6 +42,7 @@ public class UserTabs extends StackPane {
     }
 
     public void loadConversationTab() {
+        System.out.println("SEND LOAD CON");
         socketService.addRequest(ConversationRequest.builder()
                         .action(Action.GET_ALL_CONVERSATION)
                         .build()
@@ -68,6 +70,7 @@ public class UserTabs extends StackPane {
             try {
                 while (!isCancelled()) {
                     Object input = socketService.getResponse();
+                    System.out.println(input);
                     if (input instanceof FriendListResponse) {
                         FriendListResponse res = (FriendListResponse) input;
                         tab.loadFriendTab(res.getTitle(), res.getFriendList());

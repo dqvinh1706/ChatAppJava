@@ -1,6 +1,5 @@
 package com.chatapp.server.handlers;
 
-import com.chatapp.commons.enums.Action;
 import com.chatapp.commons.enums.StatusCode;
 import com.chatapp.commons.models.Conversation;
 import com.chatapp.commons.models.Message;
@@ -20,13 +19,14 @@ import java.util.stream.Collectors;
 @Getter
 public class UserHandler extends ClientHandler {
     @Setter
-    private User loggedUser = new User();
+    private User loggedUser;
+    public void setLoggedUser(User loggedUser) {
+        this.loggedUser = loggedUser;
+        clientHandlers.put(loggedUser.getUsername(), this);
+    }
 
     public UserHandler(Socket socket, Map<String, ClientHandler> clientHandlers) throws IOException {
         super(socket, clientHandlers);
-        loggedUser = userService.getUserById(5);
-        System.out.println(loggedUser.getId());
-//        clientHandlers.put("1", this);
     }
 
     private void handlerConversationRequest(ConversationRequest req) throws IOException {
@@ -101,12 +101,15 @@ public class UserHandler extends ClientHandler {
 
             case GET_ALL_CONVERSATION: {
                 List<Conversation> conversationList = conversationService.getAllConversationOfUser(loggedUser.getId());
-                Map<Conversation, Message> result = conversationList
-                        .stream()
-                        .collect(Collectors.toMap(
-                                conversation -> conversation,
-                                conversation -> messageService.getNewestMessage(conversation.getId())
-                        ));
+                Map<Conversation, Message> result = null;
+                if (conversationList != null) {
+                    result = conversationList
+                            .stream()
+                            .collect(Collectors.toMap(
+                                    conversation -> conversation,
+                                    conversation -> messageService.getNewestMessage(conversation.getId())
+                            ));
+                }
                 sendResponse(
                         ConversationListResponse.builder()
                                 .statusCode(conversationList == null ? StatusCode.BAD_REQUEST : StatusCode.OK)
@@ -241,10 +244,8 @@ public class UserHandler extends ClientHandler {
             @Override
             protected Void call() throws Exception {
                 try{
-                    while (true) {
+                    while (!isCancelled()) {
                         Object input = receiveRequest();
-                        System.out.println(input);
-
                         if (ObjectUtils.isEmpty(input))
                             continue;
 
@@ -264,7 +265,10 @@ public class UserHandler extends ClientHandler {
                     }
                 }catch (IOException | ClassNotFoundException e){
                     close();
+                    clientHandlers.remove(loggedUser.getUsername());
                     e.printStackTrace();
+                }catch (Exception err) {
+                    err.printStackTrace();
                 }
                 return null;
             }

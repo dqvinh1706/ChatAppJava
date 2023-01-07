@@ -31,7 +31,7 @@ public class FriendBox extends HBox implements Initializable {
     private int userId;
 
     protected void setData(User user) {
-        String name = user.getFullName().isEmpty() ? user.getUsername() : user.getFullName();
+        String name = (user.getFullName() == null || user.getFullName().isEmpty()) ? user.getUsername() : user.getFullName();
         this.setName(name);
         this.setUserId(user.getId());
         this.setActive(user.getIsActive());

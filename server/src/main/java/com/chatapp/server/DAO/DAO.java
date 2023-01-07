@@ -13,7 +13,7 @@ public abstract class DAO<T> {
     private static String DB_PORT = "1433";
     private static String DB_NAME = "Chatapp";
     private static String USERNAME = "sa";
-    private static String PASSWORD = "dqv1";
+    private static String PASSWORD = "Thq17062002";
 
     @Synchronized
     public Connection getConnection() {

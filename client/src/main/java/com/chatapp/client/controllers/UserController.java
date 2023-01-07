@@ -2,25 +2,32 @@ package com.chatapp.client.controllers;
 
 import com.chatapp.client.SocketClient;
 import com.chatapp.client.components.Avatar.Avatar;
+import com.chatapp.client.components.FriendDialog.FriendDialog;
 import com.chatapp.client.components.UserTabs.UserTabs;
 import com.chatapp.client.workers.UserSocketService;
 import com.chatapp.commons.models.User;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.fxml.LoadException;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class UserController implements Initializable {
     private final SimpleObjectProperty<User> currUser = new SimpleObjectProperty<>();
+
     // Sidebar
     @FXML
     private Button accountBtn;
@@ -33,15 +40,11 @@ public class UserController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        SocketClient client = SocketClient.getInstance();
-        UserSocketService userSocketService = UserSocketService.getInstance(client);
-
+        UserSocketService userSocketService = UserSocketService.getInstance();
+        userSocketService.start();
         mainContainer.getChildren().add(userTabs);
 
-        currUser.set(new User());
-        currUser.get().setId(5);
-        userSocketService.setLoggedUser(currUser.getValue());
-        userSocketService.start();
+        currUser.set(userSocketService.getLoggedUser());
 
         userTabs.toFront();
         userTabs.loadData();
@@ -55,7 +58,6 @@ public class UserController implements Initializable {
                 }
             }
         });
-
     }
 
     private void configSidebar() {

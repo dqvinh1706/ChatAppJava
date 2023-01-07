@@ -4,6 +4,7 @@ import com.chatapp.commons.models.User;
 import com.chatapp.commons.enums.StatusCode;
 import com.chatapp.commons.request.AuthRequest;
 import com.chatapp.commons.response.AuthResponse;
+import com.chatapp.commons.response.Response;
 import com.chatapp.commons.utils.PasswordUtil;
 import com.chatapp.server.services.UserService;
 import javafx.application.Platform;
@@ -13,6 +14,8 @@ import lombok.Getter;
 import org.apache.commons.lang3.ObjectUtils;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Map;
 import java.util.Properties;
@@ -33,17 +36,13 @@ public class AuthHandler extends ClientHandler {
 
     public AuthHandler(Socket socket, Map<String, ClientHandler> clientHandlers) throws IOException {
         super(socket, clientHandlers);
+        this.out = new ObjectOutputStream(clientSocket.getOutputStream());
+        this.in = new ObjectInputStream(clientSocket.getInputStream());
     }
 
     private void checkAuthenticate() {
-
         if (isAuthenticated == null) return;
         try {
-            if (isAuthenticated.equals(StatusCode.AUTHENTICATED)) {
-                clientHandlers.put(user.getUsername(), rolePermission(user));
-                succeeded();
-                return;
-            }
             sendResponse(
                     AuthResponse.builder()
                             .statusCode(isAuthenticated)
@@ -51,6 +50,13 @@ public class AuthHandler extends ClientHandler {
                             .user(user)
                             .build()
             );
+
+            if (isAuthenticated.equals(StatusCode.AUTHENTICATED)) {
+                this.clientHandlers.put(user.getUsername(),   rolePermission(user));
+                Platform.runLater(() -> {
+                    cancel();
+                });
+            }
         } catch (Exception err) {
             err.printStackTrace();
         }
@@ -60,18 +66,15 @@ public class AuthHandler extends ClientHandler {
         Properties data = req.getFormData();
         String username = (String) data.get("username");
         String rawPassword = (String) data.get("password");
-        try{
+        try {
             user = userService.getUserByUsername(username);
-
-            if (user == null || !PasswordUtil.checkMatch(rawPassword, user.getPassword())) {
+            if (user == null /*|| !PasswordUtil.checkMatch(rawPassword, user.getPassword())*/) {
                 errorText = new Exception("Username or password is incorrect");
                 isAuthenticated = StatusCode.UNAUTHENTICATED;
-            }
-            else{
+            } else {
                 isAuthenticated = StatusCode.AUTHENTICATED;
             }
-        }
-        catch (Exception err){
+        } catch (Exception err) {
             err.printStackTrace();
         }
     }
@@ -88,15 +91,25 @@ public class AuthHandler extends ClientHandler {
         }
 
     }
+
     private ClientHandler rolePermission(User user) throws IOException {
-        if (user.getIsAdmin()) {
-            // Admin role handler
-            return null;
+        try{
+            if (user.getIsAdmin()) {
+                // Admin role handler
+                return null;
+            }
+            // User role handler
+            UserHandler userHandler = new UserHandler(getClientSocket(), clientHandlers);
+            userHandler.setIn(this.in);
+            userHandler.setOut(this.out);
+
+            userHandler.setLoggedUser(user);
+            userHandler.start();
+            return userHandler;
+        } catch (Exception err) {
+            err.printStackTrace();
         }
-        // User role handler
-        UserHandler userHandler = new UserHandler(getClientSocket(), clientHandlers);
-        userHandler.setLoggedUser(user);
-        return userHandler;
+        return null;
     }
 
     @Override
@@ -104,14 +117,20 @@ public class AuthHandler extends ClientHandler {
         return new Task() {
             @Override
             protected Void call() throws Exception {
-                try{
+                try {
                     while (!isCancelled()) {
+                        System.out.println("Wait req");
+                        if (isAuthenticated.equals(StatusCode.AUTHENTICATED)) cancel();
+                        System.out.println("Wait req1");
+
                         Object input = receiveRequest();
                         if (ObjectUtils.isNotEmpty(input)) {
                             AuthRequest req = (AuthRequest) input;
                             switch (req.getAction()) {
                                 case LOGIN:
                                     login(req);
+                                    checkAuthenticate();
+                                    resetData();
                                     break;
                                 case SIGNUP:
                                     break;
@@ -124,16 +143,14 @@ public class AuthHandler extends ClientHandler {
                                     break;
                             }
                         }
-                        checkAuthenticate();
-                        resetData();
                     }
 
-                }catch (IOException | ClassNotFoundException e){
+
+                } catch (IOException | ClassNotFoundException e) {
                     close();
                     e.printStackTrace();
                     System.out.println(user.getUsername() + " is disconnected");
                 }
-
                 return null;
             }
         };

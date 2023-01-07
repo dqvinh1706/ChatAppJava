@@ -26,12 +26,16 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import net.synedra.validatorfx.Decoration;
 import net.synedra.validatorfx.ValidationMessage;
 import net.synedra.validatorfx.Validator;
 
 import java.io.IOException;
+import java.net.ConnectException;
+import java.net.SocketException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -73,6 +77,12 @@ public class LoginController implements Initializable {
         password = createCustomPasswordField();
         loginTab.getChildren().add(2, username);
         loginTab.getChildren().add(3, password);
+
+        signInBtn.setOnKeyReleased((KeyEvent e) -> {
+            if (e.getCode().equals(KeyCode.ENTER)) {
+                onLogin();
+            }
+        });
 
         VBox.setMargin(username, new Insets(0, 0, 10, 0));
         setupValidation();
@@ -142,7 +152,7 @@ public class LoginController implements Initializable {
     }
     @FXML
     public void onLogin() {
-        if (!validator.validate()) return;
+//        if (!validator.validate()) return;
 
         ProgressIndicator progressBar = new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS);
         progressBar.setMaxSize(36,  36);
@@ -151,58 +161,82 @@ public class LoginController implements Initializable {
         signInBtn.setOnAction(null);
 
         Properties formData = new Properties();
-        formData.put("username", username.getText());
-        formData.put("password", password.getText());
+//        formData.put("username", username.getText());
+//        formData.put("password", password.getText());
 
-        SocketClient socketClient = SocketClient.getInstance();
-        AuthSocketService authSocketService = AuthSocketService.getInstance(socketClient);
+        formData.put("username", "thquan");
+        formData.put("password", "12345678");
+        try{
+            SocketClient socketClient = SocketClient.getInstance();
+            AuthSocketService authSocketService = AuthSocketService.getInstance(socketClient);
 
-        Task waitResponse = new Task() {
-            @Override
-            protected Response call() throws Exception {
-                authSocketService.addRequest(
-                        AuthRequest.builder()
-                                .action(Action.LOGIN)
-                                .formData(formData)
-                                .build()
-                );
-                return (Response) authSocketService.getResponse();
-            }
-        };
-
-        waitResponse.setOnSucceeded(e -> {
-            AuthResponse res = (AuthResponse) waitResponse.getValue();
-            System.out.println(res);
-            if (res.getStatusCode() == StatusCode.AUTHENTICATED) {
-                authSocketService.cancel();
-
-                UserSocketService userSocketService = UserSocketService.getInstance(socketClient);
-                userSocketService.setLoggedUser(res.getUser());
-
-                FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/UserView.fxml"));
-                try {
-                    signUpBtn.getScene().setRoot(loader.load());
-                } catch (IOException err) {
-                    throw new RuntimeException(err);
+            Task waitResponse = new Task() {
+                @Override
+                protected Response call() throws Exception {
+                    authSocketService.addRequest(
+                            AuthRequest.builder()
+                                    .action(Action.LOGIN)
+                                    .formData(formData)
+                                    .build()
+                    );
+                    return (Response) authSocketService.getResponse();
                 }
-            }
-            else {
-                Alert errAlert = new Alert(Alert.AlertType.ERROR);
-                errAlert.setTitle("Lỗi khi đăng nhập");
-                errAlert.setHeaderText(null);
-                errAlert.setContentText(res.getErr().getMessage());
-                errAlert.showAndWait();
+            };
 
-                Platform.runLater(() -> {
+            waitResponse.setOnSucceeded(e -> {
+                AuthResponse res = (AuthResponse) waitResponse.getValue();
+                System.out.println(res);
+                if (res.getStatusCode() == StatusCode.AUTHENTICATED) {
+//                    try {
+//                        socketClient.renewStream();
+//                    } catch (IOException ex) {
+//                        System.out.println("ERROR");
+//                        ex.printStackTrace();
+//                    }
+                    System.out.println(res.getUser());
+                    authSocketService.cancel();
+                    UserSocketService userSocketService = UserSocketService.getInstance(socketClient);
+                    userSocketService.setLoggedUser(res.getUser());
+
+                    Platform.runLater(() -> {
+                        FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/UserView.fxml"));
+                        try {
+                            signUpBtn.getScene().setRoot(loader.load());
+                        } catch (IOException err) {
+                            throw new RuntimeException(err);
+                        }
+                    });
+                }
+                else {
+                    Alert errAlert = new Alert(Alert.AlertType.ERROR);
+                    errAlert.setTitle("Lỗi khi đăng nhập");
+                    errAlert.setHeaderText(null);
+                    errAlert.setContentText(res.getErr().getMessage());
+                    errAlert.showAndWait();
+
                     signInBtn.setGraphic(null);
                     signInBtn.setText("Sign in");
                     signInBtn.setOnAction(e1 -> onLogin());
-                });
-            }
-        });
+                }
+            });
 
-        Thread th = new Thread(waitResponse);
-        th.setDaemon(true);
-        th.start();
+            Thread th = new Thread(waitResponse);
+            th.setDaemon(true);
+            th.start();
+        }
+        catch (IOException netError) {
+            // Lỗi không kết nối được tới server
+            Platform.runLater(() -> {
+                Alert error = new Alert(Alert.AlertType.ERROR);
+                error.setTitle("Connection Error!");
+                error.setContentText("Không thể kết nối đến Server!!!");
+                error.setHeaderText(null);
+                error.showAndWait();
+
+                signInBtn.setGraphic(null);
+                signInBtn.setText("Sign in");
+                signInBtn.setOnAction(e1 -> onLogin());
+            });
+        }
     }
 }

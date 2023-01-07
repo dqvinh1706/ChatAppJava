@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import org.kordamp.ikonli.javafx.*?>
+
+
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="360.0" type="DialogPane" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+   <header>
+      <Label text="Thêm bạn bè">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+         <padding>
+            <Insets left="16.0" />
+         </padding>
+      </Label>
+   </header>
+   <content>
+      <VBox alignment="CENTER" spacing="8.0" style="-fx-border-style: hidden hidden solid hidden; -fx-border-width: 1px; -fx-border-color: #dedfe0;">
+         <children>
+            <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="32.0" styleClass="search-global">
+               <children>
+                  <FontIcon iconColor="GREY" iconLiteral="mdi2m-magnify" iconSize="24" />
+                  <TextField fx:id="searchFriend" maxHeight="1.7976931348623157E308" promptText="Tìm bạn bè" HBox.hgrow="ALWAYS" />
+               </children>
+               <padding>
+                  <Insets left="4.0" right="24.0" />
+               </padding>
+            </HBox>
+            <StackPane VBox.vgrow="ALWAYS">
+               <children>
+                  <VBox />
+                  <BorderPane>
+                     <center>
+                        <Label text="Không tìm thấy" BorderPane.alignment="CENTER">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Label>
+                     </center>
+                  </BorderPane>
+               </children>
+            </StackPane>
+         </children>
+      </VBox>
+   </content>
+   <padding>
+      <Insets top="16.0" />
+   </padding>
+   <stylesheets>
+<!--      <URL value="@../../css/User.css" />-->
+   </stylesheets>
+   <buttonTypes>
+      <ButtonType fx:constant="OK" />
+      <ButtonType fx:constant="CANCEL" />
+   </buttonTypes>
+</fx:root>
