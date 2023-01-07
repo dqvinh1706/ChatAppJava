@@ -1,5 +1,6 @@
 package com.chatapp.client.components.UserTabs;
 
+import com.chatapp.client.components.GroupDialog.GroupDialog;
 import com.chatapp.client.workers.UserSocketService;
 import com.chatapp.commons.enums.Action;
 import com.chatapp.commons.models.User;
@@ -85,6 +86,9 @@ public class UserTabs extends StackPane {
                     } else if (input instanceof MessageResponse) {
                         MessageResponse res = (MessageResponse) input;
                         tab.updateMessage(res.getMessage());
+                    } else if (input instanceof SearchResponse) {
+                        SearchResponse res = (SearchResponse) input;
+                        tab.loadSearchResult(GroupDialog.class, res.getResult());
                     }
 
                     // Wait for GUI to load before receive new response

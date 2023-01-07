@@ -1,5 +1,6 @@
 package com.chatapp.server.handlers;
 
+import com.chatapp.commons.enums.Action;
 import com.chatapp.commons.enums.StatusCode;
 import com.chatapp.commons.models.Conversation;
 import com.chatapp.commons.models.Message;
@@ -19,17 +20,18 @@ import java.util.stream.Collectors;
 @Getter
 public class UserHandler extends ClientHandler {
     @Setter
-    private User loggedUser;
+    private User loggedUser = new User();
 
     public UserHandler(Socket socket, Map<String, ClientHandler> clientHandlers) throws IOException {
         super(socket, clientHandlers);
-//        loggedUser.setId(5);
+        loggedUser = userService.getUserById(5);
+        System.out.println(loggedUser.getId());
 //        clientHandlers.put("1", this);
     }
 
     private void handlerConversationRequest(ConversationRequest req) throws IOException {
         switch (req.getAction()) {
-            case CREATE_CONVERSATION:
+            case CREATE_CONVERSATION: {
                 User friend = userService.getUserById((Integer) req.getBody());
                 int conId = conversationService.saveConversation(
                         new Conversation(friend.getFullName(), loggedUser.getId()),
@@ -44,7 +46,60 @@ public class UserHandler extends ClientHandler {
                                 .build()
                 );
                 break;
-            case GET_ALL_CONVERSATION:
+            }
+            case CREATE_GROUP_CHAT: {
+                int creatorId = loggedUser.getId();
+                List<Integer> membersId = (List<Integer>) req.getBody();
+                membersId.add(creatorId);
+                List<String> listName = new ArrayList<>();
+                for (int i = 0; i < membersId.size(); i++) {
+                    if (i == 3) break;
+                    User member = userService.getUserById(membersId.get(i));
+                    List<String> splitName = List.of(member.getFullName().split(" "));
+                    String lastName = splitName.get(splitName.size() - 1);
+                    listName.add(lastName);
+                }
+                String grName = "Nhóm của " +
+                        String.join(", ", listName) +
+                        (membersId.size() > 3 ? "..." : "");
+                Conversation con = new Conversation(grName, loggedUser.getId());
+                con.setIsGroup(true);
+                int conId = conversationService.saveConversation(
+                        con ,
+                        membersId
+                );
+                Message greeting = new Message();
+                greeting.setSenderId(loggedUser.getId());
+                greeting.setConversationId(conId);
+                greeting.setMessage(grName + " đã được tạo");
+
+                try{
+                    messageService.saveMessage(greeting);
+                    sendResponse(
+                            ConversationResponse.builder()
+                                    .statusCode(StatusCode.OK)
+                                    .conversation(
+                                            Conversation.builder().id(conId).build())
+                                    .build()
+                    );
+                }catch (Exception err) {
+                    sendResponse(
+                            ConversationResponse.builder()
+                                    .statusCode(StatusCode.BAD_REQUEST)
+                                    .build()
+                    );
+                }
+                break;
+            }
+            case CHANGE_TITLE: {
+                Properties body = (Properties) req.getBody();
+                String newTitle = (String) body.get("newTitle");
+                Integer conId = (Integer) body.get("conId");
+                conversationService.updateTitle(conId, newTitle);
+                break;
+            }
+
+            case GET_ALL_CONVERSATION: {
                 List<Conversation> conversationList = conversationService.getAllConversationOfUser(loggedUser.getId());
                 Map<Conversation, Message> result = conversationList
                         .stream()
@@ -52,7 +107,6 @@ public class UserHandler extends ClientHandler {
                                 conversation -> conversation,
                                 conversation -> messageService.getNewestMessage(conversation.getId())
                         ));
-
                 sendResponse(
                         ConversationListResponse.builder()
                                 .statusCode(conversationList == null ? StatusCode.BAD_REQUEST : StatusCode.OK)
@@ -60,6 +114,7 @@ public class UserHandler extends ClientHandler {
                                 .build()
                 );
                 break;
+            }
             case GET_ONE_CONVERSATION:
                 Integer friendId = (Integer) req.getBody();
                 Conversation con = conversationService.getOneOneConversation(
@@ -82,7 +137,7 @@ public class UserHandler extends ClientHandler {
     public void handleFriendRequest(FriendRequest req) throws IOException {
         switch (req.getAction()) {
             case ADD_FRIEND:
-                userService.acceptFriendRequest(loggedUser.getId(), (int) req.getBody());
+//                userService.acceptFriendRequest(loggedUser.getId(), (int) req.getBody());
                 break;
             case REMOVE_ADD_FRIEND:
                 userService.cancelFriendRequest(loggedUser.getId(), (int) req.getBody());
@@ -108,6 +163,29 @@ public class UserHandler extends ClientHandler {
                 );
                 break;
         }
+    }
+
+    public void handleSearchRequest(SearchRequest req) throws IOException {
+        switch (req.getAction()) {
+            case SEARCH_FRIEND:
+                Properties params = req.getParams();
+                String keyword = (String) params.get("keyword");
+                User user = userService.getUserByUsername(keyword);
+                System.out.println(keyword);
+
+                // Trùng với bản thân
+                if (user != null && user.getId() == loggedUser.getId())
+                    user = null;
+                sendResponse(
+                        SearchResponse.builder()
+                                .statusCode(user != null ? StatusCode.OK : StatusCode.BAD_REQUEST)
+                                .result(user)
+                                .build()
+                );
+                break;
+
+        }
+
     }
 
     public void handleMessageRequest(MessageRequest req) throws IOException {
@@ -163,8 +241,10 @@ public class UserHandler extends ClientHandler {
             @Override
             protected Void call() throws Exception {
                 try{
-                    while (!isCancelled()) {
+                    while (true) {
                         Object input = receiveRequest();
+                        System.out.println(input);
+
                         if (ObjectUtils.isEmpty(input))
                             continue;
 
@@ -177,6 +257,9 @@ public class UserHandler extends ClientHandler {
                         }
                         else if (request instanceof MessageRequest) {
                             handleMessageRequest((MessageRequest) request);
+                        }
+                        else if (request instanceof SearchRequest) {
+                            handleSearchRequest((SearchRequest) request);
                         }
                     }
                 }catch (IOException | ClassNotFoundException e){

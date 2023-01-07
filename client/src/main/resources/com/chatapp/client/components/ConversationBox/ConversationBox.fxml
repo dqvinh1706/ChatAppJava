@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<fx:root fx:id="ConversationBox" maxWidth="1.7976931348623157E308" minWidth="76.0" type="HBox" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root fx:id="ConversationBox" maxWidth="1.7976931348623157E308" minWidth="76.0" type="HBox" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
    <children>
 
    </children>
@@ -23,7 +21,7 @@
             <HBox alignment="CENTER_LEFT" spacing="8.0">
                <children>
                   <Label fx:id="title" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="primary_text" wrapText="true" HBox.hgrow="ALWAYS" />
-                  <Label fx:id="time" alignment="CENTER_RIGHT" contentDisplay="RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" styleClass="secondary_text">
+                  <Label fx:id="time" alignment="CENTER_RIGHT" contentDisplay="RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="60.0" styleClass="secondary_text">
                      <font>
                         <Font size="10.0" />
                      </font></Label>

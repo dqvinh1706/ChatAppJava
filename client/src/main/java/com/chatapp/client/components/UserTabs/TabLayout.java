@@ -4,6 +4,7 @@ import com.chatapp.client.components.Avatar.Avatar;
 import com.chatapp.client.components.ConversationBox.ConversationBox;
 import com.chatapp.client.components.FriendBox.FriendBox;
 import com.chatapp.client.components.FriendBox.PendingFriendBox;
+import com.chatapp.client.components.GroupDialog.GroupDialog;
 import com.chatapp.client.components.MessageContainer.MessageContainer;
 import com.chatapp.client.workers.UserSocketService;
 import com.chatapp.commons.enums.Action;
@@ -17,18 +18,18 @@ import com.chatapp.commons.request.MessageRequest;
 import com.chatapp.commons.response.ConversationResponse;
 import com.chatapp.commons.utils.TimestampUtil;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import lombok.Getter;
@@ -41,8 +42,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class TabLayout extends GridPane {
-    @Setter private int LIMIT = 5;
-    @Setter @Getter
+    @Setter
+    private int LIMIT = 5;
+    @Setter
+    @Getter
     private int offset = 0;
     @FXML
     private BorderPane chatContent;
@@ -52,7 +55,8 @@ public class TabLayout extends GridPane {
 
     @FXML
     private HBox chatSummaryContainer;
-
+    @FXML
+    private Button editChatTitle;
     @FXML
     private Label chatTitle, tabTitle;
 
@@ -63,21 +67,23 @@ public class TabLayout extends GridPane {
 
     private Avatar chatAvatar;
     protected final MessageContainer messageContainer = new MessageContainer();
-    private final SimpleObjectProperty<Integer> currConversationId = new SimpleObjectProperty<>();
+    private final SimpleObjectProperty<Conversation> currConversationId = new SimpleObjectProperty<>();
     protected int currUserId;
     protected Integer friendId = null;
     private UserSocketService socketService;
+
+    private GroupDialog groupDialog;
 
     public TabLayout() {
         FXMLLoader loader = new FXMLLoader(TabLayout.class.getResource("TabLayout.fxml"));
         loader.setRoot(this);
         loader.setController(this);
 
-        try{
+        try {
             loader.load();
             initGUI();
             setUpProperty();
-        }catch (IOException exc) {
+        } catch (IOException exc) {
             throw new RuntimeException(exc);
         }
     }
@@ -90,21 +96,22 @@ public class TabLayout extends GridPane {
 
     private void setUpProperty() {
         chatAvatar.imageProperty().addListener(((observable, oldValue, newValue) -> {
-            if(!newValue.equals(oldValue)) {
+            if (!newValue.equals(oldValue)) {
                 chatAvatar.setImage(newValue);
             }
         }));
-
-//        main.visibleProperty().bind(Bindings.isNotNull(currCon));
+        main.visibleProperty().bind(Bindings.isNotNull(currConversationId));
+        editChatTitle.visibleProperty().bind(Bindings.equal(tabTitle.textProperty(), "Chat"));
+        chatTitle.textProperty().addListener((obs, oldValue, newValue) -> {
+            chatTitle.setTooltip(new Tooltip(newValue));
+        });
 
         currConversationId.addListener((observable, oldValue, newValue) -> {
             Platform.runLater(() -> {
                 messageContainer.clear();
                 if (newValue == null) return;
-                if (newValue.equals(oldValue)) return;
                 offset = 0;
                 sendChatHistoryRequest();
-                System.out.println("Load");
                 chatScrollPane.setVvalue(1.0f);
             });
         });
@@ -113,7 +120,7 @@ public class TabLayout extends GridPane {
             if (currConversationId.getValue() == null) return;
             if (event.getDeltaY() > 0) {
                 // Scroll up
-                if (chatScrollPane.getVvalue() == 1.0f || chatScrollPane.getVvalue() <= 0.5){
+                if (chatScrollPane.getVvalue() == 1.0f || chatScrollPane.getVvalue() <= 0.5) {
                     sendChatHistoryRequest();
                 }
             }
@@ -127,12 +134,13 @@ public class TabLayout extends GridPane {
     }
 
     public void setCurrConversationId(Conversation con) {
-        this.currConversationId.set(con == null ? null : con.getId());
+//        this.currConversationId.set(con == null ? null : con.getId());
+        this.currConversationId.set(con == null ? null : con);
     }
 
     public void sendChatHistoryRequest() {
         Properties body = new Properties();
-        body.put("conId", currConversationId.getValue());
+        body.put("conId", currConversationId.getValue().getId());
         body.put("offset", offset);
         body.put("limit", LIMIT);
 
@@ -154,10 +162,9 @@ public class TabLayout extends GridPane {
     public void activeStyleToggle(Node ins) {
         Node oldActive = (Node) ins.getParent().lookup(".is-active");
         if (oldActive != null) {
-            System.out.println(ins.getStyleClass());
             ins.getStyleClass().remove("unseen-message");
 
-            if(oldActive.equals(ins)){
+            if (oldActive.equals(ins)) {
                 return;
             }
             oldActive.getStyleClass().remove("is-active");
@@ -175,13 +182,52 @@ public class TabLayout extends GridPane {
     }
 
     @FXML
-    void onAddFriendByUsername(ActionEvent event) {
+    void onEditConversationName(ActionEvent event) {
+        if (chatSummaryContainer.getChildren().contains(chatTitle)) {
+            TextField newTitle = new TextField(chatTitle.getText());
 
+            newTitle.focusedProperty().addListener((obs, oldValue, newValue) -> {
+                if (newValue == false) {
+                    chatSummaryContainer.getChildren().remove(newTitle);
+                    chatSummaryContainer.getChildren().add(chatTitle);
+                }
+            });
+
+            newTitle.setOnKeyReleased((e) -> {
+                if (e.getCode() == KeyCode.ENTER) {
+                    String title = newTitle.getText().trim();
+                    chatTitle.setText(title);
+                    System.out.println(tabContent.lookupAll("ConversationBox#" + currConversationId.get()));
+                    Properties body = new Properties();
+                    body.put("newTitle", title);
+                    body.put("conId", currConversationId.get().getId());
+                    socketService.addRequest(
+                            ConversationRequest.builder()
+                                    .action(Action.CHANGE_TITLE)
+                                    .body(body)
+                                    .build()
+                    );
+                    ConversationBox ins = (ConversationBox) tabContent.lookup("#ConversationBox#" + currConversationId.getValue().getId());
+                    ins.setTitle(title);
+                    messageContainer.requestFocus();
+                }
+            });
+            chatTitle.textProperty().bindBidirectional(newTitle.textProperty());
+            chatSummaryContainer.getChildren().remove(chatTitle);
+            chatSummaryContainer.getChildren().add(newTitle);
+            newTitle.positionCaret(newTitle.getText().length());
+            newTitle.requestFocus();
+        }
+    }
+
+    @FXML
+    void onAddFriendByUsername(ActionEvent event) {
     }
 
     @FXML
     void onCreateGrByUsername(ActionEvent event) {
-
+        groupDialog = new GroupDialog();
+        groupDialog.show();
     }
 
     @FXML
@@ -191,7 +237,7 @@ public class TabLayout extends GridPane {
         confirmDelete.setHeaderText(null);
         confirmDelete.setContentText("Bạn không thể hoàn tác sau khi xoá cuộc trò chuyện này.");
         Optional<ButtonType> option = confirmDelete.showAndWait();
-        if (option.get() == ButtonType.OK){
+        if (option.get() == ButtonType.OK) {
             if (currConversationId.getValue() == null) {
                 Alert errAlert = new Alert(Alert.AlertType.ERROR);
                 errAlert.setTitle("Lỗi");
@@ -225,17 +271,36 @@ public class TabLayout extends GridPane {
     }
 
     public void reload() {
-        if (tabTitle.getText().equals("Chat")){
-//            loadConversationTab();
+        if (tabTitle.getText().equals("Chat")) {
+            socketService.addRequest(ConversationRequest.builder()
+                    .action(Action.GET_ALL_CONVERSATION)
+                    .build()
+            );
+        } else if (tabTitle.getText().equals("Mọi người")) {
+            socketService.addRequest(FriendRequest.builder()
+                    .action(Action.GET_ALL_FRIENDS)
+                    .build()
+            );
+        } else if (tabTitle.getText().equals("Lời mời kết bạn")) {
+            socketService.addRequest(FriendRequest.builder()
+                    .action(Action.GET_PENDING_ADD_FRIEND)
+                    .build()
+            );
         }
-//        else {
-//            loadFriendTab();
-//        }
+    }
+
+    @Synchronized
+    public void loadSearchResult(Class _class, Object result) {
+        if (_class == GroupDialog.class) {
+            if (groupDialog != null) {
+                groupDialog.loadSearchResult(result);
+            }
+        }
     }
 
     @Synchronized
     public void loadChatHistory(List<Message> messageList) {
-        if(messageList == null) return;
+        if (messageList == null) return;
         offset += LIMIT;
         messageContainer.loadMessages(messageList);
     }
@@ -247,12 +312,11 @@ public class TabLayout extends GridPane {
             tabTitle.setText(title);
             tabContent.getChildren().clear();
 
-            if (title.equals("Lời mời kết bạn")){
+            if (title.equals("Lời mời kết bạn")) {
                 loadPendingFriendsTab(users);
                 return;
             }
             users.forEach(friend -> {
-                System.out.println("Pendding");
                 FriendBox ins = FriendBox.toFriendBox(friend);
                 ins.setOnMouseClicked(e -> {
                     onFriendBoxClicked(ins);
@@ -308,7 +372,7 @@ public class TabLayout extends GridPane {
             sortedMap.forEach((conversation, message) -> {
                 ConversationBox ins = ConversationBox.toConversationBox(conversation);
                 String lastMessage = message.getMessage();
-                if (message.getSenderId() == currUserId){
+                if (message.getSenderId() == currUserId) {
                     lastMessage = "Bạn: " + lastMessage;
                 }
                 ins.setMessage(lastMessage);
@@ -340,8 +404,9 @@ public class TabLayout extends GridPane {
         activeStyleToggle(ins);
         chatTitle.setText(ins.getTitle());
         chatAvatar.setImage(ins.getAvatarImage());
-        currConversationId.set(ins.getConversationId());
+        currConversationId.set(ins.getConversation());
     }
+
     public void updateConversationBox(ConversationBox conversationBox, Message message) {
         if (conversationBox == null) return;
         if (!conversationBox.getStyleClass().contains("is-active")) {
@@ -351,7 +416,7 @@ public class TabLayout extends GridPane {
 
         conversationBox.setTime(TimestampUtil.convertToString(message.getCreatedAt()));
         String lastMessage = message.getMessage();
-        if (message.getSenderId() == currUserId){
+        if (message.getSenderId() == currUserId) {
             lastMessage = "Bạn: " + lastMessage;
         }
         conversationBox.setMessage(lastMessage);
@@ -387,15 +452,16 @@ public class TabLayout extends GridPane {
                                     .build()
                     );
                 }
-                while(currConversationId.getValue() == null) {
+                while (currConversationId.getValue() == null) {
                     System.out.println("Wait result");
-                };
+                }
+                ;
                 return null;
             }
         };
 
         queryConversation.setOnSucceeded(e -> {
-            message.setConversationId(currConversationId.getValue());
+            message.setConversationId(currConversationId.getValue().getId());
             socketService.addRequest(
                     MessageRequest.builder()
                             .action(Action.SEND_MESSAGE)

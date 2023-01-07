@@ -10,7 +10,6 @@ import lombok.NonNull;
 @EqualsAndHashCode(callSuper = true)
 public class ConversationRequest extends Request {
     private Object body;
-
     @Builder
     public ConversationRequest(@NonNull Action action, Object body) {
         super(action);

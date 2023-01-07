@@ -21,7 +21,6 @@ import java.util.ResourceBundle;
 
 public class UserController implements Initializable {
     private final SimpleObjectProperty<User> currUser = new SimpleObjectProperty<>();
-
     // Sidebar
     @FXML
     private Button accountBtn;
@@ -34,12 +33,15 @@ public class UserController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        UserSocketService userSocketService = UserSocketService.getInstance();
-        userSocketService.start();
+        SocketClient client = SocketClient.getInstance();
+        UserSocketService userSocketService = UserSocketService.getInstance(client);
+
         mainContainer.getChildren().add(userTabs);
 
         currUser.set(new User());
         currUser.get().setId(5);
+        userSocketService.setLoggedUser(currUser.getValue());
+        userSocketService.start();
 
         userTabs.toFront();
         userTabs.loadData();
@@ -53,6 +55,7 @@ public class UserController implements Initializable {
                 }
             }
         });
+
     }
 
     private void configSidebar() {
