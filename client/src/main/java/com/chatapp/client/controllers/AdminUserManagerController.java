@@ -22,10 +22,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -259,6 +257,14 @@ public class AdminUserManagerController implements Initializable {
                                             a.setTitle("Notification");
                                             a.setHeaderText(null);
                                             a.setContentText(alertContent);
+                                            a.showAndWait();
+
+                                            FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/AdminUserManagerView.fxml"));
+                                            try {
+                                                scenePane.getScene().setRoot(loader.load());
+                                            } catch (IOException err) {
+                                                throw new RuntimeException(err);
+                                            }
                                         }
                                     });
                                     Thread th = new Thread(waitResponse);
