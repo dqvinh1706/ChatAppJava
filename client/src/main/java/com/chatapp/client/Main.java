@@ -1,9 +1,5 @@
 package com.chatapp.client;
 
-import com.chatapp.client.workers.AuthSocketService;
-import com.chatapp.client.workers.UserSocketService;
-import com.chatapp.commons.enums.Action;
-import com.chatapp.commons.request.AuthRequest;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -12,7 +8,6 @@ import javafx.stage.StageStyle;
 import org.kordamp.bootstrapfx.BootstrapFX;
 
 import java.io.IOException;
-import java.util.Properties;
 
 public class Main extends Application {
 

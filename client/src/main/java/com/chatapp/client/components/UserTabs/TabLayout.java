@@ -16,7 +16,6 @@ import com.chatapp.commons.models.User;
 import com.chatapp.commons.request.ConversationRequest;
 import com.chatapp.commons.request.FriendRequest;
 import com.chatapp.commons.request.MessageRequest;
-import com.chatapp.commons.response.ConversationResponse;
 import com.chatapp.commons.utils.TimestampUtil;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -26,23 +25,19 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.util.Pair;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Synchronized;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class TabLayout extends GridPane {
     @Setter private int LIMIT = 5;
