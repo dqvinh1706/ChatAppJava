@@ -57,7 +57,8 @@ public class AdminUserManagerController implements Initializable {
 
     private int SelectedID = -1;
     private String Date2String(Date a){
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        if (a == null) return "";
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         return dateFormat.format(a);
     }
     private void getData(){

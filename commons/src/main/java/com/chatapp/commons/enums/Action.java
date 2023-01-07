@@ -28,4 +28,5 @@ public enum Action {
     // Admin action
     GET_ALL_USERS,
     ADD_NEW_USER,
+    GET_LOGIN_LIST,
 }
