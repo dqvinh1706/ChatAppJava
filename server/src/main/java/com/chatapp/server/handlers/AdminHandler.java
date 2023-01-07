@@ -7,7 +7,8 @@ import com.chatapp.commons.models.User;
 import com.chatapp.commons.request.*;
 import com.chatapp.commons.response.AddNewUserResponse;
 import com.chatapp.commons.response.AllUsersResponse;
-import com.chatapp.commons.response.LoginListRespone;
+import com.chatapp.commons.response.DeleteUserResponse;
+import com.chatapp.commons.response.LoginListResponse;
 import com.chatapp.server.services.LoginHistoryService;
 import javafx.concurrent.Task;
 import lombok.Getter;
@@ -49,11 +50,21 @@ public class AdminHandler extends ClientHandler{
                 );
                 break;
 
+            case DELETE_USER:
+                Boolean deleteUserResult = userService.deleteUserById((int) req.getBody());
+                sendResponse(
+                        DeleteUserResponse.builder()
+                                .statusCode(StatusCode.OK)
+                                .notification("Deleted successfully")
+                                .build()
+                );
+                break;
+
             case GET_LOGIN_LIST:
                 List<LoginHistory> loginList = loginHistoryService.getLoginList();
 
                 sendResponse(
-                        LoginListRespone.builder()
+                        LoginListResponse.builder()
                                 .statusCode(StatusCode.OK)
                                 .loginList(loginList)
                                 .build()

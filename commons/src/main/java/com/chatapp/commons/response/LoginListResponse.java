@@ -11,11 +11,11 @@ import java.util.List;
 
 @ToString
 @Getter
-public class LoginListRespone extends Response {
+public class LoginListResponse extends Response {
     private List<LoginHistory> loginList;
 
     @Builder
-    public LoginListRespone(@NonNull StatusCode statusCode, List<LoginHistory> loginList) {
+    public LoginListResponse(@NonNull StatusCode statusCode, List<LoginHistory> loginList) {
         super(statusCode);
         this.loginList = loginList;
     }

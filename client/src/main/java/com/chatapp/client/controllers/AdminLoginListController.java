@@ -5,7 +5,7 @@ import com.chatapp.client.workers.UserSocketService;
 import com.chatapp.commons.enums.Action;
 import com.chatapp.commons.models.LoginHistory;
 import com.chatapp.commons.request.ManageUsersRequest;
-import com.chatapp.commons.response.LoginListRespone;
+import com.chatapp.commons.response.LoginListResponse;
 import com.chatapp.commons.response.Response;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -70,13 +70,14 @@ public class AdminLoginListController implements Initializable {
         };
 
         waitResponse.setOnSucceeded(e -> {
-            LoginListRespone res = (LoginListRespone) waitResponse.getValue();
+            LoginListResponse res = (LoginListResponse) waitResponse.getValue();
             List<LoginHistory> loginList =  res.getLoginList();
             for(LoginHistory loginHistory: loginList){
                 String createdAt = Date2String(loginHistory.getCreatedAt());
                 data.add(new AdminLoginListController.LoginHistoryClone(
                         loginHistory.getId(),
                         loginHistory.getUsername(),
+                        loginHistory.getName(),
                         createdAt
                 ));
             }
@@ -93,18 +94,21 @@ public class AdminLoginListController implements Initializable {
 
         TableColumn<LoginHistoryClone, String> userIDColumn = new TableColumn<LoginHistoryClone, String>("User ID");
         TableColumn<LoginHistoryClone, String> userNameColumn = new TableColumn<LoginHistoryClone, String>("Username");
+        TableColumn<LoginHistoryClone, String> nameColumn = new TableColumn<LoginHistoryClone, String>("Full name");
         TableColumn<LoginHistoryClone, String> loginAtColumn = new TableColumn<LoginHistoryClone, String>("Login at");
 
         userIDColumn.setCellValueFactory(new PropertyValueFactory<LoginHistoryClone, String>("id"));
         userNameColumn.setCellValueFactory(new PropertyValueFactory<LoginHistoryClone, String>("username"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<LoginHistoryClone, String>("name"));
         loginAtColumn.setCellValueFactory(new PropertyValueFactory<LoginHistoryClone, String>("createdAt"));
 
-        userIDColumn.setMinWidth(160.0);
-        userNameColumn.setMinWidth(160.0);
-        loginAtColumn.setMinWidth(160.0);
+        userIDColumn.setMinWidth(240.0);
+        userNameColumn.setMinWidth(240.0);
+        nameColumn.setMinWidth(240.0);
+        loginAtColumn.setMinWidth(240.0);
 
         LoginList.setItems(data);
-        LoginList.getColumns().addAll(userIDColumn, userNameColumn, loginAtColumn);
+        LoginList.getColumns().addAll(userIDColumn, userNameColumn, nameColumn, loginAtColumn);
         LoginList.setEditable(false);
 
         LoginList.setOnMouseClicked(onClickedEvent());
@@ -143,15 +147,17 @@ public class AdminLoginListController implements Initializable {
     public static class LoginHistoryClone{
         public SimpleIntegerProperty id;
         public SimpleStringProperty username;
+        public SimpleStringProperty name;
         public SimpleStringProperty createdAt;
 
         private Date String2Date(String date) throws Exception{
             return new SimpleDateFormat("dd/MM/yyyy").parse(date);
         }
 
-        public LoginHistoryClone(int ID, String username, String createdAt){
+        public LoginHistoryClone(int ID, String username, String name,  String createdAt){
             this.id = new SimpleIntegerProperty(ID);
             this.username = new SimpleStringProperty(username);
+            this.name = new SimpleStringProperty(name);
             this.createdAt = new SimpleStringProperty(createdAt);
         }
 
@@ -162,6 +168,7 @@ public class AdminLoginListController implements Initializable {
         public String getUsername() {
             return username.get();
         }
+        public String getName() {return  name.get(); }
 
         public String getCreatedAt() {
             return createdAt.get();

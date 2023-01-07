@@ -69,6 +69,24 @@ public class UserDao extends DAO<User> {
         return result != -1;
     }
 
+    public boolean deleteUser(int id) {
+        String sql = "DELETE from [user] where id = ?";
+        long result = this.executeUpdate(
+                sql, id
+        );
+
+        return result != -1;
+    }
+
+    public boolean deleteLoginHistory(int id) {
+        String sql = "DELETE from [login_history] where user_id = ?";
+        long result = this.executeUpdate(
+                sql, id
+        );
+
+        return result != -1;
+    }
+
     public List<User> getFriendsOfUser(int userId) {
         List<User> result;
         String sql = "SELECT U.* " +

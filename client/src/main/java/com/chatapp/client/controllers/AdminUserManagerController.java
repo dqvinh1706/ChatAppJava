@@ -6,6 +6,7 @@ import com.chatapp.commons.enums.Action;
 import com.chatapp.commons.models.User;
 import com.chatapp.commons.request.ManageUsersRequest;
 import com.chatapp.commons.response.AllUsersResponse;
+import com.chatapp.commons.response.DeleteUserResponse;
 import com.chatapp.commons.response.Response;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -20,10 +21,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -36,11 +34,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class AdminUserManagerController implements Initializable {
     private final ObservableList<UserClone> data = FXCollections.observableArrayList();
     private final UserSocketService userSocketService = UserSocketService.getInstance();
+    private String alertContent = "";
     @FXML
     private AnchorPane scenePane;
     @FXML
@@ -162,6 +162,44 @@ public class AdminUserManagerController implements Initializable {
                                 }
                             }
 
+                            else if (newValue.equals("Delete")){
+                                Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+                                a.setTitle("Warning");
+                                a.setHeaderText(null);
+                                a.setContentText("Are you sure about deleting this user?");
+
+                                Optional<ButtonType> option = a.showAndWait();
+
+                                if (option.get() == ButtonType.OK) {
+                                    if(!userSocketService.isRunning()) userSocketService.start();
+                                    Task waitResponse = new Task() {
+                                        @Override
+                                        protected Response call() throws Exception {
+                                            userSocketService.addRequest(
+                                                    ManageUsersRequest.builder()
+                                                            .action(Action.DELETE_USER)
+                                                            .body(SelectedID)
+                                                            .build()
+                                            );
+                                            return (Response) userSocketService.getResponse();
+                                        }
+                                    };
+
+                                    waitResponse.setOnSucceeded(e -> {
+                                        DeleteUserResponse res = (DeleteUserResponse) waitResponse.getValue();
+                                        alertContent = res.getNotification();
+                                        if (alertContent != "") {
+                                            a.setAlertType(Alert.AlertType.INFORMATION);
+                                            a.setTitle("Notification");
+                                            a.setHeaderText(null);
+                                            a.setContentText(alertContent);
+                                        }
+                                    });
+                                    Thread th = new Thread(waitResponse);
+                                    th.setDaemon(true);
+                                    th.start();
+                                } else {}
+                            }
                         }
                     });
                     scenePane.getChildren().add(options);
