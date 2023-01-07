@@ -39,10 +39,10 @@ public class AuthSocketService extends SocketService {
     protected void listenResponse() throws Exception {
         while (isAlive.get()) {
             try {
-                System.out.println(isAlive.get());
                 if (!isAlive.get()) return;
                 System.out.println("Wait res");
                 Object input = socketClient.getResponse();
+                System.out.println(input);
                 if (ObjectUtils.isEmpty(input)) {
                     continue;
                 }

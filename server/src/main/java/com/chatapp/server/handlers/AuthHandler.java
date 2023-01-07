@@ -68,6 +68,7 @@ public class AuthHandler extends ClientHandler {
         String rawPassword = (String) data.get("password");
         try {
             user = userService.getUserByUsername(username);
+            System.out.println(user);
             if (user == null /*|| !PasswordUtil.checkMatch(rawPassword, user.getPassword())*/) {
                 errorText = new Exception("Username or password is incorrect");
                 isAuthenticated = StatusCode.UNAUTHENTICATED;
@@ -94,9 +95,16 @@ public class AuthHandler extends ClientHandler {
 
     private ClientHandler rolePermission(User user) throws IOException {
         try{
+            ClientHandler clientHandler = null;
             if (user.getIsAdmin()) {
+
                 // Admin role handler
-                return null;
+                clientHandler = new AdminHandler(getClientSocket(), clientHandlers);
+                clientHandler.setIn(this.in);
+                clientHandler.setOut(this.out);
+                clientHandler.start();
+                System.out.println("Run admin");
+                return clientHandler;
             }
             // User role handler
             UserHandler userHandler = new UserHandler(getClientSocket(), clientHandlers);

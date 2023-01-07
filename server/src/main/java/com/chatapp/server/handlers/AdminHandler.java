@@ -5,7 +5,6 @@ import com.chatapp.commons.enums.StatusCode;
 import com.chatapp.commons.models.User;
 import com.chatapp.commons.request.*;
 import com.chatapp.commons.response.AllUsersResponse;
-import com.chatapp.server.services.AdminService;
 import javafx.concurrent.Task;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,7 +26,8 @@ public class AdminHandler extends ClientHandler{
     private void handleManageUsersRequest(ManageUsersRequest req) throws IOException{
         switch (req.getAction()){
             case GET_ALL_USERS:
-                List<User> allUsers = adminService.getAllUsers();
+                List<User> allUsers = userService.getAllUsers();
+
                 sendResponse(
                         AllUsersResponse.builder()
                                 .statusCode(StatusCode.OK)
@@ -47,7 +47,7 @@ public class AdminHandler extends ClientHandler{
                         Object input = receiveRequest();
                         if (ObjectUtils.isEmpty(input))
                             continue;
-
+                        System.out.println(input);
                         Request request = (Request) input;
                         if (request instanceof ManageUsersRequest) {
                             handleManageUsersRequest((ManageUsersRequest) request);

@@ -21,8 +21,8 @@ public class UserService {
     }
 
     @Synchronized
-    public List<User> getAllUser() {
-        return null;
+    public List<User> getAllUsers() {
+        return userDao.getAllUsers();
     }
 
     @Synchronized

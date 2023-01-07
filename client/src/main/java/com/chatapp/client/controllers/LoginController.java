@@ -152,7 +152,7 @@ public class LoginController implements Initializable {
     }
     @FXML
     public void onLogin() {
-//        if (!validator.validate()) return;
+       //if (!validator.validate()) return;
 
         ProgressIndicator progressBar = new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS);
         progressBar.setMaxSize(36,  36);
@@ -161,33 +161,47 @@ public class LoginController implements Initializable {
         signInBtn.setOnAction(null);
 
         Properties formData = new Properties();
-        formData.put("username", username.getText());
-        formData.put("password", password.getText());
+        //formData.put("username", username.getText());
+        //formData.put("password", password.getText());
+
+        formData.put("username", "hqb203");
+        formData.put("password", "123456789");
+
         try{
             SocketClient socketClient = SocketClient.getInstance();
-            AuthSocketService authSocketService = AuthSocketService.getInstance(socketClient);
+//            AuthSocketService authSocketService = AuthSocketService.getInstance(socketClient);
             Task waitResponse = new Task() {
                 @Override
                 protected Response call() throws Exception {
-                    authSocketService.addRequest(
+                    socketClient.sendRequest(
+                            AuthRequest.builder()
+                                    .action(Action.LOGIN)
+                                    .formData(formData)
+                                    .build());
+                    /*authSocketService.addRequest(
                             AuthRequest.builder()
                                     .action(Action.LOGIN)
                                     .formData(formData)
                                     .build()
-                    );
-                    return (Response) authSocketService.getResponse();
+                    );*/
+                    return (Response) socketClient.getResponse();
                 }
             };
 
             waitResponse.setOnSucceeded(e -> {
                 AuthResponse res = (AuthResponse) waitResponse.getValue();
                 if (res.getStatusCode() == StatusCode.AUTHENTICATED) {
-                    authSocketService.cancel();
+  //                  authSocketService.cancel();
                     UserSocketService userSocketService = UserSocketService.getInstance(socketClient);
                     userSocketService.setLoggedUser(res.getUser());
 
                     Platform.runLater(() -> {
-                        FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/UserView.fxml"));
+                        FXMLLoader loader = null;
+                        if (res.getUser().getIsAdmin()){
+                            loader = new FXMLLoader(Main.class.getResource("views/AdminView.fxml"));
+                        }
+                        else loader = new FXMLLoader(Main.class.getResource("views/UserView.fxml"));
+
                         try {
                             signUpBtn.getScene().setRoot(loader.load());
                         } catch (IOException err) {

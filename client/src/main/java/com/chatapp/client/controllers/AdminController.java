@@ -1,4 +1,4 @@
-package com.chatapp.client.components.Avatar.controllers;
+package com.chatapp.client.controllers;
 
 import com.chatapp.client.Main;
 import javafx.event.ActionEvent;

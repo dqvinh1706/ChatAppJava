@@ -76,7 +76,8 @@ public abstract class SocketService extends Service {
                     }
                 } catch (Exception err) {
                     cancel();
-                    err.printStackTrace();
+                    System.out.println("Cancel listener");
+//                    err.printStackTrace();
                 }
                 return null;
             }
