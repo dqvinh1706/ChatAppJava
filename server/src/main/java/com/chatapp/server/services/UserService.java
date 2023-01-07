@@ -33,6 +33,8 @@ public class UserService {
         else return false;
     }
 
+    public boolean lockUser(int id) {return userDao.lockUser(id); }
+
     @Synchronized
     public User getUserByUsername(String username) {
         return userDao.getUserByUsername(username);

@@ -31,4 +31,6 @@ public enum Action {
     DELETE_USER,
     GET_LOGIN_LIST,
     CHANGE_PASSWORD,
+    LOCK_USER,
+    SHOW_LOGIN_HISTORY,
 }

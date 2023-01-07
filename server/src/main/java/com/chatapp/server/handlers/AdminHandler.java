@@ -5,10 +5,7 @@ import com.chatapp.commons.enums.StatusCode;
 import com.chatapp.commons.models.LoginHistory;
 import com.chatapp.commons.models.User;
 import com.chatapp.commons.request.*;
-import com.chatapp.commons.response.ActionResponse;
-import com.chatapp.commons.response.AllUsersResponse;
-import com.chatapp.commons.response.DeleteUserResponse;
-import com.chatapp.commons.response.LoginListResponse;
+import com.chatapp.commons.response.*;
 import com.chatapp.server.services.LoginHistoryService;
 import javafx.concurrent.Task;
 import lombok.Getter;
@@ -83,6 +80,16 @@ public class AdminHandler extends ClientHandler{
                 );
                 break;
 
+            case LOCK_USER:
+                Boolean lockUserResult = userService.lockUser((int) req.getBody());
+                sendResponse(
+                        LockUserResponse.builder()
+                                .statusCode(StatusCode.OK)
+                                .notification("Locked successfully")
+                                .build()
+                );
+                break;
+
             case GET_LOGIN_LIST:
                 List<LoginHistory> loginList = loginHistoryService.getLoginList();
 
@@ -93,6 +100,18 @@ public class AdminHandler extends ClientHandler{
                                 .build()
                 );
                 break;
+
+            case SHOW_LOGIN_HISTORY:
+                List<LoginHistory> loginHistories = loginHistoryService.getLoginHistory((int) req.getBody());
+
+                sendResponse(
+                        LoginHistoryResponse.builder()
+                                .statusCode(StatusCode.OK)
+                                .loginHistories(loginHistories)
+                                .build()
+                );
+                break;
+
             case CHANGE_PASSWORD:
                 User userAndPassword = (User) req.getBody();
                 Boolean resChangePassword = userService.changePassword(userAndPassword);

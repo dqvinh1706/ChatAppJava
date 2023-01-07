@@ -3,12 +3,10 @@ package com.chatapp.client.controllers;
 import com.chatapp.client.Main;
 import com.chatapp.client.workers.UserSocketService;
 import com.chatapp.commons.enums.Action;
+import com.chatapp.commons.models.LoginHistory;
 import com.chatapp.commons.models.User;
 import com.chatapp.commons.request.ManageUsersRequest;
-import com.chatapp.commons.response.ActionResponse;
-import com.chatapp.commons.response.AllUsersResponse;
-import com.chatapp.commons.response.DeleteUserResponse;
-import com.chatapp.commons.response.Response;
+import com.chatapp.commons.response.*;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -22,6 +20,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -211,6 +210,7 @@ public class AdminUserManagerController implements Initializable {
                                     throw new RuntimeException(err);
                                 }
                             }
+
                             else if (newValue.equals("Update password")){
                                 try {
                                     FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/ChangePasswordScreen.fxml"));
@@ -228,7 +228,7 @@ public class AdminUserManagerController implements Initializable {
 
                             else if (newValue.equals("Delete")){
                                 Alert a = new Alert(Alert.AlertType.CONFIRMATION);
-                                a.setTitle("Warning");
+                                a.setTitle("Delete user");
                                 a.setHeaderText(null);
                                 a.setContentText("Are you sure about deleting this user?");
 
@@ -254,7 +254,7 @@ public class AdminUserManagerController implements Initializable {
                                         alertContent = res.getNotification();
                                         if (alertContent != "") {
                                             a.setAlertType(Alert.AlertType.INFORMATION);
-                                            a.setTitle("Notification");
+                                            a.setTitle("Delete user");
                                             a.setHeaderText(null);
                                             a.setContentText(alertContent);
                                             a.showAndWait();
@@ -271,6 +271,69 @@ public class AdminUserManagerController implements Initializable {
                                     th.setDaemon(true);
                                     th.start();
                                 } else {}
+                            }
+
+                            else if (newValue.equals("Lock")){
+                                Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+                                a.setTitle("Lock user");
+                                a.setHeaderText(null);
+                                a.setContentText("Are you sure about locking this user?");
+
+                                Optional<ButtonType> option = a.showAndWait();
+
+                                if (option.get() == ButtonType.OK) {
+                                    if(!userSocketService.isRunning()) userSocketService.start();
+                                    Task waitResponse = new Task() {
+                                        @Override
+                                        protected Response call() throws Exception {
+                                            userSocketService.addRequest(
+                                                    ManageUsersRequest.builder()
+                                                            .action(Action.LOCK_USER)
+                                                            .body(SelectedID)
+                                                            .build()
+                                            );
+                                            return (Response) userSocketService.getResponse();
+                                        }
+                                    };
+
+                                    waitResponse.setOnSucceeded(e -> {
+                                        LockUserResponse res = (LockUserResponse) waitResponse.getValue();
+                                        alertContent = res.getNotification();
+                                        if (alertContent != "") {
+                                            a.setAlertType(Alert.AlertType.INFORMATION);
+                                            a.setTitle("Lock user");
+                                            a.setHeaderText(null);
+                                            a.setContentText(alertContent);
+                                            a.showAndWait();
+
+                                            FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/AdminUserManagerView.fxml"));
+                                            try {
+                                                scenePane.getScene().setRoot(loader.load());
+                                            } catch (IOException err) {
+                                                throw new RuntimeException(err);
+                                            }
+                                        }
+                                    });
+                                    Thread th = new Thread(waitResponse);
+                                    th.setDaemon(true);
+                                    th.start();
+                                } else {}
+                            }
+
+                            else if (newValue.equals("Show login history")){
+                                FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/AdminLoginHistoryView.fxml"));
+                                try {
+                                    Parent root = (Parent) loader.load();
+                                    AdminLoginHistoryController adminLoginHistoryController = loader.getController();
+                                    adminLoginHistoryController.setValue(SelectedID);
+
+                                    Stage stage = new Stage();
+                                    stage.setTitle("");
+                                    stage.setScene(new Scene(root));
+                                    stage.show();
+                                } catch (IOException err) {
+                                    throw new RuntimeException(err);
+                                }
                             }
                         }
                     });

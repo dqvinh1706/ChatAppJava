@@ -88,6 +88,15 @@ public class UserDao extends DAO<User> {
         return result != -1;
     }
 
+    public boolean lockUser(int id) {
+        String sql = "UPDATE [user] SET is_blocked = 1 WHERE id = ?";
+        long result = this.executeUpdate(
+                sql, id
+        );
+
+        return result != -1;
+    }
+
     public List<User> getFriendsOfUser(int userId) {
         List<User> result;
         String sql = "SELECT U.* " +

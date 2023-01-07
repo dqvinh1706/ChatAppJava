@@ -5,6 +5,7 @@ import com.chatapp.client.workers.UserSocketService;
 import com.chatapp.commons.enums.Action;
 import com.chatapp.commons.models.LoginHistory;
 import com.chatapp.commons.request.ManageUsersRequest;
+import com.chatapp.commons.response.LoginHistoryResponse;
 import com.chatapp.commons.response.LoginListResponse;
 import com.chatapp.commons.response.Response;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -33,22 +34,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class AdminLoginListController implements Initializable {
+public class AdminLoginHistoryController implements Initializable {
+    private int SelectedID;
     private final ObservableList<LoginHistoryClone> data = FXCollections.observableArrayList();
     private final UserSocketService userSocketService = UserSocketService.getInstance();
     @FXML
     private AnchorPane scenePane;
     @FXML
-    private TableView LoginList = new TableView();
-    @FXML
-    void turnBackAdminView(ActionEvent event){
-        FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/AdminView.fxml"));
-        try {
-            scenePane.getScene().setRoot(loader.load());
-        } catch (IOException err) {
-            throw new RuntimeException(err);
-        }
-    }
+    private TableView LoginHistory = new TableView();
 
     private String Date2String(Date a){
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -62,7 +55,7 @@ public class AdminLoginListController implements Initializable {
             protected Response call() throws Exception {
                 userSocketService.addRequest(
                         ManageUsersRequest.builder()
-                                .action(Action.GET_LOGIN_LIST)
+                                .action(Action.SHOW_LOGIN_HISTORY)
                                 .build()
                 );
                 return (Response) userSocketService.getResponse();
@@ -70,11 +63,11 @@ public class AdminLoginListController implements Initializable {
         };
 
         waitResponse.setOnSucceeded(e -> {
-            LoginListResponse res = (LoginListResponse) waitResponse.getValue();
-            List<LoginHistory> loginList =  res.getLoginList();
-            for(LoginHistory loginHistory: loginList){
+            LoginHistoryResponse res = (LoginHistoryResponse) waitResponse.getValue();
+            List<LoginHistory> loginHistories =  res.getLoginHistories();
+            for(LoginHistory loginHistory: loginHistories){
                 String createdAt = Date2String(loginHistory.getCreatedAt());
-                data.add(new AdminLoginListController.LoginHistoryClone(
+                data.add(new AdminLoginHistoryController.LoginHistoryClone(
                         loginHistory.getId(),
                         loginHistory.getUsername(),
                         loginHistory.getName(),
@@ -89,7 +82,12 @@ public class AdminLoginListController implements Initializable {
     }
 
     @Override
-    public void initialize(URL url, ResourceBundle resourceBundle){
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+
+    }
+
+    public void setValue(int SelectedID){
+        this.SelectedID = SelectedID;
         this.getData();
 
         TableColumn<LoginHistoryClone, Integer> userIDColumn = new TableColumn<LoginHistoryClone, Integer>("User ID");
@@ -107,41 +105,9 @@ public class AdminLoginListController implements Initializable {
         nameColumn.setMinWidth(240.0);
         loginAtColumn.setMinWidth(240.0);
 
-        LoginList.setItems(data);
-        LoginList.getColumns().addAll(userIDColumn, userNameColumn, nameColumn, loginAtColumn);
-        LoginList.setEditable(false);
-
-        LoginList.setOnMouseClicked(onClickedEvent());
-        LoginList.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection)->{
-            if (newSelection != null) {
-                LoginList.getSelectionModel().clearSelection();
-            }
-        });
-    }
-
-    private EventHandler<MouseEvent> onClickedEvent() {
-        return new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-                    while (scenePane.getChildren().size() > 2) {
-                        scenePane.getChildren().remove(scenePane.getChildren().size() - 1);
-                    }
-                    ListView<String> options = new ListView<>();
-                    options.getItems().addAll("Add", "Delete", "Lock", "Update password", "Show login history", "Show friend list");
-
-                    options.setMaxHeight(100);
-
-                    options.setLayoutX(mouseEvent.getSceneX());
-                    options.setLayoutY(mouseEvent.getSceneY());
-                    scenePane.getChildren().add(options);
-                } else if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-                    while (scenePane.getChildren().size() > 2) {
-                        scenePane.getChildren().remove(scenePane.getChildren().size() - 1);
-                    }
-                }
-            }
-        };
+        LoginHistory.setItems(data);
+        LoginHistory.getColumns().addAll(userIDColumn, userNameColumn, nameColumn, loginAtColumn);
+        LoginHistory.setEditable(false);
     }
 
     public static class LoginHistoryClone{

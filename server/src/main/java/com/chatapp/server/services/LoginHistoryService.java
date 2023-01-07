@@ -28,4 +28,9 @@ public class LoginHistoryService {
     public List<LoginHistory> getLoginList() {
         return loginHistoryDao.getLoginList();
     }
+
+    @Synchronized
+    public List<LoginHistory> getLoginHistory(int id) {
+        return loginHistoryDao.getLoginHistory(id);
+    }
 }
