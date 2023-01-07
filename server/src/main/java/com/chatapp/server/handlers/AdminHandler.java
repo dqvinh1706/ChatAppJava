@@ -9,6 +9,8 @@ import com.chatapp.commons.response.ActionResponse;
 import com.chatapp.commons.response.AllUsersResponse;
 import com.chatapp.commons.response.FriendListResponse;
 import com.chatapp.commons.response.LoginListRespone;
+import com.chatapp.commons.response.*;
+import com.chatapp.server.services.LoginHistoryService;
 import javafx.concurrent.Task;
 import lombok.Getter;
 import lombok.Setter;
@@ -72,11 +74,31 @@ public class AdminHandler extends ClientHandler{
                 }
                 break;
 
+            case DELETE_USER:
+                Boolean deleteUserResult = userService.deleteUserById((int) req.getBody());
+                sendResponse(
+                        DeleteUserResponse.builder()
+                                .statusCode(StatusCode.OK)
+                                .notification("Deleted successfully")
+                                .build()
+                );
+                break;
+
+            case LOCK_USER:
+                Boolean lockUserResult = userService.lockUser((int) req.getBody());
+                sendResponse(
+                        LockUserResponse.builder()
+                                .statusCode(StatusCode.OK)
+                                .notification("Locked successfully")
+                                .build()
+                );
+                break;
+
             case GET_LOGIN_LIST:
                 List<LoginHistory> loginList = loginHistoryService.getLoginList();
 
                 sendResponse(
-                        LoginListRespone.builder()
+                        LoginListResponse.builder()
                                 .statusCode(StatusCode.OK)
                                 .loginList(loginList)
                                 .build()
@@ -101,6 +123,16 @@ public class AdminHandler extends ClientHandler{
                                 .statusCode(StatusCode.OK)
                                 .friendList(userList)
                                 .title("Friend List")
+                                .build()
+                );
+                break;
+            case SHOW_LOGIN_HISTORY:
+                List<LoginHistory> loginHistories = loginHistoryService.getLoginHistory((int) req.getBody());
+
+                sendResponse(
+                        LoginHistoryResponse.builder()
+                                .statusCode(StatusCode.OK)
+                                .loginHistories(loginHistories)
                                 .build()
                 );
                 break;

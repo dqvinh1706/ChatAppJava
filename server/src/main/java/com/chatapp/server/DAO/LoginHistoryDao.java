@@ -40,7 +40,16 @@ public class LoginHistoryDao extends DAO<LoginHistory> {
     }
 
     public List<LoginHistory> getLoginList() {
-        return this.executeQuery("SELECT U.id, U.username, LH.created_at  FROM [login_history] LH, [user] U " +
+        return this.executeQuery("SELECT U.id, U.username, U.full_name, LH.created_at  FROM [login_history] LH, [user] U " +
                 "WHERE lh.user_id = u.id");
+    }
+
+    public List<LoginHistory> getLoginHistory(int id) {
+        String sql = "SELECT U.id, U.username, U.full_name, LH.created_at  FROM [login_history] LH, [user] U " +
+                "WHERE lh.user_id = u.id AND U.id = ? ORDER BY created_at DESC";
+
+        return this.executeQuery(
+                sql, id
+        );
     }
 }

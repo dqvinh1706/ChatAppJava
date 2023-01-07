@@ -28,8 +28,11 @@ public enum Action {
     // Admin action
     GET_ALL_USERS,
     ADD_NEW_USER,
+    DELETE_USER,
     GET_LOGIN_LIST,
     CHANGE_PASSWORD,
     GET_PASSWORD_BY_ID,
-    GET_FRIEND_BY_ID
+    GET_FRIEND_BY_ID,
+    LOCK_USER,
+    SHOW_LOGIN_HISTORY,
 }

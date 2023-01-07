@@ -16,6 +16,7 @@ import java.sql.Timestamp;
 public class LoginHistory implements Serializable {
     private int id;
     private String username;
+    private String name;
     @Builder.Default
     private Timestamp createdAt = TimestampUtil.getCurrentTime();
 
@@ -27,6 +28,7 @@ public class LoginHistory implements Serializable {
     public LoginHistory(int id, String username, String name) {
         setId(id);
         setUsername(username);
+        setName(name);
         setCreatedAt(TimestampUtil.getCurrentTime());
     }
     public LoginHistory getLoginHistory(){ return this; }
@@ -35,6 +37,7 @@ public class LoginHistory implements Serializable {
         try{
             setId(rs.getInt("id"));
             setUsername(rs.getString("username"));
+            setName(rs.getString("full_name"));
             setCreatedAt(rs.getTimestamp("created_at"));
         }
         catch (SQLException err) {}
