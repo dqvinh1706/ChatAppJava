@@ -21,7 +21,7 @@ public final class User implements Serializable {
     private int id;
     private String username;
     private String password;
-    private Boolean gender;
+    private String gender;
     private String email;
     @Builder.Default
     private Timestamp createdAt = TimestampUtil.getCurrentTime();
@@ -45,6 +45,15 @@ public final class User implements Serializable {
         setUsername(username);
         setPassword(password);
         setEmail(email);
+    }
+    public User(String username, String password, String address, String email, String gender, Date dob, Timestamp createdDay){
+        this.username = username;
+        this.password = password;
+        this.address = address;
+        this.email = email;
+        this.gender = gender;
+        this.DOB = dob;
+        this.createdAt = createdDay;
     }
     public User getUser(){ return this; }
 

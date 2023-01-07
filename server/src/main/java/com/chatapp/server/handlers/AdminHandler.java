@@ -4,6 +4,7 @@ package com.chatapp.server.handlers;
 import com.chatapp.commons.enums.StatusCode;
 import com.chatapp.commons.models.User;
 import com.chatapp.commons.request.*;
+import com.chatapp.commons.response.AddNewUserResponse;
 import com.chatapp.commons.response.AllUsersResponse;
 import javafx.concurrent.Task;
 import lombok.Getter;
@@ -32,6 +33,15 @@ public class AdminHandler extends ClientHandler{
                         AllUsersResponse.builder()
                                 .statusCode(StatusCode.OK)
                                 .allUsers(allUsers)
+                                .build()
+                );
+                break;
+            case ADD_NEW_USER:
+                System.out.println(req.getBody());
+                Boolean addNewUserResult = userService.addNewUser((User) req.getBody());
+                sendResponse(
+                        AddNewUserResponse.builder()
+                                .statusCode(StatusCode.OK)
                                 .build()
                 );
                 break;

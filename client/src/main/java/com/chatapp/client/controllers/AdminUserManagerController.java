@@ -10,6 +10,8 @@ import com.chatapp.commons.response.Response;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -38,10 +40,11 @@ import java.util.ResourceBundle;
 
 public class AdminUserManagerController implements Initializable {
     private final ObservableList<UserClone> data = FXCollections.observableArrayList();
+    private final UserSocketService userSocketService = UserSocketService.getInstance();
     @FXML
     private AnchorPane scenePane;
     @FXML
-    private TableView usersTable = new TableView();
+    private TableView<UserClone> usersTable = new TableView<>();
     @FXML
     void turnBackAdminView(ActionEvent event){
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/AdminView.fxml"));
@@ -52,14 +55,13 @@ public class AdminUserManagerController implements Initializable {
         }
     }
 
+    private int SelectedID = -1;
     private String Date2String(Date a){
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
         return dateFormat.format(a);
     }
-
     private void getData(){
-            UserSocketService userSocketService = UserSocketService.getInstance();
-            userSocketService.start();
+            if(!userSocketService.isRunning()) userSocketService.start();
             Task waitResponse = new Task() {
                 @Override
                 protected Response call() throws Exception {
@@ -75,7 +77,6 @@ public class AdminUserManagerController implements Initializable {
             waitResponse.setOnSucceeded(e -> {
                 AllUsersResponse res = (AllUsersResponse) waitResponse.getValue();
                 List<User> usersList =  res.getAllUsers();
-                //System.out.println(usersList);
                 for(User user: usersList){
                     String BD = Date2String(user.getDOB());
                     data.add(new UserClone(
@@ -89,7 +90,6 @@ public class AdminUserManagerController implements Initializable {
                     ));
                 }
             });
-
             Thread th = new Thread(waitResponse);
             th.setDaemon(true);
             th.start();
@@ -127,17 +127,17 @@ public class AdminUserManagerController implements Initializable {
         usersTable.setOnMouseClicked(onClickedEvent());
         usersTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection)->{
             if (newSelection != null) {
-                usersTable.getSelectionModel().clearSelection();
+                UserClone user = usersTable.getSelectionModel().getSelectedItem();
+                this.SelectedID = user.getId();
             }
         });
     }
-
     private EventHandler<MouseEvent> onClickedEvent() {
         return new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-                    while (scenePane.getChildren().size() > 1) {
+                    while (scenePane.getChildren().size() > 2) {
                         scenePane.getChildren().remove(scenePane.getChildren().size() - 1);
                     }
                     ListView<String> options = new ListView<>();
@@ -147,9 +147,26 @@ public class AdminUserManagerController implements Initializable {
 
                     options.setLayoutX(mouseEvent.getSceneX());
                     options.setLayoutY(mouseEvent.getSceneY());
+
+                    options.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+                        @Override
+                        public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
+                            System.out.println(newValue + " id= " + SelectedID);
+                            if (newValue.equals("Add")){
+                                FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/AdminAddNewAccount.fxml"));
+                                try {
+                                    scenePane.getScene().setRoot(loader.load());
+                                } catch (IOException err) {
+                                    throw new RuntimeException(err);
+                                }
+                            }
+
+                        }
+                    });
                     scenePane.getChildren().add(options);
-                } else if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-                    while (scenePane.getChildren().size() > 1) {
+                }
+                else if (mouseEvent.getButton() == MouseButton.PRIMARY){
+                    while (scenePane.getChildren().size() > 2) {
                         scenePane.getChildren().remove(scenePane.getChildren().size() - 1);
                     }
                 }
@@ -165,10 +182,6 @@ public class AdminUserManagerController implements Initializable {
         public SimpleStringProperty address;
         public SimpleBooleanProperty gender;
         public SimpleStringProperty email;
-
-        private Date String2Date(String date) throws Exception{
-            return new SimpleDateFormat("dd/MM/yyyy").parse(date);
-        }
 
         public UserClone(int ID, String username, String Name, String address, String birthday, Boolean gender, String email){
             this.id = new SimpleIntegerProperty(ID);

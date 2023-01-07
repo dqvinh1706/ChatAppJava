@@ -50,24 +50,26 @@ public class UserDao extends DAO<User> {
         return this.executeQuery("SELECT * FROM [user]");
     }
 
-    public boolean createUser(User user) {
-        String sql = "INSERT INTO [user](username, password, email, created_at, updated_at) " +
-                        "VALUES (?, ?, ?, ?, ?)";
-//        int result = this.executeUpdate(
-//                                        sql,
-//                                        user.getUsername(),
-//                                        user.getPassword(),
-//                                        user.getEmail(),
-//                                        user.getCreatedAt(),
-//                                        user.getUpdatedAt()
-//                                    );
+    public boolean addNewUser(User user) {
+        String sql = "INSERT INTO [user](username, password, address, email, gender, DOB, created_at, updated_at) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        long result = this.executeUpdate(
+                                        sql,
+                                        user.getUsername(),
+                                        user.getPassword(),
+                                        user.getAddress(),
+                                        user.getEmail(),
+                                        user.getGender(),
+                                        user.getDOB(),
+                                        user.getCreatedAt(),
+                                        user.getUpdatedAt()
+                                    );
 
-//        return result == -1 ? false : true;
-        return false;
+        return result != -1;
     }
 
     public List<User> getFriendsOfUser(int userId) {
-        List<User> result = null;
+        List<User> result;
         String sql = "SELECT U.* " +
                 "FROM (SELECT friend_id as id FROM [friends_list] WHERE user_id = ?) AS T JOIN [user] U ON T.id = U.id";
         result = this.executeQuery(sql, userId);

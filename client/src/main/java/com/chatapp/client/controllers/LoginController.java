@@ -169,7 +169,6 @@ public class LoginController implements Initializable {
 
         try{
             SocketClient socketClient = SocketClient.getInstance();
-//            AuthSocketService authSocketService = AuthSocketService.getInstance(socketClient);
             Task waitResponse = new Task() {
                 @Override
                 protected Response call() throws Exception {
@@ -178,12 +177,6 @@ public class LoginController implements Initializable {
                                     .action(Action.LOGIN)
                                     .formData(formData)
                                     .build());
-                    /*authSocketService.addRequest(
-                            AuthRequest.builder()
-                                    .action(Action.LOGIN)
-                                    .formData(formData)
-                                    .build()
-                    );*/
                     return (Response) socketClient.getResponse();
                 }
             };

@@ -21,11 +21,6 @@ public class UserService {
     }
 
     @Synchronized
-    public List<User> getAllUsers() {
-        return userDao.getAllUsers();
-    }
-
-    @Synchronized
     public boolean saveUser(User user) {
         return false;
     }
@@ -44,6 +39,12 @@ public class UserService {
     public User getUserById(int userId) {
         return userDao.getUserById(userId);
     }
+
+    public List<User> getAllUsers() {
+        return userDao.getAllUsers();
+    }
+
+    public Boolean addNewUser(User newUser){return userDao.addNewUser(newUser);}
 
     public List<User> getAllFriends(int userId) {
         return userDao.getFriendsOfUser(userId);
