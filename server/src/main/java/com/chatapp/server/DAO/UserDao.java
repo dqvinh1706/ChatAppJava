@@ -42,6 +42,13 @@ public class UserDao extends DAO<User> {
         return result == null ? null : result.get(0);
     }
 
+    public List<User> getFriendById(int userId){
+        List<User> result = this.executeQuery("SELECT u.*\n" +
+                "FROM friends_list fl join [user] u on u.id = fl.friend_id\n" +
+                "WHERE fl.user_id = ?", userId);
+        return result;
+    }
+
     public User getUserByUsername(String username) {
         List<User> result = this.executeQuery("SELECT * FROM [user] WHERE username = ?", username);
         return result == null ? null : result.get(0);
@@ -107,13 +114,13 @@ public class UserDao extends DAO<User> {
         return this.executeUpdate(sql, userId, friendId).intValue();
     }
 
-
-
     public boolean changePassword(User userAndPassword) {
 
         String sql = "UPDATE [user] " +
                 "SET password = ? " +
                 "WHERE id = ?";
+        System.out.println(userAndPassword.getPassword());
+        System.out.println(userAndPassword.getId());
         Long result = this.executeUpdate(
                 sql,
                 userAndPassword.getPassword(),

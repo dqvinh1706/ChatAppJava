@@ -7,6 +7,7 @@ import com.chatapp.commons.models.User;
 import com.chatapp.commons.request.*;
 import com.chatapp.commons.response.ActionResponse;
 import com.chatapp.commons.response.AllUsersResponse;
+import com.chatapp.commons.response.FriendListResponse;
 import com.chatapp.commons.response.LoginListRespone;
 import javafx.concurrent.Task;
 import lombok.Getter;
@@ -81,10 +82,32 @@ public class AdminHandler extends ClientHandler{
                                 .build()
                 );
                 break;
+
+            case GET_PASSWORD_BY_ID:
+                int id = (int) req.getBody();
+                User user = userService.getUserById(id);
+                sendResponse(
+                        ActionResponse.builder()
+                                .statusCode(StatusCode.OK)
+                                .notification(user.getPassword())
+                                .build()
+                );
+                break;
+            case GET_FRIEND_BY_ID:
+                id = (int) req.getBody();
+                List<User> userList = userService.getFriendByID(id);
+                sendResponse(
+                        FriendListResponse.builder()
+                                .statusCode(StatusCode.OK)
+                                .friendList(userList)
+                                .title("Friend List")
+                                .build()
+                );
+                break;
+
             case CHANGE_PASSWORD:
                 User userAndPassword = (User) req.getBody();
                 Boolean resChangePassword = userService.changePassword(userAndPassword);
-                System.out.println(resChangePassword);
                 if (resChangePassword) {
                     sendResponse(
                             ActionResponse.builder()

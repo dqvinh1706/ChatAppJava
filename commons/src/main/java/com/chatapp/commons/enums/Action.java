@@ -30,4 +30,6 @@ public enum Action {
     ADD_NEW_USER,
     GET_LOGIN_LIST,
     CHANGE_PASSWORD,
+    GET_PASSWORD_BY_ID,
+    GET_FRIEND_BY_ID
 }

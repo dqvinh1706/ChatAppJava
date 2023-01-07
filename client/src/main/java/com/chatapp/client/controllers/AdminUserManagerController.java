@@ -21,6 +21,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -43,20 +44,12 @@ public class AdminUserManagerController implements Initializable {
     private final ObservableList<UserClone> data = FXCollections.observableArrayList();
     private final UserSocketService userSocketService = UserSocketService.getInstance();
     private int SelectedID = -1;
+    private String cPassword = "";
+
     @FXML
     private AnchorPane scenePane;
     @FXML
     private TableView<UserClone> usersTable = new TableView<>();
-    @FXML
-    private AnchorPane ChangePassword;
-    @FXML
-    private PasswordField confirmPassword;
-    @FXML
-    private TextField currentPassword;
-    @FXML
-    private PasswordField newPassword;
-    @FXML
-    private Label notificationText;
 
     @FXML
     void turnBackAdminView(ActionEvent event){
@@ -67,43 +60,6 @@ public class AdminUserManagerController implements Initializable {
             throw new RuntimeException(err);
         }
     }
-
-    @FXML
-    void ChangePassword(ActionEvent event){
-        Alert confirmChangePassword = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmChangePassword.setTitle("Change password confirm");
-        confirmChangePassword.setHeaderText(null);
-        confirmChangePassword.setContentText("Do you really want to change password?");
-        Optional<ButtonType> option = confirmChangePassword.showAndWait();
-        if (option.get() == ButtonType.OK) {
-            if (!userSocketService.isRunning()) userSocketService.start();
-            Task waitResponse = new Task() {
-                @Override
-                protected Response call() throws Exception {
-                    User userAndPassword = new User(SelectedID, newPassword.getText());
-                    userSocketService.addRequest(
-                            ManageUsersRequest.builder()
-                                    .action(Action.CHANGE_PASSWORD)
-                                    .body(userAndPassword)
-                                    .build()
-                    );
-                    return (Response) userSocketService.getResponse();
-                }
-            };
-
-            waitResponse.setOnSucceeded(e -> {
-                ActionResponse res = (ActionResponse) waitResponse.getValue();
-                notificationText.setText(res.getNotification());
-            });
-
-            Thread th = new Thread(waitResponse);
-            th.setDaemon(true);
-            th.start();
-        }
-    }
-
-
-
     private String Date2String(Date a){
         if (a == null) return "";
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -143,6 +99,7 @@ public class AdminUserManagerController implements Initializable {
         th.setDaemon(true);
         th.start();
     }
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle){
@@ -212,16 +169,35 @@ public class AdminUserManagerController implements Initializable {
                             else if (newValue.equals("Update password")){
                                 try {
                                     FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/ChangePasswordScreen.fxml"));
-                                    Scene scene = new Scene(loader.load());
+                                    Parent root = (Parent) loader.load();
+
+                                    ChangePasswordController changePassController = loader.getController();
+                                    changePassController.setValue(SelectedID);
                                     Stage stage = new Stage();
                                     stage.setTitle("");
-                                    stage.setScene(scene);
+                                    stage.setScene( new Scene(root));
                                     stage.show();
                                 }
                                 catch (IOException e){
                                     throw new RuntimeException(e);
                                 }
+                            }
+                            else if (newValue.equals("Show friend list")){
+                                try {
+                                    FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/ShowFriendList.fxml"));
+                                    Parent root = (Parent) loader.load();
 
+                                    ShowFriendListController showFriendListController = loader.getController();
+                                    showFriendListController.setValue(SelectedID);
+
+                                    Stage stage = new Stage();
+                                    stage.setTitle("");
+                                    stage.setScene( new Scene(root));
+                                    stage.show();
+                                }
+                                catch (IOException e){
+                                    throw new RuntimeException(e);
+                                }
                             }
 
                         }
