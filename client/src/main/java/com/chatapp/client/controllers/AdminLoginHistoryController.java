@@ -56,6 +56,7 @@ public class AdminLoginHistoryController implements Initializable {
                 userSocketService.addRequest(
                         ManageUsersRequest.builder()
                                 .action(Action.SHOW_LOGIN_HISTORY)
+                                .body(SelectedID)
                                 .build()
                 );
                 return (Response) userSocketService.getResponse();
