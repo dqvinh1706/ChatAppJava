@@ -1,5 +1,6 @@
 package com.chatapp.server.DAO;
 
+import com.chatapp.commons.models.LoginHistory;
 import com.chatapp.commons.models.User;
 import com.chatapp.commons.utils.TimestampUtil;
 import lombok.Synchronized;

@@ -2,6 +2,7 @@ package com.chatapp.server.handlers;
 
 import com.chatapp.commons.response.Response;
 import com.chatapp.server.services.ConversationService;
+import com.chatapp.server.services.LoginHistoryService;
 import com.chatapp.server.services.MessageService;
 import com.chatapp.server.services.UserService;
 import javafx.concurrent.Service;
@@ -27,6 +28,7 @@ public abstract class ClientHandler extends Service {
     protected ConversationService conversationService = ConversationService.getInstance();
     protected MessageService messageService = MessageService.getInstance();
     protected UserService userService = UserService.getInstance();
+    protected LoginHistoryService loginHistoryService = LoginHistoryService.getInstance();
 
     public ClientHandler(Socket socket, Map<String, ClientHandler> clientHandlers) throws IOException {
         try {

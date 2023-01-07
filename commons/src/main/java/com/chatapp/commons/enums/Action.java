@@ -27,4 +27,5 @@ public enum Action {
 
     // Admin action
     GET_ALL_USERS,
+    GET_LOGIN_LIST,
 }

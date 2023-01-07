@@ -38,6 +38,7 @@ import java.util.ResourceBundle;
 
 public class AdminUserManagerController implements Initializable {
     private final ObservableList<UserClone> data = FXCollections.observableArrayList();
+    private final UserSocketService userSocketService = UserSocketService.getInstance();
     @FXML
     private AnchorPane scenePane;
     @FXML
@@ -53,46 +54,46 @@ public class AdminUserManagerController implements Initializable {
     }
 
     private String Date2String(Date a){
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        if (a == null) return "";
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         return dateFormat.format(a);
     }
 
     private void getData(){
-            UserSocketService userSocketService = UserSocketService.getInstance();
-            userSocketService.start();
-            Task waitResponse = new Task() {
-                @Override
-                protected Response call() throws Exception {
-                    userSocketService.addRequest(
-                            ManageUsersRequest.builder()
-                                    .action(Action.GET_ALL_USERS)
-                                    .build()
-                    );
-                    return (Response) userSocketService.getResponse();
-                }
-            };
+        if(!userSocketService.isRunning()) userSocketService.start();
+        Task waitResponse = new Task() {
+            @Override
+            protected Response call() throws Exception {
+                userSocketService.addRequest(
+                        ManageUsersRequest.builder()
+                                .action(Action.GET_ALL_USERS)
+                                .build()
+                );
+                return (Response) userSocketService.getResponse();
+            }
+        };
 
-            waitResponse.setOnSucceeded(e -> {
-                AllUsersResponse res = (AllUsersResponse) waitResponse.getValue();
-                List<User> usersList =  res.getAllUsers();
-                //System.out.println(usersList);
-                for(User user: usersList){
-                    String BD = Date2String(user.getDOB());
-                    data.add(new UserClone(
-                            user.getId(),
-                            user.getUsername(),
-                            user.getFullName(),
-                            user.getAddress(),
-                            BD,
-                            false,
-                            user.getEmail()
-                    ));
-                }
-            });
+        waitResponse.setOnSucceeded(e -> {
+            AllUsersResponse res = (AllUsersResponse) waitResponse.getValue();
+            List<User> usersList =  res.getAllUsers();
+            //System.out.println(usersList);
+            for(User user: usersList){
+                String BD = Date2String(user.getDOB());
+                data.add(new UserClone(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getFullName(),
+                        user.getAddress(),
+                        BD,
+                        false,
+                        user.getEmail()
+                ));
+            }
+        });
 
-            Thread th = new Thread(waitResponse);
-            th.setDaemon(true);
-            th.start();
+        Thread th = new Thread(waitResponse);
+        th.setDaemon(true);
+        th.start();
     }
 
     @Override
@@ -137,7 +138,7 @@ public class AdminUserManagerController implements Initializable {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-                    while (scenePane.getChildren().size() > 1) {
+                    while (scenePane.getChildren().size() > 2) {
                         scenePane.getChildren().remove(scenePane.getChildren().size() - 1);
                     }
                     ListView<String> options = new ListView<>();
@@ -149,7 +150,7 @@ public class AdminUserManagerController implements Initializable {
                     options.setLayoutY(mouseEvent.getSceneY());
                     scenePane.getChildren().add(options);
                 } else if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-                    while (scenePane.getChildren().size() > 1) {
+                    while (scenePane.getChildren().size() > 2) {
                         scenePane.getChildren().remove(scenePane.getChildren().size() - 1);
                     }
                 }

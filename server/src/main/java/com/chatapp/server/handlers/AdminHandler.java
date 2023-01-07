@@ -2,9 +2,12 @@ package com.chatapp.server.handlers;
 
 
 import com.chatapp.commons.enums.StatusCode;
+import com.chatapp.commons.models.LoginHistory;
 import com.chatapp.commons.models.User;
 import com.chatapp.commons.request.*;
 import com.chatapp.commons.response.AllUsersResponse;
+import com.chatapp.commons.response.LoginListRespone;
+import com.chatapp.server.services.LoginHistoryService;
 import javafx.concurrent.Task;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,6 +35,17 @@ public class AdminHandler extends ClientHandler{
                         AllUsersResponse.builder()
                                 .statusCode(StatusCode.OK)
                                 .allUsers(allUsers)
+                                .build()
+                );
+                break;
+
+            case GET_LOGIN_LIST:
+                List<LoginHistory> loginList = loginHistoryService.getLoginList();
+
+                sendResponse(
+                        LoginListRespone.builder()
+                                .statusCode(StatusCode.OK)
+                                .loginList(loginList)
                                 .build()
                 );
                 break;
