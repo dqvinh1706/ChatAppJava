@@ -5,7 +5,7 @@ import com.chatapp.client.workers.UserSocketService;
 import com.chatapp.commons.enums.Action;
 import com.chatapp.commons.models.User;
 import com.chatapp.commons.request.ManageUsersRequest;
-import com.chatapp.commons.response.AllUsersResponse;
+import com.chatapp.commons.response.ActionResponse;
 import com.chatapp.commons.response.Response;
 import com.chatapp.commons.utils.TimestampUtil;
 import javafx.concurrent.Task;
@@ -29,6 +29,8 @@ import java.util.Date;
 
 public class AdminAddNewAccountController implements Initializable {
     private final UserSocketService userSocketService = UserSocketService.getInstance();
+    @FXML
+    private TextField nameInput;
     @FXML
     private TextField userNameInput;
     @FXML
@@ -72,6 +74,8 @@ public class AdminAddNewAccountController implements Initializable {
             return;
         }
 
+        String name = nameInput.getText();
+
         String email = emailInput.getText();
         String address = addressInput.getText();
         LocalDate dob = LocalDate.now();
@@ -82,7 +86,17 @@ public class AdminAddNewAccountController implements Initializable {
 
         if(!userSocketService.isRunning()) userSocketService.start();
 
-        User newUser = new User(username, password, address, email, gender, Date.from(dob.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()), TimestampUtil.getCurrentTime());
+        User newUser = new User(
+                username,
+                password,
+                name,
+                address,
+                email,
+                gender,
+                Date.from(dob.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()),
+                TimestampUtil.getCurrentTime(),
+                TimestampUtil.getCurrentTime()
+        );
 
         Task waitResponse = new Task() {
             @Override
@@ -98,8 +112,8 @@ public class AdminAddNewAccountController implements Initializable {
         };
 
         waitResponse.setOnSucceeded(e -> {
-            AllUsersResponse res = (AllUsersResponse) waitResponse.getValue();
-            ResultText.setText(res.getStatusCode().toString());
+            ActionResponse res = (ActionResponse) waitResponse.getValue();
+            ResultText.setText(res.getNotification());
         });
 
         Thread th = new Thread(waitResponse);

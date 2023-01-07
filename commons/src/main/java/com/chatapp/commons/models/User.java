@@ -46,7 +46,17 @@ public final class User implements Serializable {
         setPassword(password);
         setEmail(email);
     }
-    public User(String username, String password, String address, String email, String gender, Date dob, Timestamp createdDay){
+    public User(
+            String username,
+            String password,
+            String name,
+            String address,
+            String email,
+            String gender,
+            Date dob,
+            Timestamp createdDay,
+            Timestamp updatedDay
+    ){
         this.username = username;
         this.password = password;
         this.address = address;
@@ -54,6 +64,12 @@ public final class User implements Serializable {
         this.gender = gender;
         this.DOB = dob;
         this.createdAt = createdDay;
+        this.updatedAt = updatedDay;
+        this.fullName = name;
+    }
+    public User(int id, String password){
+        this.id = id;
+        this.password = password;
     }
     public User getUser(){ return this; }
 

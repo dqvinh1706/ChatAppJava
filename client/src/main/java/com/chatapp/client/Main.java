@@ -12,7 +12,6 @@ import javafx.stage.StageStyle;
 import org.kordamp.bootstrapfx.BootstrapFX;
 
 import java.io.IOException;
-import java.util.Properties;
 
 public class Main extends Application {
 

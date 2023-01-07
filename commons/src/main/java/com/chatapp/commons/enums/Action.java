@@ -29,4 +29,5 @@ public enum Action {
     GET_ALL_USERS,
     ADD_NEW_USER,
     GET_LOGIN_LIST,
+    CHANGE_PASSWORD,
 }

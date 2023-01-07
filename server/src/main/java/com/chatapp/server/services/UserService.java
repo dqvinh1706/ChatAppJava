@@ -59,6 +59,10 @@ public class UserService {
         return userDao.getUsersInConversation(conversationId);
     }
 
+    public Boolean changePassword(User userAndPassword){
+        return userDao.changePassword(userAndPassword);
+    }
+
     public int acceptFriendRequest(int userId, int friendId) {
         userDao.saveFriend(userId, friendId);
         return userDao.removeFriendRequest(userId, friendId);
