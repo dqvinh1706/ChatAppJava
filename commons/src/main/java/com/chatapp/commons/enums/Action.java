@@ -30,4 +30,5 @@ public enum Action {
     ADD_NEW_USER,
     DELETE_USER,
     GET_LOGIN_LIST,
+    CHANGE_PASSWORD,
 }

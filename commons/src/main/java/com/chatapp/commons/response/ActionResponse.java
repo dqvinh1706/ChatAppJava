@@ -8,9 +8,12 @@ import lombok.ToString;
 
 @ToString
 @Getter
-public class AddNewUserResponse extends Response {
+public class ActionResponse extends Response {
+    private final String notification;
+
     @Builder
-    public AddNewUserResponse(@NonNull StatusCode statusCode) {
+    public ActionResponse(@NonNull StatusCode statusCode, String notification) {
         super(statusCode);
+        this.notification = notification;
     }
 }

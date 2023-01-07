@@ -52,12 +52,13 @@ public class UserDao extends DAO<User> {
     }
 
     public boolean addNewUser(User user) {
-        String sql = "INSERT INTO [user](username, password, address, email, gender, DOB, created_at, updated_at) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO [user](username, password, full_name, address, email, gender, DOB, created_at, updated_at) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         long result = this.executeUpdate(
                                         sql,
                                         user.getUsername(),
                                         user.getPassword(),
+                                        user.getFullName(),
                                         user.getAddress(),
                                         user.getEmail(),
                                         user.getGender(),
@@ -124,18 +125,19 @@ public class UserDao extends DAO<User> {
         return this.executeUpdate(sql, userId, friendId).intValue();
     }
 
-//    public boolean updateUser(User user) {
-//        String sql = "UPDATE [user](username, password, email, created_at, updated_at) " +
-//                "VALUES (?, ?, ?, ?, ?)";
-//        int result = this.executeUpdate(
-//                sql,
-//                user.getUsername(),
-//                user.getPassword(),
-//                user.getEmail(),
-//                user.getCreatedAt(),
-//                user.getUpdatedAt()
-//        );
-//
-//        return result == -1 ? false : true;
-//    }
+
+
+    public boolean changePassword(User userAndPassword) {
+
+        String sql = "UPDATE [user] " +
+                "SET password = ? " +
+                "WHERE id = ?";
+        Long result = this.executeUpdate(
+                sql,
+                userAndPassword.getPassword(),
+                userAndPassword.getId()
+        );
+
+        return result != -1;
+    }
 }

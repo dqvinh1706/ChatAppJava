@@ -5,6 +5,7 @@ import com.chatapp.client.workers.UserSocketService;
 import com.chatapp.commons.enums.Action;
 import com.chatapp.commons.models.User;
 import com.chatapp.commons.request.ManageUsersRequest;
+import com.chatapp.commons.response.ActionResponse;
 import com.chatapp.commons.response.AllUsersResponse;
 import com.chatapp.commons.response.DeleteUserResponse;
 import com.chatapp.commons.response.Response;
@@ -21,11 +22,15 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 import lombok.Getter;
 
 import java.io.IOException;
@@ -40,11 +45,23 @@ import java.util.ResourceBundle;
 public class AdminUserManagerController implements Initializable {
     private final ObservableList<UserClone> data = FXCollections.observableArrayList();
     private final UserSocketService userSocketService = UserSocketService.getInstance();
+    private int SelectedID = -1;
     private String alertContent = "";
     @FXML
     private AnchorPane scenePane;
     @FXML
     private TableView<UserClone> usersTable = new TableView<>();
+    @FXML
+    private AnchorPane ChangePassword;
+    @FXML
+    private PasswordField confirmPassword;
+    @FXML
+    private TextField currentPassword;
+    @FXML
+    private PasswordField newPassword;
+    @FXML
+    private Label notificationText;
+
     @FXML
     void turnBackAdminView(ActionEvent event){
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/AdminView.fxml"));
@@ -55,20 +72,23 @@ public class AdminUserManagerController implements Initializable {
         }
     }
 
-    private int SelectedID = -1;
-    private String Date2String(Date a){
-        if (a == null) return "";
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        return dateFormat.format(a);
-    }
-    private void getData(){
-            if(!userSocketService.isRunning()) userSocketService.start();
+    @FXML
+    void ChangePassword(ActionEvent event){
+        Alert confirmChangePassword = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmChangePassword.setTitle("Change password confirm");
+        confirmChangePassword.setHeaderText(null);
+        confirmChangePassword.setContentText("Do you really want to change password?");
+        Optional<ButtonType> option = confirmChangePassword.showAndWait();
+        if (option.get() == ButtonType.OK) {
+            if (!userSocketService.isRunning()) userSocketService.start();
             Task waitResponse = new Task() {
                 @Override
                 protected Response call() throws Exception {
+                    User userAndPassword = new User(SelectedID, newPassword.getText());
                     userSocketService.addRequest(
                             ManageUsersRequest.builder()
-                                    .action(Action.GET_ALL_USERS)
+                                    .action(Action.CHANGE_PASSWORD)
+                                    .body(userAndPassword)
                                     .build()
                     );
                     return (Response) userSocketService.getResponse();
@@ -76,24 +96,56 @@ public class AdminUserManagerController implements Initializable {
             };
 
             waitResponse.setOnSucceeded(e -> {
-                AllUsersResponse res = (AllUsersResponse) waitResponse.getValue();
-                List<User> usersList =  res.getAllUsers();
-                for(User user: usersList){
-                    String BD = Date2String(user.getDOB());
-                    data.add(new UserClone(
-                            user.getId(),
-                            user.getUsername(),
-                            user.getFullName(),
-                            user.getAddress(),
-                            BD,
-                            false,
-                            user.getEmail()
-                    ));
-                }
+                ActionResponse res = (ActionResponse) waitResponse.getValue();
+                notificationText.setText(res.getNotification());
             });
+
             Thread th = new Thread(waitResponse);
             th.setDaemon(true);
             th.start();
+        }
+    }
+
+
+
+    private String Date2String(Date a){
+        if (a == null) return "";
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        return dateFormat.format(a);
+    }
+    private void getData(){
+        if(!userSocketService.isRunning()) userSocketService.start();
+        Task waitResponse = new Task() {
+            @Override
+            protected Response call() throws Exception {
+                userSocketService.addRequest(
+                        ManageUsersRequest.builder()
+                                .action(Action.GET_ALL_USERS)
+                                .build()
+                );
+                return (Response) userSocketService.getResponse();
+            }
+        };
+
+        waitResponse.setOnSucceeded(e -> {
+            AllUsersResponse res = (AllUsersResponse) waitResponse.getValue();
+            List<User> usersList =  res.getAllUsers();
+            for(User user: usersList){
+                String BD = Date2String(user.getDOB());
+                data.add(new UserClone(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getFullName(),
+                        user.getAddress(),
+                        BD,
+                        false,
+                        user.getEmail()
+                ));
+            }
+        });
+        Thread th = new Thread(waitResponse);
+        th.setDaemon(true);
+        th.start();
     }
 
     @Override
@@ -160,6 +212,20 @@ public class AdminUserManagerController implements Initializable {
                                 } catch (IOException err) {
                                     throw new RuntimeException(err);
                                 }
+                            }
+                            else if (newValue.equals("Update password")){
+                                try {
+                                    FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/ChangePasswordScreen.fxml"));
+                                    Scene scene = new Scene(loader.load());
+                                    Stage stage = new Stage();
+                                    stage.setTitle("");
+                                    stage.setScene(scene);
+                                    stage.show();
+                                }
+                                catch (IOException e){
+                                    throw new RuntimeException(e);
+                                }
+
                             }
 
                             else if (newValue.equals("Delete")){

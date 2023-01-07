@@ -8,7 +8,7 @@ import com.chatapp.commons.request.*;
 import com.chatapp.commons.response.AddNewUserResponse;
 import com.chatapp.commons.response.AllUsersResponse;
 import com.chatapp.commons.response.DeleteUserResponse;
-import com.chatapp.commons.response.LoginListResponse;
+import com.chatapp.commons.response.LoginListRespone;
 import com.chatapp.server.services.LoginHistoryService;
 import javafx.concurrent.Task;
 import lombok.Getter;
@@ -41,13 +41,36 @@ public class AdminHandler extends ClientHandler{
                 );
                 break;
             case ADD_NEW_USER:
-                System.out.println(req.getBody());
-                Boolean addNewUserResult = userService.addNewUser((User) req.getBody());
-                sendResponse(
-                        AddNewUserResponse.builder()
-                                .statusCode(StatusCode.OK)
-                                .build()
-                );
+                User newUser = (User) req.getBody();
+                User findUser = null;
+                findUser = userService.getUserByUsername(newUser.getUsername());
+                if (findUser != null){
+                    sendResponse(
+                            ActionResponse.builder()
+                                    .statusCode(StatusCode.OK)
+                                    .notification("This username already have in system.")
+                                    .build()
+                    );
+                    break;
+                }
+
+                Boolean addNewUserResult = userService.addNewUser(newUser);
+                if (addNewUserResult) {
+                    sendResponse(
+                            ActionResponse.builder()
+                                    .statusCode(StatusCode.OK)
+                                    .notification("Add new user successfully.")
+                                    .build()
+                    );
+                }
+                else {
+                    sendResponse(
+                            ActionResponse.builder()
+                                    .statusCode(StatusCode.OK)
+                                    .notification("Having error in at new user.")
+                                    .build()
+                    );
+                }
                 break;
 
             case DELETE_USER:
@@ -69,6 +92,27 @@ public class AdminHandler extends ClientHandler{
                                 .loginList(loginList)
                                 .build()
                 );
+                break;
+            case CHANGE_PASSWORD:
+                User userAndPassword = (User) req.getBody();
+                Boolean resChangePassword = userService.changePassword(userAndPassword);
+                System.out.println(resChangePassword);
+                if (resChangePassword) {
+                    sendResponse(
+                            ActionResponse.builder()
+                                    .statusCode(StatusCode.OK)
+                                    .notification("Change password successfully.")
+                                    .build()
+                    );
+                }
+                else {
+                    sendResponse(
+                            ActionResponse.builder()
+                                    .statusCode(StatusCode.OK)
+                                    .notification("Having error when change password.")
+                                    .build()
+                    );
+                }
                 break;
         }
     }
