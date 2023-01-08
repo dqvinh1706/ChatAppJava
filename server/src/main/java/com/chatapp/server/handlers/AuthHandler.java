@@ -70,12 +70,14 @@ public class AuthHandler extends ClientHandler {
         String rawPassword = (String) data.get("password");
         try {
             user = userService.getUserByUsername(username);
-            System.out.println(user);
             if (user == null /*|| !PasswordUtil.checkMatch(rawPassword, user.getPassword())*/) {
                 errorText = new Exception("Username or password is incorrect");
                 isAuthenticated = StatusCode.UNAUTHENTICATED;
             } else {
                 isAuthenticated = StatusCode.AUTHENTICATED;
+                user.setIsActive(true);
+                userService.updateUser(user);
+                userService.setLogin(user);
             }
         } catch (Exception err) {
             err.printStackTrace();

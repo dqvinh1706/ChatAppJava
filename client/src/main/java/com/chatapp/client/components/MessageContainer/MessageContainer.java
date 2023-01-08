@@ -10,9 +10,11 @@ import lombok.Setter;
 import java.util.List;
 
 public class MessageContainer extends VBox {
-    @Setter @Getter
+    @Setter
+    @Getter
     private Integer currUserId;
     private MessageBox currMessageBox = null;
+
     public MessageContainer() {
         super();
         initGui();
@@ -29,15 +31,21 @@ public class MessageContainer extends VBox {
         this.setSpacing(4);
     }
 
-    public void loadMessages(List<Message> messageList) {
+    public void loadMessages(List<Message> messageList, List<String> senderNames) {
         if (messageList == null) return;
-        messageList.forEach(message -> {
-            Integer senderId = message.getSenderId();
+        for (Message message : messageList) {
             Platform.runLater(() -> {
+                Integer senderId = message.getSenderId();
                 try {
                     if (currMessageBox == null || currMessageBox.getUserId() != senderId) {
-                        currMessageBox = senderId.equals(currUserId)
-                                ? new SendMessage(senderId) : new ReceiveMessage(senderId);
+                        if (senderId.equals(currUserId))
+                            currMessageBox = new SendMessage(senderId);
+                        else {
+                            if (!senderNames.isEmpty()) {
+                                currMessageBox = new ReceiveMessage(senderId, senderNames.get(senderNames.size() - 1));
+                                senderNames.remove(senderNames.size() - 1);
+                            }
+                        }
                         getChildren().add(0, currMessageBox);
                     }
                     currMessageBox.addTopMessage(message);
@@ -45,13 +53,25 @@ public class MessageContainer extends VBox {
                     e.printStackTrace();
                 }
             });
-        });
+        }
     }
 
-    public void updateMessage(Message message) {
+    public void updateMessage(Message message, String senderName) {
         if (currMessageBox != null) {
             MessageBox messageBox = (MessageBox) getChildren().get(getChildren().size() - 1);
-            messageBox.addBottomMessage(message);
+            if (message.getSenderId() != messageBox.getUserId()) {
+                MessageBox newMessageBox = null;
+                if (message.getSenderId() == currUserId) {
+                    newMessageBox = new SendMessage(message.getSenderId());
+                }
+                else {
+                    newMessageBox = new ReceiveMessage(message.getSenderId(), senderName);
+                }
+                newMessageBox.addBottomMessage(message);
+                getChildren().add(newMessageBox);
+            } else {
+                messageBox.addBottomMessage(message);
+            }
         }
     }
 }

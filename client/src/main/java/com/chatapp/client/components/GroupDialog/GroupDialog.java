@@ -125,8 +125,9 @@ public class GroupDialog extends DialogPane {
                     Properties params = new Properties();
                     params.put("keyword", newValue.trim());
                     userSocketService.addRequest(SearchRequest.builder()
-                            .action(Action.SEARCH_FRIEND)
+                            .action(Action.SEARCH_USER)
                             .params(params)
+                            ._class(GroupDialog.class)
                             .build());
                 });
                 pauseTransition.playFromStart();
@@ -148,6 +149,7 @@ public class GroupDialog extends DialogPane {
             }
 
             if (result instanceof User) {
+                System.out.println(result);
                 FriendBox ins = FriendBox.toFriendBox((User) result);
                 Tooltip.install(ins, new Tooltip(((User) result).getUsername()));
                 ins.setOnMouseClicked(e -> {

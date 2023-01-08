@@ -17,11 +17,12 @@ import java.util.Date;
 @ToString
 @Builder
 @AllArgsConstructor
+@EqualsAndHashCode
 public final class User implements Serializable {
     private int id;
     private String username;
     private String password;
-    private String gender;
+    private String gender ;
     private String email;
     @Builder.Default
     private Timestamp createdAt = TimestampUtil.getCurrentTime();
@@ -79,11 +80,11 @@ public final class User implements Serializable {
             setUsername(rs.getString("username"));
             setPassword(rs.getString("password"));
             setEmail(rs.getString("email"));
-            setFullName(rs.getString("full_name"));
-            setAvatar(rs.getBlob("avatar"));
+            setFullName(rs.getString("full_name") == null ? "" : rs.getString("full_name").trim());
             setIsActive(rs.getBoolean("is_active"));
             setIsBlocked(rs.getBoolean("is_blocked"));
-            setAddress(rs.getString("address"));
+            setGender(rs.getString("gender") == null ? "" : rs.getString("gender").trim());
+            setAddress(rs.getString("address") == null ? "" : rs.getString("address").trim());
             setDOB(rs.getDate("DOB"));
             setCreatedAt(rs.getTimestamp("created_at"));
             setUpdatedAt(rs.getTimestamp("updated_at"));

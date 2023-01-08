@@ -20,6 +20,12 @@ public class UserSocketService extends SocketService {
         return INSTANCE;
     }
 
+    @Override
+    public void close() {
+        super.close();
+        INSTANCE = null;
+    }
+
     @Synchronized
     public static UserSocketService getInstance() {
         if (INSTANCE == null) throw new NullPointerException("User Socket Service was not defined");
@@ -36,7 +42,8 @@ public class UserSocketService extends SocketService {
     @Override
     protected void listenResponse() {
         try {
-            while (true) {
+            while (isAlive.get()) {
+                System.out.println("wait response");
                 Object object = socketClient.getResponse();
                 if (ObjectUtils.isEmpty(object)) {
                     continue;

@@ -5,7 +5,9 @@ import com.chatapp.client.components.ConversationBox.ConversationBox;
 import com.chatapp.client.components.FriendBox.FriendBox;
 import com.chatapp.client.components.FriendBox.PendingFriendBox;
 import com.chatapp.client.components.GroupDialog.GroupDialog;
+import com.chatapp.client.components.FriendBox.FriendBoxType;
 import com.chatapp.client.components.FriendDialog.FriendDialog;
+import com.chatapp.client.components.GroupMemberDialog.GroupMemberDialog;
 import com.chatapp.client.components.MessageContainer.MessageContainer;
 import com.chatapp.client.workers.UserSocketService;
 import com.chatapp.commons.enums.Action;
@@ -16,6 +18,7 @@ import com.chatapp.commons.models.User;
 import com.chatapp.commons.request.ConversationRequest;
 import com.chatapp.commons.request.FriendRequest;
 import com.chatapp.commons.request.MessageRequest;
+import com.chatapp.commons.response.InformationResponse;
 import com.chatapp.commons.utils.TimestampUtil;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -40,8 +43,10 @@ import java.io.IOException;
 import java.util.*;
 
 public class TabLayout extends GridPane {
-    @Setter private int LIMIT = 5;
-    @Setter @Getter
+    @Setter
+    private int LIMIT = 15;
+    @Setter
+    @Getter
     private int offset = 0;
     @FXML
     private BorderPane chatContent;
@@ -61,14 +66,18 @@ public class TabLayout extends GridPane {
     @FXML
     private VBox main, tabContent;
 
+    @FXML
+    private Button moreInfoBtn;
+
     private Avatar chatAvatar;
     protected final MessageContainer messageContainer = new MessageContainer();
-    private final SimpleObjectProperty<Conversation> currConversationId = new SimpleObjectProperty<>();
+    private final SimpleObjectProperty<Conversation> currConversation = new SimpleObjectProperty<>();
     protected int currUserId;
     protected Integer friendId = null;
     private UserSocketService socketService;
 
     private GroupDialog groupDialog;
+    private GroupMemberDialog groupMemberDialog;
 
     private FriendDialog friendDialog = null;
 
@@ -77,11 +86,11 @@ public class TabLayout extends GridPane {
         loader.setRoot(this);
         loader.setController(this);
 
-        try{
+        try {
             loader.load();
             initGUI();
             setUpProperty();
-        }catch (IOException exc) {
+        } catch (IOException exc) {
             throw new RuntimeException(exc);
         }
     }
@@ -94,31 +103,34 @@ public class TabLayout extends GridPane {
 
     private void setUpProperty() {
         chatAvatar.imageProperty().addListener(((observable, oldValue, newValue) -> {
-            if(!newValue.equals(oldValue)) {
+            if (!newValue.equals(oldValue)) {
                 chatAvatar.setImage(newValue);
             }
         }));
-        main.visibleProperty().bind(Bindings.isNotNull(currConversationId));
+
+        main.visibleProperty().bind(Bindings.isNotNull(currConversation));
         editChatTitle.visibleProperty().bind(Bindings.equal(tabTitle.textProperty(), "Chat"));
         chatTitle.textProperty().addListener((obs, oldValue, newValue) -> {
             chatTitle.setTooltip(new Tooltip(newValue));
         });
 
-        currConversationId.addListener((observable, oldValue, newValue) -> {
+        currConversation.addListener((observable, oldValue, newValue) -> {
             Platform.runLater(() -> {
                 messageContainer.clear();
                 if (newValue == null) return;
+                if (newValue.equals(oldValue)) return;
                 offset = 0;
                 sendChatHistoryRequest();
+                moreInfoBtn.setVisible(newValue.getIsGroup());
                 chatScrollPane.setVvalue(1.0f);
             });
         });
 
         chatScrollPane.setOnScroll(event -> {
-            if (currConversationId.getValue() == null) return;
+            if (currConversation.getValue() == null) return;
             if (event.getDeltaY() > 0) {
                 // Scroll up
-                if (chatScrollPane.getVvalue() == 1.0f || chatScrollPane.getVvalue() <= 0.5){
+                if (chatScrollPane.getVvalue() == 1.0f || chatScrollPane.getVvalue() <= 0.5) {
                     sendChatHistoryRequest();
                 }
             }
@@ -131,14 +143,14 @@ public class TabLayout extends GridPane {
         });
     }
 
-    public void setCurrConversationId(Conversation con) {
+    public void setCurrConversation(Conversation con) {
 //        this.currConversationId.set(con == null ? null : con.getId());
-        this.currConversationId.set(con == null ? null : con);
+        this.currConversation.set(con == null ? null : con);
     }
 
     public void sendChatHistoryRequest() {
         Properties body = new Properties();
-        body.put("conId", currConversationId.getValue().getId());
+        body.put("conId", currConversation.getValue().getId());
         body.put("offset", offset);
         body.put("limit", LIMIT);
 
@@ -160,6 +172,7 @@ public class TabLayout extends GridPane {
     public void activeStyleToggle(Node ins) {
         Node oldActive = (Node) ins.getParent().lookup(".is-active");
         if (oldActive != null) {
+            System.out.println(ins.getStyleClass());
             ins.getStyleClass().remove("unseen-message");
 
             if (oldActive.equals(ins)) {
@@ -195,17 +208,17 @@ public class TabLayout extends GridPane {
                 if (e.getCode() == KeyCode.ENTER) {
                     String title = newTitle.getText().trim();
                     chatTitle.setText(title);
-                    System.out.println(tabContent.lookupAll("ConversationBox#" + currConversationId.get()));
+                    System.out.println(tabContent.lookupAll("ConversationBox#" + currConversation.get()));
                     Properties body = new Properties();
                     body.put("newTitle", title);
-                    body.put("conId", currConversationId.get().getId());
+                    body.put("conId", currConversation.get().getId());
                     socketService.addRequest(
                             ConversationRequest.builder()
                                     .action(Action.CHANGE_TITLE)
                                     .body(body)
                                     .build()
                     );
-                    ConversationBox ins = (ConversationBox) tabContent.lookup("#ConversationBox#" + currConversationId.getValue().getId());
+                    ConversationBox ins = (ConversationBox) tabContent.lookup("#ConversationBox#" + currConversation.getValue().getId());
                     ins.setTitle(title);
                     messageContainer.requestFocus();
                 }
@@ -222,7 +235,14 @@ public class TabLayout extends GridPane {
     void onAddFriendByUsername(ActionEvent event) throws IOException {
         friendDialog = new FriendDialog();
         friendDialog.show();
+    }
 
+    @FXML
+    void onGroupMemberDialog() {
+        groupMemberDialog = new GroupMemberDialog();
+        groupMemberDialog.setUserId(currUserId);
+        groupMemberDialog.setConversation(currConversation.get());
+        groupMemberDialog.show();
     }
 
     @FXML
@@ -238,8 +258,8 @@ public class TabLayout extends GridPane {
         confirmDelete.setHeaderText(null);
         confirmDelete.setContentText("Bạn không thể hoàn tác sau khi xoá cuộc trò chuyện này.");
         Optional<ButtonType> option = confirmDelete.showAndWait();
-        if (option.get() == ButtonType.OK){
-            if (currConversationId.getValue() == null) {
+        if (option.get() == ButtonType.OK) {
+            if (currConversation.getValue() == null) {
                 Alert errAlert = new Alert(Alert.AlertType.ERROR);
                 errAlert.setTitle("Lỗi");
                 errAlert.setHeaderText(null);
@@ -251,13 +271,13 @@ public class TabLayout extends GridPane {
             socketService.addRequest(
                     ConversationRequest.builder()
                             .action(Action.DELETE_CONVERSATION)
-                            .body(currConversationId.getValue())
+                            .body(currConversation.getValue())
                             .build()
             );
 
             // Update gui
             Platform.runLater(() ->
-                    tabContent.getChildren().remove(tabContent.lookup("#ConversationBox#" + currConversationId.getValue()))
+                    tabContent.getChildren().remove(tabContent.lookup("#ConversationBox#" + currConversation.getValue()))
             );
         }
     }
@@ -296,38 +316,53 @@ public class TabLayout extends GridPane {
             if (groupDialog != null) {
                 groupDialog.loadSearchResult(result);
             }
+        } else if (_class == GroupMemberDialog.class) {
+            if (groupMemberDialog == null) return;
+            groupMemberDialog.loadSearchResult(result);
+        } else if (friendDialog != null) {
+            if (friendDialog == null) return;
+            friendDialog.loadSearchResult((User) result);
         }
     }
 
     @Synchronized
-    public void loadChatHistory(List<Message> messageList) {
-        if(messageList == null) return;
+    public void loadChatHistory(List<Message> messageList, List<String> senderNames) {
+        if (messageList == null) return;
         offset += LIMIT;
-        messageContainer.loadMessages(messageList);
+        messageContainer.loadMessages(messageList, senderNames);
     }
 
     @Synchronized
     public void loadFriendTab(String title, List<User> users) {
-        if (users == null) return;
         Platform.runLater(() -> {
-            tabTitle.setText(title);
             tabContent.getChildren().clear();
-
-            if (title.equals("Lời mời kết bạn")){
+            tabTitle.setText(title);
+            if (title.equals("Lời mời kết bạn")) {
                 loadPendingFriendsTab(users);
                 return;
             }
+            if (users == null) return;
             users.forEach(friend -> {
-                FriendBox ins = FriendBox.toFriendBox(friend);
+                PendingFriendBox ins = PendingFriendBox.toPendingFriendBox(friend, FriendBoxType.UNFRIEND);
                 ins.setOnMouseClicked(e -> {
                     onFriendBoxClicked(ins);
                 });
                 tabContent.getChildren().add(0, ins);
+                ins.setCancelBtnAction((e) -> {
+                    socketService.addRequest(
+                            FriendRequest.builder()
+                                    .action(Action.UNFRIEND)
+                                    .body(ins.getUserId())
+                                    .build()
+                    );
+                    tabContent.getChildren().remove(ins);
+                });
             });
         });
     }
 
     private void loadPendingFriendsTab(List<User> users) {
+        if (users == null) return;
         users.forEach(friend -> {
             PendingFriendBox ins = PendingFriendBox.toPendingFriendBox(friend);
             ins.setAcceptBtnAction((e) -> {
@@ -373,7 +408,7 @@ public class TabLayout extends GridPane {
             sortedMap.forEach((conversation, message) -> {
                 ConversationBox ins = ConversationBox.toConversationBox(conversation);
                 String lastMessage = message.getMessage();
-                if (message.getSenderId() == currUserId){
+                if (message.getSenderId() == currUserId) {
                     lastMessage = "Bạn: " + lastMessage;
                 }
                 ins.setMessage(lastMessage);
@@ -405,7 +440,7 @@ public class TabLayout extends GridPane {
         activeStyleToggle(ins);
         chatTitle.setText(ins.getTitle());
         chatAvatar.setImage(ins.getAvatarImage());
-        currConversationId.set(ins.getConversation());
+        currConversation.set(ins.getConversation());
     }
 
     public void updateConversationBox(ConversationBox conversationBox, Message message) {
@@ -417,15 +452,15 @@ public class TabLayout extends GridPane {
 
         conversationBox.setTime(TimestampUtil.convertToString(message.getCreatedAt()));
         String lastMessage = message.getMessage();
-        if (message.getSenderId() == currUserId){
+        if (message.getSenderId() == currUserId) {
             lastMessage = "Bạn: " + lastMessage;
         }
         conversationBox.setMessage(lastMessage);
     }
 
-    public void updateMessage(Message message) {
+    public void updateMessage(Message message, String senderName) {
         Platform.runLater(() -> {
-            messageContainer.updateMessage(message);
+            messageContainer.updateMessage(message, senderName);
             ConversationBox conversationBox = (ConversationBox) tabContent.lookup("#ConversationBox#" + message.getConversationId());
             if (!tabTitle.getText().equals("Chat")) return;
             tabContent.getChildren().remove(conversationBox);
@@ -445,7 +480,7 @@ public class TabLayout extends GridPane {
         Task queryConversation = new Task() {
             @Override
             protected Object call() throws Exception {
-                if (currConversationId.getValue() == null) {
+                if (currConversation.getValue() == null) {
                     socketService.addRequest(
                             ConversationRequest.builder()
                                     .action(Action.CREATE_CONVERSATION)
@@ -453,15 +488,16 @@ public class TabLayout extends GridPane {
                                     .build()
                     );
                 }
-                while(currConversationId.getValue() == null) {
+                while (currConversation.getValue() == null) {
                     System.out.println("Wait result");
-                };
+                }
+                ;
                 return null;
             }
         };
 
         queryConversation.setOnSucceeded(e -> {
-            message.setConversationId(currConversationId.getValue().getId());
+            message.setConversationId(currConversation.getValue().getId());
             socketService.addRequest(
                     MessageRequest.builder()
                             .action(Action.SEND_MESSAGE)
@@ -472,5 +508,19 @@ public class TabLayout extends GridPane {
         Thread th = new Thread(queryConversation);
         th.setDaemon(true);
         th.start();
+    }
+
+
+    public void loadInfo(InformationResponse res) {
+        Class _class = res.get_class();
+        if (_class == res.get_class()) {
+            switch (res.getForAction()) {
+                case GET_MEMBERS: {
+                    if (groupMemberDialog == null) return;
+                    groupMemberDialog.loadMemberList(res.getBody());
+                    break;
+                }
+            }
+        }
     }
 }

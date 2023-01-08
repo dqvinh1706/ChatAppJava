@@ -1,21 +1,14 @@
 package com.chatapp.client.components.UserTabs;
 
-import com.chatapp.client.components.GroupDialog.GroupDialog;
 import com.chatapp.client.workers.UserSocketService;
 import com.chatapp.commons.enums.Action;
 import com.chatapp.commons.models.User;
 import com.chatapp.commons.request.ConversationRequest;
 import com.chatapp.commons.request.FriendRequest;
-import com.chatapp.commons.request.InformationRequest;
 import com.chatapp.commons.response.*;
-import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
-import org.apache.commons.lang3.ObjectUtils;
-
-import java.io.IOException;
-import java.util.Objects;
 
 public class UserTabs extends StackPane {
     private TabLayout tab = new TabLayout();
@@ -81,18 +74,22 @@ public class UserTabs extends StackPane {
                     }
                     else if (input instanceof ConversationResponse) {
                         ConversationResponse res = (ConversationResponse) input;
-                        tab.setCurrConversationId(res.getConversation());
+                        tab.setCurrConversation(res.getConversation());
                     }
                     else if (input instanceof ChatHistoryResponse) {
                         ChatHistoryResponse res = (ChatHistoryResponse) input;
-                        tab.loadChatHistory(res.getMessageList());
+                        tab.loadChatHistory(res.getMessageList(), res.getSenderNames());
                     } else if (input instanceof MessageResponse) {
                         MessageResponse res = (MessageResponse) input;
-                        tab.updateMessage(res.getMessage());
+                        tab.updateMessage(res.getMessage(), res.getSenderName());
                     } else if (input instanceof SearchResponse) {
                         SearchResponse res = (SearchResponse) input;
-                        tab.loadSearchResult(GroupDialog.class, res.getResult());
+                        tab.loadSearchResult(res.get_class(), res.getResult());
+                    } else if (input instanceof InformationResponse) {
+                        InformationResponse res = (InformationResponse) input;
+                        tab.loadInfo(res);
                     }
+
 
                     // Wait for GUI to load before receive new response
                     Thread.sleep(20);

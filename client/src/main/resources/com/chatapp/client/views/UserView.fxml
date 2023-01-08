@@ -68,7 +68,7 @@
                   </Button>
                   <Pane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                   <Button fx:id="accountBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="44.0" />
-                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="44.0" styleClass="sidebar-btn">
+                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#onLogout" prefHeight="44.0" styleClass="sidebar-btn">
                      <graphic>
                         <FontIcon iconLiteral="mdi2l-logout" iconSize="24" />
                      </graphic>

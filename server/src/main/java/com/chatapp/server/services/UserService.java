@@ -60,12 +60,19 @@ public class UserService {
         return userDao.getFriendsOfUser(userId);
     }
 
+    public List<User> getAdminFromGroup(int conId) {
+        return userDao.getAdminFromGroup(conId);
+    }
+
     public List<User> getPendingFriends(int userId) {
         return userDao.getPendingFriends(userId);
     }
+    public int addToPendingFriend(int userId, int friendId) {
+        return userDao.addToPendingFriend(userId, friendId);
+    }
 
     public List<User> getUsersInConversation(int conversationId) {
-        return userDao.getUsersInConversation(conversationId);
+            return userDao.getUsersInConversation(conversationId);
     }
 
     public boolean signUp(String username, String password, String email) {
@@ -80,8 +87,19 @@ public class UserService {
         userDao.saveFriend(userId, friendId);
         return userDao.removeFriendRequest(userId, friendId);
     }
+    public boolean setLogin(User user){
+        return userDao.setLogin(user);
+    }
 
     public int cancelFriendRequest(int userId, int friendId) {
         return userDao.removeFriendRequest(userId, friendId);
+    }
+
+    public void unfriend(int userId, int friendId) {
+        userDao.unfriend(userId, friendId);
+    }
+
+    public boolean updateUser(User user) {
+        return userDao.updateUser(user);
     }
 }

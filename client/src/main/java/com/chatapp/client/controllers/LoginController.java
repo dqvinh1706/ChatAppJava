@@ -148,7 +148,7 @@ public class LoginController implements Initializable {
     }
     @FXML
     public void onLogin() {
-       //if (!validator.validate()) return;
+//        if (!validator.validate()) return;
 
         ProgressIndicator progressBar = new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS);
         progressBar.setMaxSize(36,  36);
@@ -157,12 +157,11 @@ public class LoginController implements Initializable {
         signInBtn.setOnAction(null);
 
         Properties formData = new Properties();
-        //formData.put("username", username.getText());
-        //formData.put("password", password.getText());
+//        formData.put("username", username.getText());
+//        formData.put("password", password.getText());
 
-        formData.put("username", "admin");
+        formData.put("username", "thquan");
         formData.put("password", "12345678");
-
         try{
             SocketClient socketClient = SocketClient.getInstance();
 
@@ -180,6 +179,7 @@ public class LoginController implements Initializable {
 
             waitResponse.setOnSucceeded(e -> {
                 AuthResponse res = (AuthResponse) waitResponse.getValue();
+                System.out.println(res);
                 if (res.getStatusCode() == StatusCode.AUTHENTICATED) {
                     System.out.println(res.getUser());
                     UserSocketService userSocketService = UserSocketService.getInstance(socketClient);

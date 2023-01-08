@@ -19,6 +19,8 @@ module com.chatapp.client {
     opens com.chatapp.client.components.MessageContainer to javafx.fxml;
     opens com.chatapp.client.components.UserTabs to javafx.fxml;
     opens com.chatapp.client.components.GroupDialog to javafx.fxml;
+    opens com.chatapp.client.components.FriendDialog to javafx.fxml;
+    opens com.chatapp.client.components.GroupMemberDialog to javafx.fxml;
     exports com.chatapp.client;
     exports com.chatapp.client.controllers;
 }

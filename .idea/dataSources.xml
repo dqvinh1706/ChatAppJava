@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="Chatapp@localhost" uuid="4663957b-632b-4ba1-b50d-e6520918e4f0">
+    <data-source source="LOCAL" name="Chatapp@localhost" uuid="dd628535-794a-426f-b523-a2f4a4849c3e">
       <driver-ref>sqlserver.ms</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</jdbc-driver>
-      <jdbc-url>jdbc:sqlserver://localhost\EXPRESS:1433;database=Chatapp</jdbc-url>
+      <jdbc-url>jdbc:sqlserver://localhost:1433;database=Chatapp</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

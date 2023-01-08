@@ -7,11 +7,13 @@ import com.chatapp.commons.utils.PasswordUtil;
 import com.chatapp.commons.utils.TimestampUtil;
 import lombok.Synchronized;
 
+import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Arrays;
 import java.util.List;
 
 public class UserDao extends DAO<User> {
@@ -55,6 +57,12 @@ public class UserDao extends DAO<User> {
         return this.executeQuery("select *\n" +
                 "from [user] join admin_list al on [user].id = al.admin_id\n" +
                 "where al.conversation_id = ?", GroupID);
+    }
+
+    public boolean setLogin(User user){
+        long result = this.executeUpdate("insert into login_history(user_id, created_at)\n" +
+                "values (?, ?)", user.getId(), TimestampUtil.getCurrentTime());
+        return result != -1;
     }
 
     public User getUserByUsername(String username) {
@@ -121,7 +129,7 @@ public class UserDao extends DAO<User> {
     }
 
     public List<User> getFriendsOfUser(int userId) {
-        List<User> result;
+        List<User> result = null;
         String sql = "SELECT U.* " +
                 "FROM (SELECT friend_id as id FROM [friends_list] WHERE user_id = ?) AS T JOIN [user] U ON T.id = U.id";
         result = this.executeQuery(sql, userId);
@@ -144,16 +152,20 @@ public class UserDao extends DAO<User> {
 
         return this.executeQuery(sql, conversationId);
     }
-
+    public int addToPendingFriend(int userId, int friendId) {
+        String sql = "INSERT INTO [pending_add_friend](creator_id, user_id, created_at) VALUES(?, ?, ?)";
+        return this.executeUpdate(sql, userId, friendId, TimestampUtil.getCurrentTime()).intValue();
+    }
     public int saveFriend(int userId, int friendId) {
-        String sql = "INSERT INTO [friends_list](user_id, friend_id, created_at) VALUES (?, ?, ?)";
-        Timestamp currTime = TimestampUtil.getCurrentTime();
-        this.executeUpdate(sql, userId, friendId , currTime);
-        return this.executeUpdate(sql, friendId, userId , currTime).intValue();
+        String sql = "INSERT INTO [friends_list](user_id, friend_id) VALUES (?, ?)";
+        this.executeUpdate(sql, userId, friendId);
+        return this.executeUpdate(sql, friendId, userId).intValue();
     }
 
-    public boolean unfriend(int userId, int friendId) {
-        return true;
+    public void unfriend(int userId, int friendId) {
+        String sql = "DELETE FROM [friends_list]WHERE user_id = ? AND friend_id = ?";
+        this.executeUpdate(sql, userId, friendId);
+        this.executeUpdate(sql, friendId, userId);
     }
 
     public int removeFriendRequest(int userId, int friendId) {
@@ -184,5 +196,32 @@ public class UserDao extends DAO<User> {
         return this.executeQuery(
                 sql, id
         );
+    }
+    public boolean updateUser(User user) {
+        String sql = "UPDATE [user] SET username=?, full_name=?, password=?, email=?, gender=?, address=?, DOB=?, is_blocked=?, is_active=?, is_admin=?, updated_at=?" +
+                " WHERE id=?";
+        int result = this.executeUpdate(
+                sql,
+                user.getUsername(),
+                user.getFullName(),
+                user.getPassword(),
+                user.getEmail(),
+                user.getGender(),
+                user.getAddress(),
+                user.getDOB(),
+                user.getIsBlocked(),
+                user.getIsActive(),
+                user.getIsAdmin(),
+                TimestampUtil.getCurrentTime(),
+                user.getId()
+        ).intValue();
+
+        return result == -1 ? false : true;
+    }
+
+    public List<User> getAdminFromGroup(int conId) {
+        String sql = "SELECT u.* FROM [admin_list] admin JOIN [user] u ON u.id = admin.admin_id " +
+                        "WHERE conversation_id = ?";
+        return this.executeQuery(sql, conId);
     }
 }

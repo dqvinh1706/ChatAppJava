@@ -1,0 +1,27 @@
+.root {
+    -fx-background-color: #fff;
+}
+
+.added-gr-list {
+
+}
+
+.added-gr-list .title {
+    -fx-background-color: #f7f8fa;
+    -fx-border-style: hidden hidden solid hidden;
+    -fx-border-width: 1px;
+    -fx-border-color: #dedfe0;
+}
+
+.added-gr-list .title .arrow-button {
+}
+
+.added-gr-list .title .arrow-button .arrow {
+    -fx-background-color: #333;
+    -fx-effect: none;
+}
+
+.added-gr-list .title .text {
+    -fx-font-weight: 700;
+    -fx-font-size: 12px;
+}
