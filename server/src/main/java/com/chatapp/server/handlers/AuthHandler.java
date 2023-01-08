@@ -54,7 +54,7 @@ public class AuthHandler extends ClientHandler {
             );
 
             if (isAuthenticated.equals(StatusCode.AUTHENTICATED)) {
-                this.clientHandlers.put(user.getUsername(),   rolePermission(user));
+                this.clientHandlers.put(user.getUsername(), rolePermission(user));
                 Platform.runLater(() -> {
                     cancel();
                 });
@@ -70,15 +70,14 @@ public class AuthHandler extends ClientHandler {
         String rawPassword = (String) data.get("password");
         try {
             user = userService.getUserByUsername(username);
-            if (user == null /*|| !PasswordUtil.checkMatch(rawPassword, user.getPassword())*/) {
+            if (user == null || !PasswordUtil.checkMatch(rawPassword, user.getPassword())) {
                 errorText = new Exception("Username or password is incorrect");
                 isAuthenticated = StatusCode.UNAUTHENTICATED;
             } else {
                 if (clientHandlers.get(user.getUsername()) != null) {
                     isAuthenticated = StatusCode.UNAUTHENTICATED;
                     errorText = new Exception("Account already logged");
-                }
-                else {
+                } else {
                     isAuthenticated = StatusCode.AUTHENTICATED;
                     user.setIsActive(true);
                     userService.updateUser(user);
@@ -86,7 +85,8 @@ public class AuthHandler extends ClientHandler {
                 }
             }
         } catch (Exception err) {
-            err.printStackTrace();
+            errorText = new Exception("Username or password is incorrect");
+            isAuthenticated = StatusCode.UNAUTHENTICATED;
         }
     }
 
@@ -100,7 +100,8 @@ public class AuthHandler extends ClientHandler {
             if (user != null) {
                 isAuthenticated = StatusCode.UNAUTHENTICATED;
             } else if (userService.signUp(username, rawPassword, email)) {
-                    isAuthenticated = StatusCode.AUTHENTICATED;
+                isAuthenticated = StatusCode.AUTHENTICATED;
+                user = null;
             } else {
                 isAuthenticated = StatusCode.UNAUTHENTICATED;
             }
@@ -110,7 +111,7 @@ public class AuthHandler extends ClientHandler {
     }
 
     private ClientHandler rolePermission(User user) throws IOException {
-        try{
+        try {
             ClientHandler clientHandler = null;
             if (user.getIsAdmin()) {
                 // Admin role handler
@@ -142,17 +143,13 @@ public class AuthHandler extends ClientHandler {
             protected Void call() throws Exception {
                 try {
                     while (!isCancelled()) {
-                        System.out.println("Wait req");
                         System.out.println(isAuthenticated);
-                        if (isAuthenticated != null && isAuthenticated == StatusCode.AUTHENTICATED) {
-                            System.out.println("DN");
+                        if (isAuthenticated != null && isAuthenticated == StatusCode.AUTHENTICATED && user != null) {
                             cancel();
                             break;
-                        }
-                        else {
+                        } else {
                             resetData();
                         }
-                        System.out.println("Wait req1");
 
                         Object input = receiveRequest();
                         if (ObjectUtils.isNotEmpty(input)) {
@@ -163,19 +160,9 @@ public class AuthHandler extends ClientHandler {
                                     break;
                                 case SIGNUP:
                                     signUp(req);
-                                    sendResponse(
-                                            AuthResponse.builder()
-                                                    .statusCode(isAuthenticated)
-                                                    .err(errorText)
-                                                    .build()
-                                    );
-                                    resetData();
                                     break;
                                 case FORGOT_PASSWORD:
                                     break;
-                                case DISCONNECT: {
-                                    break;
-                                }
                                 default:
                                     break;
                             }

@@ -391,6 +391,9 @@ public class TabLayout extends GridPane {
 
     @Synchronized
     public void loadConversationTab(Map<Conversation, Message> conversationList) {
+        Platform.runLater(() -> {
+            tabTitle.setText("Chat");
+        });
         if (conversationList == null) return;
         Comparator<Conversation> comparator = new Comparator<Conversation>() {
             @Override
@@ -402,7 +405,6 @@ public class TabLayout extends GridPane {
         sortedMap.putAll(conversationList);
 
         Platform.runLater(() -> {
-            tabTitle.setText("Chat");
             tabContent.getChildren().clear();
 
             sortedMap.forEach((conversation, message) -> {

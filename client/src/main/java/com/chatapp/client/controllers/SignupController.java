@@ -187,7 +187,6 @@ public class SignupController  implements Initializable {
             waitResponse.setOnSucceeded(e -> {
                 AuthResponse res = (AuthResponse) waitResponse.getValue();
                 if (res.getStatusCode() == StatusCode.AUTHENTICATED) {
-
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Sign up success");
                     alert.setHeaderText(null);

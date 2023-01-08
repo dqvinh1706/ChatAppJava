@@ -75,8 +75,8 @@ public class UserDao extends DAO<User> {
     }
 
     public boolean signUp(String username, String password, String email) {
-        String sql = "INSERT INTO [user](username, password, email, created_at, updated_at) " +
-                "VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO [user](username, password, email, created_at, updated_at, DOB) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
         Calendar cal = Calendar.getInstance();
         Timestamp timestamp = new Timestamp(cal.getTimeInMillis());
         long result = this.executeUpdate(
@@ -84,6 +84,7 @@ public class UserDao extends DAO<User> {
                 username,
                 PasswordUtil.encode(password),
                 email,
+                timestamp,
                 timestamp,
                 timestamp
         );

@@ -58,6 +58,4 @@ public class ConversationService {
     public int addMember(int conId, int userId) {
         return conversationDao.addMember(conId, userId, "group");
     }
-
-
 }
