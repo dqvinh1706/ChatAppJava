@@ -144,6 +144,21 @@ public class AdminGroupManagerController implements Initializable {
                         public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
                             System.out.println(newValue + " id= " + SelectedID);
                             if (newValue.equals("Show Admin")){
+                                try {
+                                    FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/ShowGroupAdminList.fxml"));
+                                    Parent root = (Parent) loader.load();
+
+                                    ShowGroupAdminListController showGroupAdminListController = loader.getController();
+                                    showGroupAdminListController.setValue(SelectedID);
+
+                                    Stage stage = new Stage();
+                                    stage.setTitle("");
+                                    stage.setScene(new Scene(root));
+                                    stage.show();
+                                }
+                                catch (IOException e){
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     });

@@ -166,6 +166,16 @@ public class AdminHandler extends ClientHandler{
                                 .build()
                 );
                 break;
+            case GET_ADMIN_BY_GROUP_ID:
+                id = (int) req.getBody();
+                List<User> adminList = userService.getAdminByGroupID(id);
+                sendResponse(
+                        FriendListResponse.builder()
+                                .statusCode(StatusCode.OK)
+                                .friendList(adminList)
+                                .build()
+                );
+                break;
         }
     }
     @Override
