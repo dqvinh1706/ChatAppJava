@@ -19,11 +19,15 @@ public enum Action {
     ADD_FRIEND,
     GET_ALL_FRIENDS,
     GET_PENDING_ADD_FRIEND,
+    REMOVE_ADD_FRIEND,
 
 
     // -> CRUD Message
     GET_CHAT_HISTORY,
-    SEND_MESSAGE, REMOVE_ADD_FRIEND,
+    SEND_MESSAGE,
+
+    // Group chat
+    CREATE_GROUP_CHAT, SEARCH_FRIEND, CHANGE_TITLE,
 
     // Admin action
     GET_ALL_USERS,
@@ -37,4 +41,5 @@ public enum Action {
     SHOW_LOGIN_HISTORY,
     GET_ALL_GROUPS,
     SHOW_GROUP_MEMBER,
+    GET_ADMIN_BY_GROUP_ID,
 }

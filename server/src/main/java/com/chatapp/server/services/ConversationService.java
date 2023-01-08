@@ -12,7 +12,6 @@ public class ConversationService {
     public static volatile ConversationService INSTANCE;
     private ConversationService() {}
 
-    @Synchronized
     public static ConversationService getInstance() {
         if (null == INSTANCE) {
             INSTANCE = new ConversationService();
@@ -20,6 +19,7 @@ public class ConversationService {
         return INSTANCE;
     }
 
+    public List<Conversation> getALlGroup(){return conversationDao.getALlGroup();}
     public Conversation getConversationById(int conversationId) {
         return conversationDao.getConversationById(conversationId);
     }
@@ -33,6 +33,10 @@ public class ConversationService {
 
     public int saveConversation(Conversation con, List<Integer> usersId) {
         return conversationDao.saveConversation(con, usersId);
+    }
+
+    public int updateTitle(int conId, String newTitle) {
+        return conversationDao.updateTitle(conId, newTitle);
     }
 
     public boolean deleteConversation(int conId, int userId){

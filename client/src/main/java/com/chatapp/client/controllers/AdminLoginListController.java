@@ -54,7 +54,6 @@ public class AdminLoginListController implements Initializable {
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         return dateFormat.format(a);
     }
-
     private void getData(){
         if(!userSocketService.isRunning()) userSocketService.start();
         Task waitResponse = new Task() {
@@ -72,14 +71,16 @@ public class AdminLoginListController implements Initializable {
         waitResponse.setOnSucceeded(e -> {
             LoginListResponse res = (LoginListResponse) waitResponse.getValue();
             List<LoginHistory> loginList =  res.getLoginList();
-            for(LoginHistory loginHistory: loginList){
-                String createdAt = Date2String(loginHistory.getCreatedAt());
-                data.add(new AdminLoginListController.LoginHistoryClone(
-                        loginHistory.getId(),
-                        loginHistory.getUsername(),
-                        loginHistory.getName(),
-                        createdAt
-                ));
+            if (loginList != null) {
+                for (LoginHistory loginHistory : loginList) {
+                    String createdAt = Date2String(loginHistory.getCreatedAt());
+                    data.add(new AdminLoginListController.LoginHistoryClone(
+                            loginHistory.getId(),
+                            loginHistory.getUsername(),
+                            loginHistory.getName(),
+                            createdAt
+                    ));
+                }
             }
         });
 

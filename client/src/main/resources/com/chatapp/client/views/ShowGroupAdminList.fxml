@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="scenePane" prefHeight="600.0" prefWidth="1024.0" styleClass="root" stylesheets="@../css/adminView.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.chatapp.client.controllers.ShowGroupAdminListController">
+   <children>
+      <TableView fx:id="AdminList" layoutX="25.0" layoutY="19.0" prefHeight="551.0" prefWidth="966.0" />
+   </children>
+</AnchorPane>

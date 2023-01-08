@@ -159,13 +159,22 @@ public class AdminHandler extends ClientHandler{
                     );
                 }
                 break;
-
             case GET_ALL_GROUPS:
-                List<Group> allGroups = groupService.getAllGroups();
+                List<Conversation> allGroups = conversationService.getALlGroup();
                 sendResponse(
                         AllGroupsResponse.builder()
                                 .statusCode(StatusCode.OK)
                                 .allGroups(allGroups)
+                                .build()
+                );
+                break;
+            case GET_ADMIN_BY_GROUP_ID:
+                id = (int) req.getBody();
+                List<User> adminList = userService.getAdminByGroupID(id);
+                sendResponse(
+                        FriendListResponse.builder()
+                                .statusCode(StatusCode.OK)
+                                .friendList(adminList)
                                 .build()
                 );
                 break;

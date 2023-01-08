@@ -17,6 +17,7 @@ public class Conversation implements Serializable {
     private int id;
     private String title;
     private int creatorId;
+    private Boolean isGroup = false;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
@@ -36,6 +37,7 @@ public class Conversation implements Serializable {
         setId(rs.getInt("id"));
         setTitle(rs.getString("title"));
         setCreatorId(rs.getInt("creator_id"));
+        setIsGroup(rs.getBoolean("is_group"));
         setCreatedAt(rs.getTimestamp("created_at"));
         setUpdatedAt(rs.getTimestamp("updated_at"));
     }

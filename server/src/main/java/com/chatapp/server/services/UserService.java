@@ -73,6 +73,7 @@ public class UserService {
     public Boolean changePassword(User userAndPassword){
         return userDao.changePassword(userAndPassword);
     }
+    public List<User> getAdminByGroupID(int GroupID){ return userDao.getAdminByGroupID(GroupID);}
     public int acceptFriendRequest(int userId, int friendId) {
         userDao.saveFriend(userId, friendId);
         return userDao.removeFriendRequest(userId, friendId);

@@ -44,10 +44,15 @@ public class UserDao extends DAO<User> {
     }
 
     public List<User> getFriendById(int userId){
-        List<User> result = this.executeQuery("SELECT u.*\n" +
+        return this.executeQuery("SELECT u.*\n" +
                 "FROM friends_list fl join [user] u on u.id = fl.friend_id\n" +
                 "WHERE fl.user_id = ?", userId);
-        return result;
+    }
+
+    public List<User> getAdminByGroupID(int GroupID){
+        return this.executeQuery("SELECT *\n" +
+                "FROM [user] join [group] g on [user].id = g.admin\n" +
+                "where g.id = ?", GroupID);
     }
 
     public User getUserByUsername(String username) {
@@ -140,6 +145,10 @@ public class UserDao extends DAO<User> {
         Timestamp currTime = TimestampUtil.getCurrentTime();
         this.executeUpdate(sql, userId, friendId , currTime);
         return this.executeUpdate(sql, friendId, userId , currTime).intValue();
+    }
+
+    public boolean unfriend(int userId, int friendId) {
+        return true;
     }
 
     public int removeFriendRequest(int userId, int friendId) {

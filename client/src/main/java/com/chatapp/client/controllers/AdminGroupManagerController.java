@@ -3,6 +3,7 @@ package com.chatapp.client.controllers;
 import com.chatapp.client.Main;
 import com.chatapp.client.workers.UserSocketService;
 import com.chatapp.commons.enums.Action;
+import com.chatapp.commons.models.Conversation;
 import com.chatapp.commons.models.Group;
 import com.chatapp.commons.models.User;
 import com.chatapp.commons.request.ManageUsersRequest;
@@ -78,12 +79,12 @@ public class AdminGroupManagerController implements Initializable {
 
         waitResponse.setOnSucceeded(e -> {
             AllGroupsResponse res = (AllGroupsResponse) waitResponse.getValue();
-            List<Group> groupsList =  res.getAllGroups();
-            for(Group group: groupsList){
+            List<Conversation> groupsList =  res.getAllGroups();
+            for(Conversation group: groupsList){
                 String createdDate = Date2String(group.getCreatedAt());
                 data.add(new GroupClone(
                         group.getId(),
-                        group.getName(),
+                        group.getTitle(),
                         createdDate
                 ));
             }
@@ -144,6 +145,21 @@ public class AdminGroupManagerController implements Initializable {
                         public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
                             System.out.println(newValue + " id= " + SelectedID);
                             if (newValue.equals("Show Admin")){
+                                try {
+                                    FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/ShowGroupAdminList.fxml"));
+                                    Parent root = (Parent) loader.load();
+
+                                    ShowGroupAdminListController showGroupAdminListController = loader.getController();
+                                    showGroupAdminListController.setValue(SelectedID);
+
+                                    Stage stage = new Stage();
+                                    stage.setTitle("");
+                                    stage.setScene(new Scene(root));
+                                    stage.show();
+                                }
+                                catch (IOException e){
+                                    e.printStackTrace();
+                                }
                             }
 
                             else if (newValue.equals("Show Member")) {

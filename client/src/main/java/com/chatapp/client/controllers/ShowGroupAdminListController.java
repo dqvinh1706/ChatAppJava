@@ -1,6 +1,5 @@
 package com.chatapp.client.controllers;
 
-import com.chatapp.client.Main;
 import com.chatapp.client.workers.UserSocketService;
 import com.chatapp.commons.enums.Action;
 import com.chatapp.commons.models.User;
@@ -23,14 +22,14 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class ShowFriendListController implements Initializable {
-    private final ObservableList<FriendListClone> data = FXCollections.observableArrayList();
+public class ShowGroupAdminListController implements Initializable {
+    private final ObservableList<GroupAdminListClone> data = FXCollections.observableArrayList();
     private final UserSocketService userSocketService = UserSocketService.getInstance();
     private int SelectedID = -1;
     @FXML
     private AnchorPane scenePane;
     @FXML
-    private TableView<FriendListClone> FriendList = new TableView<>();
+    private TableView<GroupAdminListClone> AdminList = new TableView<>();
 
     private void getData(){
         if(!userSocketService.isRunning()) userSocketService.start();
@@ -39,7 +38,7 @@ public class ShowFriendListController implements Initializable {
             protected Response call() throws Exception {
                 userSocketService.addRequest(
                         ManageUsersRequest.builder()
-                                .action(Action.GET_FRIEND_BY_ID)
+                                .action(Action.GET_ADMIN_BY_GROUP_ID)
                                 .body(SelectedID)
                                 .build()
                 );
@@ -49,10 +48,10 @@ public class ShowFriendListController implements Initializable {
 
         waitResponse.setOnSucceeded(e -> {
             FriendListResponse res = (FriendListResponse) waitResponse.getValue();
-            List<User> friendList =  res.getFriendList();
-            if(friendList != null) {
-                for (User user : friendList) {
-                    data.add(new ShowFriendListController.FriendListClone(
+            List<User> adminList =  res.getFriendList();
+            if (adminList != null) {
+                for (User user : adminList) {
+                    data.add(new ShowGroupAdminListController.GroupAdminListClone(
                             user.getId(),
                             user.getUsername(),
                             user.getFullName()
@@ -74,28 +73,28 @@ public class ShowFriendListController implements Initializable {
 
         this.getData();
 
-        TableColumn<FriendListClone, Integer> userIDColumn = new TableColumn<FriendListClone, Integer>("User ID");
-        TableColumn<FriendListClone, String> userNameColumn = new TableColumn<FriendListClone, String>("Username");
-        TableColumn<FriendListClone, String> nameColumn = new TableColumn<FriendListClone, String>("Name");
+        TableColumn<GroupAdminListClone, Integer> userIDColumn = new TableColumn<GroupAdminListClone, Integer>("User ID");
+        TableColumn<GroupAdminListClone, String> userNameColumn = new TableColumn<GroupAdminListClone, String>("Username");
+        TableColumn<GroupAdminListClone, String> nameColumn = new TableColumn<GroupAdminListClone, String>("Name");
 
-        userIDColumn.setCellValueFactory(new PropertyValueFactory<FriendListClone, Integer>("id"));
-        userNameColumn.setCellValueFactory(new PropertyValueFactory<FriendListClone, String>("username"));
-        nameColumn.setCellValueFactory(new PropertyValueFactory<FriendListClone, String>("name"));
+        userIDColumn.setCellValueFactory(new PropertyValueFactory<GroupAdminListClone, Integer>("id"));
+        userNameColumn.setCellValueFactory(new PropertyValueFactory<GroupAdminListClone, String>("username"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<GroupAdminListClone, String>("name"));
 
         userIDColumn.setMinWidth(320.0);
         userNameColumn.setMinWidth(320.0);
         nameColumn.setMinWidth(320.0);
 
-        FriendList.setItems(data);
-        FriendList.getColumns().addAll(userIDColumn, userNameColumn, nameColumn);
-        FriendList.setEditable(false);
+        AdminList.setItems(data);
+        AdminList.getColumns().addAll(userIDColumn, userNameColumn, nameColumn);
+        AdminList.setEditable(false);
     }
-    public static class FriendListClone{
+    public static class GroupAdminListClone{
         public SimpleIntegerProperty id;
         public SimpleStringProperty username;
         public SimpleStringProperty name;
 
-        public FriendListClone(int ID, String username, String name){
+        public GroupAdminListClone(int ID, String username, String name){
             this.id = new SimpleIntegerProperty(ID);
             this.username = new SimpleStringProperty(username);
             this.name = new SimpleStringProperty(name);
