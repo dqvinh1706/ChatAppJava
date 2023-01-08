@@ -2,6 +2,7 @@ package com.chatapp.server.handlers;
 
 
 import com.chatapp.commons.enums.StatusCode;
+import com.chatapp.commons.models.Conversation;
 import com.chatapp.commons.models.Group;
 import com.chatapp.commons.models.LoginHistory;
 import com.chatapp.commons.models.User;
@@ -181,7 +182,7 @@ public class AdminHandler extends ClientHandler{
 
             case SHOW_GROUP_MEMBER:
                 List<User> GroupMembers = userService.getAllMembers((int) req.getBody());
-                System.out.println(GroupMembers);
+                System.out.println(userService.getAllMembers((int) req.getBody()));
 
                 sendResponse(
                         GroupMemberResponse.builder()
