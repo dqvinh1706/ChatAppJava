@@ -125,7 +125,7 @@ public class GroupDialog extends DialogPane {
                     Properties params = new Properties();
                     params.put("keyword", newValue.trim());
                     userSocketService.addRequest(SearchRequest.builder()
-                            .action(Action.SEARCH_USER)
+                            .action(Action.SEARCH_FRIEND)
                             .params(params)
                             ._class(GroupDialog.class)
                             .build());

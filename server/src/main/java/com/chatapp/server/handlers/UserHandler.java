@@ -35,8 +35,10 @@ public class UserHandler extends ClientHandler {
         switch (req.getAction()) {
             case CREATE_CONVERSATION: {
                 User friend = userService.getUserById((Integer) req.getBody());
+                Conversation con = new Conversation(friend.getFullName(), loggedUser.getId());
+                con.setIsGroup(false);
                 int conId = conversationService.saveConversation(
-                        new Conversation(friend.getFullName(), loggedUser.getId()),
+                        con,
                         List.of(friend.getId(), loggedUser.getId())
                 );
 
@@ -229,11 +231,12 @@ public class UserHandler extends ClientHandler {
                 Properties params = req.getParams();
                 String keyword = (String) params.get("keyword");
                 List<User> users = userService.getAllFriends(loggedUser.getId());
-
+                System.out.println(users);
                 if (users != null) {
                     for (User user :
                             users) {
                         if (user.getUsername().equals(keyword)) {
+                            System.out.println(user);
                             sendResponse(SearchResponse.builder()
                                     .statusCode(StatusCode.OK)
                                     .result(user)
@@ -260,7 +263,6 @@ public class UserHandler extends ClientHandler {
                     List<User> frList = userService.getAllFriends(loggedUser.getId());
                     List<User> pendingList = userService.getPendingFriends(user.getId());
                     List<User> loggedUserPendingList = userService.getPendingFriends(loggedUser.getId());
-
 
                     if (user != null && (user.getId() == loggedUser.getId()))
                         user = null;
@@ -391,8 +393,8 @@ public class UserHandler extends ClientHandler {
                         }
                     }
                 } catch (IOException | ClassNotFoundException e) {
-                    close();
                     clientHandlers.remove(loggedUser.getUsername());
+                    close();
                     e.printStackTrace();
                 } catch (Exception err) {
                     err.printStackTrace();

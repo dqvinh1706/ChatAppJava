@@ -91,7 +91,7 @@ public class GroupMemberDialog extends DialogPane {
         searchFriend.textProperty().addListener(onSearchFriend());
     }
 
-    protected ChangeListener<String> onSearchFriend() {
+    private ChangeListener<String> onSearchFriend() {
         PauseTransition pauseTransition = new PauseTransition(Duration.seconds(0.5));
         return new ChangeListener<String>() {
             @Override
@@ -103,7 +103,10 @@ public class GroupMemberDialog extends DialogPane {
                 pauseTransition.setOnFinished((e) -> {
                     Properties params = new Properties();
                     params.put("keyword", newValue.trim());
-                    userSocketService.addRequest(SearchRequest.builder()
+                    System.out.println(params);
+
+                    userSocketService.addRequest(
+                            SearchRequest.builder()
                             .action(Action.SEARCH_FRIEND)
                             ._class(GroupMemberDialog.class)
                             .params(params)

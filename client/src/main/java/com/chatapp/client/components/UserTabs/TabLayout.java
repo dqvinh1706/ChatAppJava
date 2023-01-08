@@ -108,7 +108,6 @@ public class TabLayout extends GridPane {
             }
         }));
 
-        main.visibleProperty().bind(Bindings.isNotNull(currConversation));
         editChatTitle.visibleProperty().bind(Bindings.equal(tabTitle.textProperty(), "Chat"));
         chatTitle.textProperty().addListener((obs, oldValue, newValue) -> {
             chatTitle.setTooltip(new Tooltip(newValue));
@@ -319,7 +318,7 @@ public class TabLayout extends GridPane {
         } else if (_class == GroupMemberDialog.class) {
             if (groupMemberDialog == null) return;
             groupMemberDialog.loadSearchResult(result);
-        } else if (friendDialog != null) {
+        } else if (_class == FriendDialog.class) {
             if (friendDialog == null) return;
             friendDialog.loadSearchResult((User) result);
         }
@@ -428,6 +427,7 @@ public class TabLayout extends GridPane {
         activeStyleToggle(ins);
         chatTitle.setText(ins.getNameText());
         chatAvatar.setImage(ins.getAvatarImage());
+        friendId = ins.getUserId();
 
         socketService.addRequest(
                 ConversationRequest.builder()
