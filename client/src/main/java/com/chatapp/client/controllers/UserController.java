@@ -1,5 +1,6 @@
 package com.chatapp.client.components.Avatar.controllers;
 
+import com.chatapp.client.SocketClient;
 import com.chatapp.client.components.Avatar.Avatar;
 import com.chatapp.client.components.FriendDialog.FriendDialog;
 import com.chatapp.client.components.UserTabs.UserTabs;
@@ -40,7 +41,7 @@ public class UserController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         UserSocketService userSocketService = UserSocketService.getInstance();
-        Platform.runLater(() ->         userSocketService.start());
+        userSocketService.start();
         mainContainer.getChildren().add(userTabs);
 
         currUser.set(userSocketService.getLoggedUser());

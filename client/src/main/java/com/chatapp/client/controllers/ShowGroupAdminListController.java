@@ -49,13 +49,14 @@ public class ShowGroupAdminListController implements Initializable {
         waitResponse.setOnSucceeded(e -> {
             FriendListResponse res = (FriendListResponse) waitResponse.getValue();
             List<User> adminList =  res.getFriendList();
-
-            for(User user: adminList){
-                data.add(new ShowGroupAdminListController.GroupAdminListClone(
-                        user.getId(),
-                        user.getUsername(),
-                        user.getFullName()
-                ));
+            if (adminList != null) {
+                for (User user : adminList) {
+                    data.add(new ShowGroupAdminListController.GroupAdminListClone(
+                            user.getId(),
+                            user.getUsername(),
+                            user.getFullName()
+                    ));
+                }
             }
         });
         Thread th = new Thread(waitResponse);

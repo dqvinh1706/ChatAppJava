@@ -96,11 +96,20 @@
                   <Insets bottom="10.0" left="12.0" right="12.0" top="10.0" />
                </padding>
                <children>
-                  <HBox fx:id="chatSummaryContainer" alignment="CENTER_LEFT" spacing="8.0" HBox.hgrow="ALWAYS">
+                  <HBox fx:id="chatSummaryContainer" alignment="CENTER_LEFT" maxWidth="180.0" spacing="8.0" HBox.hgrow="ALWAYS">
                      <children>
                         <Label fx:id="chatTitle" contentDisplay="BOTTOM" styleClass="primary_text" text="Label" />
                      </children>
                   </HBox>
+                  <Button fx:id="editChatTitle" contentDisplay="GRAPHIC_ONLY" mnemonicParsing="false" onAction="#onEditConversationName">
+                     <tooltip>
+                        <Tooltip text="Đổi tên" />
+                     </tooltip>
+                     <graphic>
+                        <FontIcon iconLiteral="mdi2l-lead-pencil" iconSize="16" />
+                     </graphic>
+                  </Button>
+                  <HBox HBox.hgrow="ALWAYS" />
                   <HBox alignment="CENTER_LEFT" maxHeight="32.0" prefHeight="32.0" prefWidth="300.0" styleClass="search-message">
                      <children>
                         <FontIcon iconColor="GREY" iconLiteral="mdi2m-magnify" iconSize="24" />

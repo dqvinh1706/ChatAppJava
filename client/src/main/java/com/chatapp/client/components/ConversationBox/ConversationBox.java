@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -30,14 +31,18 @@ public class ConversationBox extends HBox implements Initializable {
 
     private Avatar avatar;
 
-    @Setter
-    @Getter
-    private Integer conversationId;
+//    @Setter
+//    @Getter
+//    private Integer conversationId;
 
-    public static final ConversationBox toConversationBox(Conversation conversation) {
+    @Setter @Getter
+    private Conversation conversation;
+
+    public static ConversationBox toConversationBox(Conversation conversation) {
         ConversationBox conversationBox = new ConversationBox(conversation.getTitle());
         conversationBox.setId(conversationBox.getId() + "#" + conversation.getId());
-        conversationBox.setConversationId(conversation.getId());
+//        conversationBox.setConversationId(conversation.getId());
+        conversationBox.setConversation(conversation);
         conversationBox.setTime(TimestampUtil.convertToString(conversation.getUpdatedAt()));
         return conversationBox;
     }
@@ -49,6 +54,7 @@ public class ConversationBox extends HBox implements Initializable {
 
         try{
             loader.load();
+            this.setMaxHeight(68);
             this.setId("ConversationBox");
             this.getStyleClass().add("box");
             avatar = new Avatar(48, 48);
@@ -93,14 +99,17 @@ public class ConversationBox extends HBox implements Initializable {
     }
 
     public void setTitle(String nameText){
+        this.title.setTooltip(new Tooltip(nameText));
         this.title.setText(nameText);
     }
 
     public void setMessage(String messageText) {
+        this.message.setTooltip(new Tooltip(messageText));
         this.message.setText(messageText);
     }
 
     public void setTime(String time) {
+        this.time.setTooltip(new Tooltip(time));
         this.time.setText(time);
     }
 

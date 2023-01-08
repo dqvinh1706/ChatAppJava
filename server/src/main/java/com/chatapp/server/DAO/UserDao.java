@@ -147,6 +147,10 @@ public class UserDao extends DAO<User> {
         return this.executeUpdate(sql, friendId, userId , currTime).intValue();
     }
 
+    public boolean unfriend(int userId, int friendId) {
+        return true;
+    }
+
     public int removeFriendRequest(int userId, int friendId) {
         String sql = "DELETE FROM [pending_add_friend] WHERE user_id = ? AND creator_id = ?";
         return this.executeUpdate(sql, userId, friendId).intValue();

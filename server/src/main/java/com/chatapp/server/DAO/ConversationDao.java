@@ -14,7 +14,6 @@ import java.util.List;
 public class ConversationDao extends DAO<Conversation>{
     public static volatile ConversationDao INSTANCE;
 
-    @Synchronized
     public static ConversationDao getInstance() {
         if (INSTANCE == null) INSTANCE = new ConversationDao();
         return INSTANCE;
@@ -72,8 +71,8 @@ public class ConversationDao extends DAO<Conversation>{
     }
 
     public int saveConversation(Conversation con, List<Integer> usersId) {
-        String sql = "INSERT INTO [conversation] (title, creator_id, created_at, updated_at) VALUES (?, ?, ?, ?)";
-        Long newConId = this.executeUpdate(sql, con.getTitle(), con.getCreatorId(), con.getCreatedAt(), con.getUpdatedAt());
+        String sql = "INSERT INTO [conversation] (title, creator_id, is_group, created_at, updated_at) VALUES (?, ?, ?, ?)";
+        Long newConId = this.executeUpdate(sql, con.getTitle(), con.getCreatorId(), con.getIsGroup(), con.getCreatedAt(), con.getUpdatedAt());
 
         String sqlAddUsers = "INSERT INTO [participant](conversation_id, users_id, created_at, updated_at, type) VALUES (?, ?, ?, ?, ?)";
         usersId.forEach(user -> {
@@ -87,6 +86,11 @@ public class ConversationDao extends DAO<Conversation>{
             );
         });
         return newConId.intValue();
+    }
+
+    public int updateTitle(int conId, String newTitle) {
+        String sql = "UPDATE [conversation] SET title = ? WHERE id = ?";
+        return this.executeUpdate(sql, newTitle, conId).intValue();
     }
 
     public boolean deleteConversation(int conId, int userId) {

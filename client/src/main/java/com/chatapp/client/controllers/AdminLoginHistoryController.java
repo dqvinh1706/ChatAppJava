@@ -66,14 +66,16 @@ public class AdminLoginHistoryController implements Initializable {
         waitResponse.setOnSucceeded(e -> {
             LoginHistoryResponse res = (LoginHistoryResponse) waitResponse.getValue();
             List<LoginHistory> loginHistories =  res.getLoginHistories();
-            for(LoginHistory loginHistory: loginHistories){
-                String createdAt = Date2String(loginHistory.getCreatedAt());
-                data.add(new AdminLoginHistoryController.LoginHistoryClone(
-                        loginHistory.getId(),
-                        loginHistory.getUsername(),
-                        loginHistory.getName(),
-                        createdAt
-                ));
+            if (loginHistories != null) {
+                for (LoginHistory loginHistory : loginHistories) {
+                    String createdAt = Date2String(loginHistory.getCreatedAt());
+                    data.add(new AdminLoginHistoryController.LoginHistoryClone(
+                            loginHistory.getId(),
+                            loginHistory.getUsername(),
+                            loginHistory.getName(),
+                            createdAt
+                    ));
+                }
             }
         });
 

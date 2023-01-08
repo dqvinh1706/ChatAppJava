@@ -50,13 +50,14 @@ public class ShowFriendListController implements Initializable {
         waitResponse.setOnSucceeded(e -> {
             FriendListResponse res = (FriendListResponse) waitResponse.getValue();
             List<User> friendList =  res.getFriendList();
-
-            for(User user: friendList){
-                data.add(new ShowFriendListController.FriendListClone(
-                        user.getId(),
-                        user.getUsername(),
-                        user.getFullName()
-                ));
+            if(friendList != null) {
+                for (User user : friendList) {
+                    data.add(new ShowFriendListController.FriendListClone(
+                            user.getId(),
+                            user.getUsername(),
+                            user.getFullName()
+                    ));
+                }
             }
         });
         Thread th = new Thread(waitResponse);

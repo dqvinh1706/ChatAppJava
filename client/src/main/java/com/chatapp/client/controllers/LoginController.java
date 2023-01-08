@@ -4,10 +4,8 @@ import com.chatapp.client.Main;
 import com.chatapp.client.SocketClient;
 import com.chatapp.client.components.CustomPasswordField.CustomPasswordField;
 import com.chatapp.client.components.CustomTextField.CustomTextField;
-import com.chatapp.client.validations.EmailValidator;
 import com.chatapp.client.validations.PasswordValidator;
 import com.chatapp.client.validations.UsernameValidator;
-import com.chatapp.client.workers.AuthSocketService;
 import com.chatapp.client.workers.UserSocketService;
 import com.chatapp.commons.enums.Action;
 import com.chatapp.commons.enums.StatusCode;
@@ -34,8 +32,6 @@ import net.synedra.validatorfx.ValidationMessage;
 import net.synedra.validatorfx.Validator;
 
 import java.io.IOException;
-import java.net.ConnectException;
-import java.net.SocketException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -169,14 +165,15 @@ public class LoginController implements Initializable {
 
         try{
             SocketClient socketClient = SocketClient.getInstance();
+
             Task waitResponse = new Task() {
                 @Override
                 protected Response call() throws Exception {
-                    socketClient.sendRequest(
-                            AuthRequest.builder()
+                    socketClient.sendRequest(AuthRequest.builder()
                                     .action(Action.LOGIN)
                                     .formData(formData)
-                                    .build());
+                                    .build()
+                    );
                     return (Response) socketClient.getResponse();
                 }
             };
@@ -184,7 +181,7 @@ public class LoginController implements Initializable {
             waitResponse.setOnSucceeded(e -> {
                 AuthResponse res = (AuthResponse) waitResponse.getValue();
                 if (res.getStatusCode() == StatusCode.AUTHENTICATED) {
-  //                  authSocketService.cancel();
+                    System.out.println(res.getUser());
                     UserSocketService userSocketService = UserSocketService.getInstance(socketClient);
                     userSocketService.setLoggedUser(res.getUser());
 
