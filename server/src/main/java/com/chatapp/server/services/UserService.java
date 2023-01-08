@@ -54,7 +54,7 @@ public class UserService {
         return userDao.getAllUsers();
     }
 
-    public List<Group> getAllGroups(){return userDao.getAllGroups();}
+    public List<User> getAllMembers(int id){return userDao.getAllMembers(id);}
 
     public Boolean addNewUser(User newUser){return userDao.addNewUser(newUser);}
 

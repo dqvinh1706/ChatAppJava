@@ -145,6 +145,22 @@ public class AdminGroupManagerController implements Initializable {
                             System.out.println(newValue + " id= " + SelectedID);
                             if (newValue.equals("Show Admin")){
                             }
+
+                            else if (newValue.equals("Show Member")) {
+                                FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/AdminGroupMemberView.fxml"));
+                                try {
+                                    Parent root = (Parent) loader.load();
+                                    AdminGroupMemberController adminGroupMemberController= loader.getController();
+                                    adminGroupMemberController.setValue(SelectedID);
+
+                                    Stage stage = new Stage();
+                                    stage.setTitle("");
+                                    stage.setScene(new Scene(root));
+                                    stage.show();
+                                } catch (IOException err) {
+                                    throw new RuntimeException(err);
+                                }
+                            }
                         }
                     });
                     scenePane.getChildren().add(options);

@@ -162,4 +162,13 @@ public class UserDao extends DAO<User> {
 
         return result != -1;
     }
+
+    public List<User> getAllMembers(int id) {
+        String sql = "SELECT U.id, U.username, U.full_name FROM [conversation] C, [user] U, [participant] P " +
+                "WHERE P.users_id = U.id and P.conversation_id = C.id and C.is_group = 1 and C.id = 3";
+
+        return this.executeQuery(
+                sql, id
+        );
+    }
 }

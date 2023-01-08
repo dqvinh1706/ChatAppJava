@@ -78,8 +78,8 @@
             <Font size="15.0" />
          </font>
       </Label>
-      <Button layoutX="361.0" layoutY="474.0" mnemonicParsing="false" onAction="#backToAdminUserManagement" prefHeight="51.0" prefWidth="154.0" text="Back" />
-      <Button layoutX="515.0" layoutY="474.0" mnemonicParsing="false" onAction="#submitClick" prefHeight="51.0" prefWidth="154.0" text="Submit" />
+      <Button layoutX="356.0" layoutY="474.0" mnemonicParsing="false" onAction="#backToAdminUserManagement" prefHeight="51.0" prefWidth="154.0" text="Back" />
+      <Button layoutX="520.0" layoutY="474.0" mnemonicParsing="false" onAction="#submitClick" prefHeight="51.0" prefWidth="154.0" text="Submit" />
       <Label fx:id="ResultText" alignment="CENTER" layoutX="361.0" layoutY="436.0" prefHeight="38.0" prefWidth="302.0" textAlignment="CENTER" textFill="RED">
          <font>
             <Font name="System Bold" size="15.0" />

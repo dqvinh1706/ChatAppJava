@@ -36,4 +36,5 @@ public enum Action {
     LOCK_USER,
     SHOW_LOGIN_HISTORY,
     GET_ALL_GROUPS,
+    SHOW_GROUP_MEMBER,
 }
