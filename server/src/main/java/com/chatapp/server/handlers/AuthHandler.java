@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Map;
 import java.util.Properties;
 
@@ -80,17 +82,23 @@ public class AuthHandler extends ClientHandler {
         }
     }
 
-    public void signup(AuthRequest req) throws IOException {
+    public void signUp(AuthRequest req) throws IOException {
         Properties data = req.getFormData();
         String username = (String) data.get("username");
         String rawPassword = (String) data.get("rawPassword");
         String email = (String) data.get("email");
-
-        user = userService.getUserByUsername(username);
-        if (user != null) {
-            isAuthenticated = StatusCode.UNAUTHENTICATED;
+        try {
+            user = userService.getUserByUsername(username);
+            if (user != null) {
+                isAuthenticated = StatusCode.UNAUTHENTICATED;
+            } else if (userService.signUp(username, rawPassword, email)) {
+                    isAuthenticated = StatusCode.AUTHENTICATED;
+            } else {
+                isAuthenticated = StatusCode.UNAUTHENTICATED;
+            }
+        } catch (Exception err) {
+            err.printStackTrace();
         }
-
     }
 
     private ClientHandler rolePermission(User user) throws IOException {
@@ -141,6 +149,14 @@ public class AuthHandler extends ClientHandler {
                                     resetData();
                                     break;
                                 case SIGNUP:
+                                    signUp(req);
+                                    sendResponse(
+                                            AuthResponse.builder()
+                                                    .statusCode(isAuthenticated)
+                                                    .err(errorText)
+                                                    .build()
+                                    );
+                                    resetData();
                                     break;
                                 case FORGOT_PASSWORD:
                                     break;

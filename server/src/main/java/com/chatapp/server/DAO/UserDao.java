@@ -3,6 +3,7 @@ package com.chatapp.server.DAO;
 import com.chatapp.commons.models.Group;
 import com.chatapp.commons.models.LoginHistory;
 import com.chatapp.commons.models.User;
+import com.chatapp.commons.utils.PasswordUtil;
 import com.chatapp.commons.utils.TimestampUtil;
 import lombok.Synchronized;
 
@@ -10,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class UserDao extends DAO<User> {
@@ -64,9 +66,21 @@ public class UserDao extends DAO<User> {
         return this.executeQuery("SELECT * FROM [user]");
     }
 
-    public List<Group> getAllGroups() {
-        System.out.println(this.executeQuery("SELECT * FROM [group]"));
-        return null;
+    public boolean signUp(String username, String password, String email) {
+        String sql = "INSERT INTO [user](username, password, email, created_at, updated_at) " +
+                "VALUES (?, ?, ?, ?, ?)";
+        Calendar cal = Calendar.getInstance();
+        Timestamp timestamp = new Timestamp(cal.getTimeInMillis());
+        long result = this.executeUpdate(
+                sql,
+                username,
+                PasswordUtil.encode(password),
+                email,
+                timestamp,
+                timestamp
+        );
+
+        return result != -1;
     }
 
     public boolean addNewUser(User user) {

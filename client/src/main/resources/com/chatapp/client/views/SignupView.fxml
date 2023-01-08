@@ -37,7 +37,7 @@
                 <RowConstraints maxHeight="71.0" minHeight="10.0" prefHeight="71.0" valignment="CENTER" vgrow="SOMETIMES" />
               </rowConstraints>
             </GridPane>
-                <Button id="signInBtn" fx:id="signUpBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onSignUp" prefHeight="44.0" prefWidth="243.0" text="Sign up">
+                <Button fx:id="signUpBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" focusTraversable="true" mnemonicParsing="false" onAction="#onSignUp" prefHeight="44.0" prefWidth="243.0" text="Sign up">
                     <VBox.margin>
                         <Insets top="10.0" />
                     </VBox.margin>
@@ -46,11 +46,11 @@
         </VBox>
         <VBox alignment="CENTER" prefHeight="600.0" prefWidth="320.0" styleClass="side-pane">
             <children>
-                <Label id="header" fx:id="headerSignupLabel" alignment="CENTER" text="Already member?" textFill="WHITE">
+                <Label fx:id="headerSignupLabel" alignment="CENTER" text="Already member?" textFill="WHITE">
                     <font>
                         <Font name="System Bold" size="36.0" />
                     </font></Label>
-                <Label id="content" fx:id="descripSignupLabel" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="64.0" prefWidth="242.0" text="If you already have an account, just sign in. Have fun !!! :)" textAlignment="CENTER" textFill="WHITE" wrapText="true">
+                <Label fx:id="descripSignupLabel" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" prefHeight="64.0" prefWidth="242.0" text="If you already have an account, just sign in. Have fun !!! :)" textAlignment="CENTER" textFill="WHITE" wrapText="true">
                     <font>
                         <Font size="16.0" />
                     </font>
@@ -58,7 +58,7 @@
                         <Insets bottom="8.0" />
                     </VBox.margin>
                 </Label>
-                  <Button id="signUpBtn" fx:id="signInBtn" alignment="CENTER" focusTraversable="false" mnemonicParsing="false" onAction="#goToLogin" prefHeight="44.0" prefWidth="180.0" text="Sign in">
+                  <Button fx:id="signInBtn" alignment="CENTER" focusTraversable="false" mnemonicParsing="false" onAction="#goToLogin" prefHeight="44.0" prefWidth="180.0" text="Sign in">
                       <font>
                           <Font size="16.0" />
                       </font>

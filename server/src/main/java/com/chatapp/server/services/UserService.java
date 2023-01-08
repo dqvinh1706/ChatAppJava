@@ -54,7 +54,7 @@ public class UserService {
 
     public List<User> getAllMembers(int id){return userDao.getAllMembers(id);}
 
-    public Boolean addNewUser(User newUser){return userDao.addNewUser(newUser);}
+    public boolean addNewUser(User newUser){return userDao.addNewUser(newUser);}
 
     public List<User> getAllFriends(int userId) {
         return userDao.getFriendsOfUser(userId);
@@ -68,7 +68,11 @@ public class UserService {
         return userDao.getUsersInConversation(conversationId);
     }
 
-    public Boolean changePassword(User userAndPassword){
+    public boolean signUp(String username, String password, String email) {
+        return userDao.signUp(username, password, email);
+    }
+
+    public boolean changePassword(User userAndPassword){
         return userDao.changePassword(userAndPassword);
     }
     public List<User> getAdminByGroupID(int GroupID){ return userDao.getAdminByGroupID(GroupID);}
