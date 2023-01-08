@@ -6,7 +6,6 @@ import com.chatapp.commons.models.LoginHistory;
 import com.chatapp.commons.models.User;
 import com.chatapp.commons.request.*;
 import com.chatapp.commons.response.*;
-import com.chatapp.server.services.LoginHistoryService;
 import javafx.concurrent.Task;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,6 +36,7 @@ public class AdminHandler extends ClientHandler{
                                 .build()
                 );
                 break;
+
             case ADD_NEW_USER:
                 User newUser = (User) req.getBody();
                 User findUser = null;
