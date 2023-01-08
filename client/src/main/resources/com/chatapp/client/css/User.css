@@ -70,11 +70,11 @@
     -fx-font-weight: 900;
 }
 
-.tab-container .accept-btn:hover {
+.accept-btn:hover {
     -fx-icon-color: #1ec51e !important;
 }
 
-.tab-container .cancel-btn:hover {
+.cancel-btn:hover {
     -fx-icon-color: #d44848 !important;
 }
 

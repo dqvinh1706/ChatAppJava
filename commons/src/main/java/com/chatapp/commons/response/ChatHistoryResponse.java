@@ -13,10 +13,13 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class ChatHistoryResponse extends Response {
     private List<Message> messageList;
-
+    private List<String> senderNames;
     @Builder
-    public ChatHistoryResponse(@NonNull StatusCode statusCode, List<Message> messageList) {
+    public ChatHistoryResponse(@NonNull StatusCode statusCode,
+                               List<Message> messageList,
+                               List<String> senderNames) {
         super(statusCode);
         this.messageList = messageList;
+        this.senderNames = senderNames;
     }
 }

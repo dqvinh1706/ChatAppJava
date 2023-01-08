@@ -17,6 +17,7 @@ public class Conversation implements Serializable {
     private int id;
     private String title;
     private int creatorId;
+    @Builder.Default
     private Boolean isGroup = false;
     private Timestamp createdAt;
     private Timestamp updatedAt;

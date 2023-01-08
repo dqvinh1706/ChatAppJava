@@ -71,26 +71,26 @@ public class ConversationDao extends DAO<Conversation>{
     }
 
     public int saveConversation(Conversation con, List<Integer> usersId) {
-        String sql = "INSERT INTO [conversation] (title, creator_id, is_group, created_at, updated_at) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO [conversation] (title, creator_id, is_group, created_at, updated_at) VALUES (?, ?, ?, ?, ?)";
         Long newConId = this.executeUpdate(sql, con.getTitle(), con.getCreatorId(), con.getIsGroup(), con.getCreatedAt(), con.getUpdatedAt());
-
-        String sqlAddUsers = "INSERT INTO [participant](conversation_id, users_id, created_at, updated_at, type) VALUES (?, ?, ?, ?, ?)";
         usersId.forEach(user -> {
-            this.executeUpdate(
-                    sqlAddUsers,
-                    newConId.intValue(),
-                    user,
-                    con.getCreatedAt(),
-                    con.getCreatedAt(),
-                    usersId.size() == 2 ? "single" : "group"
-            );
+            addMember(newConId.intValue(), user, usersId.size() == 2 ? "single" : "group");
         });
+
+        if (newConId != null && usersId.size() >= 3) {
+           this.saveAdmin(newConId.intValue(), con.getCreatorId());
+        }
         return newConId.intValue();
     }
 
     public int updateTitle(int conId, String newTitle) {
         String sql = "UPDATE [conversation] SET title = ? WHERE id = ?";
         return this.executeUpdate(sql, newTitle, conId).intValue();
+    }
+
+    public int updateCreator(int conId, int userId) {
+        String sql = "UPDATE [conversation] SET creator_id = ? WHERE id = ?";
+        return this.executeUpdate(sql, userId, conId).intValue();
     }
 
     public boolean deleteConversation(int conId, int userId) {
@@ -108,5 +108,30 @@ public class ConversationDao extends DAO<Conversation>{
             return false;
         }
         return true;
+    }
+
+    public int saveAdmin(int conId, int userId) {
+        String sqlAddAdmin = "INSERT INTO [admin_list](conversation_id, admin_id) " +
+                "VALUES (?, ?)";
+
+        return this.executeUpdate(sqlAddAdmin, conId, userId).intValue();
+    }
+
+    public int deleteMember(int conId, int userId) {
+        String sql = "DELETE FROM [participant] WHERE conversation_id = ? AND users_id = ?";
+        return this.executeUpdate(sql, conId, userId).intValue();
+    }
+
+    public int addMember(int conId, int userId, String type) {
+        Timestamp currTime = TimestampUtil.getCurrentTime();
+        String sqlAddUsers = "INSERT INTO [participant](conversation_id, users_id, created_at, updated_at, type) VALUES (?, ?, ?, ?, ?)";
+        return this.executeUpdate(
+                    sqlAddUsers,
+                    conId,
+                    userId,
+                    currTime,
+                    currTime,
+                    type
+            ).intValue();
     }
 }

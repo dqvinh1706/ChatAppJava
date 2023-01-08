@@ -34,11 +34,27 @@ public class ConversationService {
         return conversationDao.saveConversation(con, usersId);
     }
 
+    public int saveAdmin(int conId, int userId) {
+        return conversationDao.saveAdmin(conId, userId);
+    }
+
+    public int deleteMember(int conId, int userId) {
+        return conversationDao.deleteMember(conId, userId);
+    }
+
     public int updateTitle(int conId, String newTitle) {
         return conversationDao.updateTitle(conId, newTitle);
     }
 
+    public int updateCreator(int conId, int userId) {
+        return conversationDao.updateCreator(conId, userId);
+    }
+
     public boolean deleteConversation(int conId, int userId){
         return conversationDao.deleteConversation(conId, userId);
+    }
+
+    public int addMember(int conId, int userId) {
+        return conversationDao.addMember(conId, userId, "group");
     }
 }

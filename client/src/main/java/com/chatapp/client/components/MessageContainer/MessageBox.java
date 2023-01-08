@@ -19,7 +19,7 @@ public abstract class MessageBox extends HBox {
     protected int userId;
 
     @FXML
-    private VBox messageStackContainer;
+    protected VBox messageStackContainer;
 
     public MessageBox() {
         FXMLLoader loader = new FXMLLoader(ReceiveMessage.class.getResource("MessageBox.fxml"));
