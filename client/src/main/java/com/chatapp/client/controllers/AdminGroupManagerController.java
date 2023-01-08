@@ -10,6 +10,7 @@ import com.chatapp.commons.request.ManageUsersRequest;
 import com.chatapp.commons.response.*;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -32,6 +33,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -85,7 +87,7 @@ public class AdminGroupManagerController implements Initializable {
                 data.add(new GroupClone(
                         group.getId(),
                         group.getTitle(),
-                        createdDate
+                        group.getCreatedAt()
                 ));
             }
         });
@@ -100,12 +102,12 @@ public class AdminGroupManagerController implements Initializable {
 
         TableColumn<GroupClone, Integer> idColumn = new TableColumn<GroupClone, Integer>("ID");
         TableColumn<GroupClone, String> nameColumn = new TableColumn<GroupClone, String>("Name");
-        TableColumn<GroupClone, String> createdColumn = new TableColumn<GroupClone, String>("Created Date");
+        TableColumn<GroupClone, Timestamp> createdColumn = new TableColumn<GroupClone, Timestamp>("Created Date");
 
 
         idColumn.setCellValueFactory(new PropertyValueFactory<GroupClone, Integer>("id"));
         nameColumn.setCellValueFactory(new PropertyValueFactory<GroupClone, String>("name"));
-        createdColumn.setCellValueFactory(new PropertyValueFactory<GroupClone, String>("createdDate"));
+        createdColumn.setCellValueFactory(new PropertyValueFactory<GroupClone, Timestamp>("createdDate"));
 
 
         idColumn.setMinWidth(320.0);
@@ -176,12 +178,13 @@ public class AdminGroupManagerController implements Initializable {
     public static class GroupClone{
         public SimpleIntegerProperty id;
         public SimpleStringProperty name;
-        public SimpleStringProperty createdDate;
+        public SimpleObjectProperty<Timestamp> createdDate;
 
-        public GroupClone(int ID, String Name, String createdDate){
+        public GroupClone(int ID, String Name, Timestamp createdDate){
             this.id = new SimpleIntegerProperty(ID);
             this.name = new SimpleStringProperty(Name);
-            this.createdDate = new SimpleStringProperty(createdDate);
+            this.createdDate = new SimpleObjectProperty<>();
+            this.createdDate.set(createdDate);
         }
 
         public int getId() {
@@ -192,7 +195,7 @@ public class AdminGroupManagerController implements Initializable {
             return name.get();
         }
 
-        public String getCreatedDate() {
+        public Timestamp getCreatedDate() {
             return createdDate.get();
         }
     }

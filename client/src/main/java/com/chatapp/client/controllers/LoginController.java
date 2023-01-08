@@ -160,12 +160,11 @@ public class LoginController implements Initializable {
         //formData.put("username", username.getText());
         //formData.put("password", password.getText());
 
-        formData.put("username", "hqb203");
-        formData.put("password", "123456789");
+        formData.put("username", "admin1");
+        formData.put("password", "12345678");
 
         try{
             SocketClient socketClient = SocketClient.getInstance();
-
             Task waitResponse = new Task() {
                 @Override
                 protected Response call() throws Exception {

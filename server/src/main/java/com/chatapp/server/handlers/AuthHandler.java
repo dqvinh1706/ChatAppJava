@@ -74,6 +74,7 @@ public class AuthHandler extends ClientHandler {
                 isAuthenticated = StatusCode.UNAUTHENTICATED;
             } else {
                 isAuthenticated = StatusCode.AUTHENTICATED;
+                userService.setLogin(user);
             }
         } catch (Exception err) {
             err.printStackTrace();

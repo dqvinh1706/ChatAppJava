@@ -55,6 +55,12 @@ public class UserDao extends DAO<User> {
                 "where al.conversation_id = ?", GroupID);
     }
 
+    public boolean setLogin(User user){
+        long result = this.executeUpdate("insert into login_history(user_id, created_at)\n" +
+                "values (?, ?)", user.getId(), TimestampUtil.getCurrentTime());
+        return result != -1;
+    }
+
     public User getUserByUsername(String username) {
         List<User> result = this.executeQuery("SELECT * FROM [user] WHERE username = ?", username);
         return result == null ? null : result.get(0);

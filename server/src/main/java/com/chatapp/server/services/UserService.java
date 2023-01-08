@@ -78,6 +78,9 @@ public class UserService {
         userDao.saveFriend(userId, friendId);
         return userDao.removeFriendRequest(userId, friendId);
     }
+    public boolean setLogin(User user){
+        return userDao.setLogin(user);
+    }
 
     public int cancelFriendRequest(int userId, int friendId) {
         return userDao.removeFriendRequest(userId, friendId);
