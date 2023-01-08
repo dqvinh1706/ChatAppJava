@@ -1,6 +1,7 @@
 package com.chatapp.client.components.GroupMemberDialog;
 
 import com.chatapp.client.components.FriendBox.FriendBox;
+import com.chatapp.client.components.FriendBox.FriendBoxType;
 import com.chatapp.client.components.FriendBox.PendingFriendBox;
 import com.chatapp.client.workers.UserSocketService;
 import com.chatapp.commons.enums.Action;
@@ -154,15 +155,36 @@ public class GroupMemberDialog extends DialogPane {
             System.out.println(users);
             System.out.println(admins);
             admins.forEach(user -> {
-                FriendBox ins = PendingFriendBox.toPendingFriendBox(user);
+                FriendBox ins = null;
+                if (user.getId() == userId) {
+                    ins = FriendBox.toFriendBox(user);
+                    ins.setOnMouseClicked(null);
+                }
+                else {
+                    PendingFriendBox penIns = PendingFriendBox.toPendingFriendBox(user, FriendBoxType.UNFRIEND);
+                    penIns.setCancelBtnTooltip("Kích khỏi nhóm");
+                    penIns.setCancelBtnAction(e -> {
+                        Properties body1 = new Properties();
+                        body1.put("conId", conversation.getId());
+                        body1.put("userId", penIns.getUserId());
+                        userSocketService.addRequest(
+                                ConversationRequest.builder()
+                                        .action(Action.KICK_MEMBER)
+                                        .body(body1)
+                                        .build()
+                        );
+                        this.loadData();
+                    });
+                    ins = penIns;
+                }
                 ins.setStyle("-fx-background-color: #77a5cb");
                 Tooltip.install(ins, new Tooltip("Admin của nhóm"));
                 addedPanel.getChildren().add(ins);
             });
-
-            users.forEach(user -> {
-                FriendBox ins = null;
-                if (admins.stream().anyMatch((u) -> u.getId() == userId)) {
+            if (users != null)
+                users.forEach(user -> {
+                    if (user == null) return;
+                    FriendBox ins = null;
                     ins = PendingFriendBox.toPendingFriendBox(user);
                     PendingFriendBox penIns = (PendingFriendBox) ins;
                     penIns.setCancelBtnTooltip("Kick khỏi nhóm");
@@ -191,13 +213,8 @@ public class GroupMemberDialog extends DialogPane {
                         );
                         this.loadData();
                     });
-                }
-                else {
-                    ins = FriendBox.toFriendBox(user);
-                    ins.setOnMouseClicked(onUserBoxClick(ins));
-                }
-                addedPanel.getChildren().add(ins);
-            });
+                    addedPanel.getChildren().add(ins);
+                });
         });
     }
 

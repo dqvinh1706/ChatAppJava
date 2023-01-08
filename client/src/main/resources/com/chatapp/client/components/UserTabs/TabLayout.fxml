@@ -128,7 +128,7 @@
                         <FontIcon iconLiteral="mdi2d-delete" iconSize="24" />
                      </graphic>
                   </Button>
-                  <Button contentDisplay="GRAPHIC_ONLY" layoutX="161.0" layoutY="28.0" mnemonicParsing="false" onAction="#onGroupMemberDialog">
+                  <Button fx:id="moreInfoBtn" contentDisplay="GRAPHIC_ONLY" layoutX="161.0" layoutY="28.0" mnemonicParsing="false" onAction="#onGroupMemberDialog">
                      <tooltip>
                         <Tooltip text="Mở rộng" />
                      </tooltip>

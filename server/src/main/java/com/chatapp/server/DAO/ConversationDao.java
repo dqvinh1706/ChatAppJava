@@ -118,6 +118,11 @@ public class ConversationDao extends DAO<Conversation>{
     }
 
     public int deleteMember(int conId, int userId) {
+        try{
+            String sqlDelAdmin =  "DELETE FROM [admin_list] " +
+                    "WHERE conversation_id = ? AND admin_id = ? ";
+            this.executeUpdate(sqlDelAdmin, conId, userId);
+        }catch (Exception err) {}
         String sql = "DELETE FROM [participant] WHERE conversation_id = ? AND users_id = ?";
         return this.executeUpdate(sql, conId, userId).intValue();
     }

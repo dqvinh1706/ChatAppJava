@@ -29,7 +29,14 @@ public enum Action {
     SEND_MESSAGE,
 
     // Group chat
-    CREATE_GROUP_CHAT, SEARCH_USER, CHANGE_TITLE,
+    CREATE_GROUP_CHAT,
+    SEARCH_USER,
+    CHANGE_TITLE,
+    GET_MEMBERS,
+    SEARCH_FRIEND,
+    ADD_MEMBER,
+    CHANGE_ADMIN,
+    KICK_MEMBER,
 
     // Admin action
 }

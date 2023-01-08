@@ -37,17 +37,16 @@ public class MessageContainer extends VBox {
             Platform.runLater(() -> {
                 Integer senderId = message.getSenderId();
                 try {
-
                     if (currMessageBox == null || currMessageBox.getUserId() != senderId) {
                         if (senderId.equals(currUserId))
                             currMessageBox = new SendMessage(senderId);
                         else {
-                            currMessageBox = new ReceiveMessage(senderId, senderNames.get(senderNames.size() - 1));
-                            if (!senderNames.isEmpty())
-                                senderNames.remove(0);
+                            if (!senderNames.isEmpty()) {
+                                currMessageBox = new ReceiveMessage(senderId, senderNames.get(senderNames.size() - 1));
+                                senderNames.remove(senderNames.size() - 1);
+                            }
                         }
                         getChildren().add(0, currMessageBox);
-
                     }
                     currMessageBox.addTopMessage(message);
                 } catch (Exception e) {

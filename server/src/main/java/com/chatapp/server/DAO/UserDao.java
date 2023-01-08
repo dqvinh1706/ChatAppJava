@@ -134,4 +134,10 @@ public class UserDao extends DAO<User> {
 
         return result == -1 ? false : true;
     }
+
+    public List<User> getAdminFromGroup(int conId) {
+        String sql = "SELECT u.* FROM [admin_list] admin JOIN [user] u ON u.id = admin.admin_id " +
+                        "WHERE conversation_id = ?";
+        return this.executeQuery(sql, conId);
+    }
 }

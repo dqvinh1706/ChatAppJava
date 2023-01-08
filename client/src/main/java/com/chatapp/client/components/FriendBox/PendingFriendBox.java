@@ -76,4 +76,12 @@ public class PendingFriendBox extends FriendBox {
     public void setCancelBtnAction(EventHandler eventHandler) {
         this.cancelBtn.setOnAction(eventHandler);
     }
+
+    public void setCancelBtnTooltip(String title) {
+        this.cancelBtn.setTooltip(new Tooltip(title));
+    }
+
+    public void setAcceptBtnTooltip(String title) {
+        this.acceptBtn.setTooltip(new Tooltip(title));
+    }
 }
