@@ -37,6 +37,7 @@ class UserClone{
         return this.username;
     }
 
+<<<<<<< Updated upstream
     public String getName() {
         return name;
     }
@@ -47,6 +48,29 @@ class UserClone{
 
     public Date getBirthday() {
         return birthday;
+=======
+        waitResponse.setOnSucceeded(e -> {
+            AllUsersResponse res = (AllUsersResponse) waitResponse.getValue();
+            List<User> usersList =  res.getAllUsers();
+            if (usersList != null) {
+                for (User user : usersList) {
+                    String BD = Date2String(user.getDOB());
+                    data.add(new UserClone(
+                            user.getId(),
+                            user.getUsername(),
+                            user.getFullName(),
+                            user.getAddress(),
+                            BD,
+                            false,
+                            user.getEmail()
+                    ));
+                }
+            }
+        });
+        Thread th = new Thread(waitResponse);
+        th.setDaemon(true);
+        th.start();
+>>>>>>> Stashed changes
     }
 
     public Boolean getGender() {
