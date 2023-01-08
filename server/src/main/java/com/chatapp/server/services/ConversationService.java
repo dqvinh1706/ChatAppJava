@@ -19,6 +19,7 @@ public class ConversationService {
         return INSTANCE;
     }
 
+    public List<Conversation> getALlGroup(){return conversationDao.getALlGroup();}
     public Conversation getConversationById(int conversationId) {
         return conversationDao.getConversationById(conversationId);
     }

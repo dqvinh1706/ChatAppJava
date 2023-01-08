@@ -2,6 +2,7 @@ package com.chatapp.server.handlers;
 
 
 import com.chatapp.commons.enums.StatusCode;
+import com.chatapp.commons.models.Conversation;
 import com.chatapp.commons.models.Group;
 import com.chatapp.commons.models.LoginHistory;
 import com.chatapp.commons.models.User;
@@ -158,7 +159,7 @@ public class AdminHandler extends ClientHandler{
                 }
                 break;
             case GET_ALL_GROUPS:
-                List<Group> allGroups = groupService.getAllGroups();
+                List<Conversation> allGroups = conversationService.getALlGroup();
                 sendResponse(
                         AllGroupsResponse.builder()
                                 .statusCode(StatusCode.OK)
