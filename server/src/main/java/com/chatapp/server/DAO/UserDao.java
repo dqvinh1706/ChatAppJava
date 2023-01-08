@@ -50,9 +50,9 @@ public class UserDao extends DAO<User> {
     }
 
     public List<User> getAdminByGroupID(int GroupID){
-        return this.executeQuery("SELECT *\n" +
-                "FROM [user] join [group] g on [user].id = g.admin\n" +
-                "where g.id = ?", GroupID);
+        return this.executeQuery("select *\n" +
+                "from [user] join admin_list al on [user].id = al.admin_id\n" +
+                "where al.conversation_id = ?", GroupID);
     }
 
     public User getUserByUsername(String username) {
