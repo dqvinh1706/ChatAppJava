@@ -29,9 +29,7 @@ public class UserService {
 
     @Synchronized
     public boolean deleteUserById(int id) {
-        if(userDao.deleteLoginHistory(id))
-            return userDao.deleteUser(id);
-        else return false;
+        return userDao.deleteUser(id);
     }
 
     public boolean lockUser(int id) {return userDao.lockUser(id); }
@@ -54,7 +52,7 @@ public class UserService {
         return userDao.getAllUsers();
     }
 
-    public List<Group> getAllGroups(){return userDao.getAllGroups();}
+    public List<User> getAllMembers(int id){return userDao.getAllMembers(id);}
 
     public Boolean addNewUser(User newUser){return userDao.addNewUser(newUser);}
 

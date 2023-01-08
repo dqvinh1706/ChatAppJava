@@ -12,6 +12,7 @@ import com.chatapp.commons.response.AllUsersResponse;
 import com.chatapp.commons.response.FriendListResponse;
 import com.chatapp.commons.response.LoginListResponse;
 import com.chatapp.commons.response.*;
+import com.chatapp.server.services.GroupService;
 import javafx.concurrent.Task;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,6 +43,7 @@ public class AdminHandler extends ClientHandler{
                                 .build()
                 );
                 break;
+
             case ADD_NEW_USER:
                 User newUser = (User) req.getBody();
                 User findUser = null;
@@ -174,6 +176,18 @@ public class AdminHandler extends ClientHandler{
                         FriendListResponse.builder()
                                 .statusCode(StatusCode.OK)
                                 .friendList(adminList)
+                                .build()
+                );
+                break;
+
+            case SHOW_GROUP_MEMBER:
+                List<User> GroupMembers = userService.getAllMembers((int) req.getBody());
+                System.out.println(userService.getAllMembers((int) req.getBody()));
+
+                sendResponse(
+                        GroupMemberResponse.builder()
+                                .statusCode(StatusCode.OK)
+                                .groupMembers(GroupMembers)
                                 .build()
                 );
                 break;

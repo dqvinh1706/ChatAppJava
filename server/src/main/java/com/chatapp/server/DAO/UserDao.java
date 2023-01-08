@@ -103,15 +103,6 @@ public class UserDao extends DAO<User> {
         return result != -1;
     }
 
-    public boolean deleteLoginHistory(int id) {
-        String sql = "DELETE from [login_history] where user_id = ?";
-        long result = this.executeUpdate(
-                sql, id
-        );
-
-        return result != -1;
-    }
-
     public boolean lockUser(int id) {
         String sql = "UPDATE [user] SET is_blocked = 1 WHERE id = ?";
         long result = this.executeUpdate(
@@ -176,5 +167,14 @@ public class UserDao extends DAO<User> {
         );
 
         return result != -1;
+    }
+
+    public List<User> getAllMembers(int id) {
+        String sql = "SELECT U.* FROM [conversation] C, [user] U, [participant] P " +
+                "WHERE P.users_id = U.id and P.conversation_id = C.id and C.is_group = 1 and C.id = ?";
+
+        return this.executeQuery(
+                sql, id
+        );
     }
 }
