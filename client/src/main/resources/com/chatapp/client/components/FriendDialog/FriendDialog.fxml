@@ -6,7 +6,6 @@
 <?import javafx.scene.text.*?>
 <?import org.kordamp.ikonli.javafx.*?>
 
-
 <fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="360.0" type="DialogPane" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
    <header>
       <Label text="Thêm bạn bè">
@@ -30,10 +29,15 @@
                   <Insets left="4.0" right="24.0" />
                </padding>
             </HBox>
+            <Label prefHeight="35.0" prefWidth="367.0" text="Kết quả tìm kiếm">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
             <StackPane VBox.vgrow="ALWAYS">
                <children>
-                  <VBox />
-                  <BorderPane>
+                  <VBox fx:id="searchResult" />
+                  <BorderPane fx:id="notFound">
                      <center>
                         <Label text="Không tìm thấy" BorderPane.alignment="CENTER">
                            <font>

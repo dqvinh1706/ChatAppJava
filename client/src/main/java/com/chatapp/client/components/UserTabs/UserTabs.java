@@ -91,8 +91,9 @@ public class UserTabs extends StackPane {
                         tab.updateMessage(res.getMessage());
                     } else if (input instanceof SearchResponse) {
                         SearchResponse res = (SearchResponse) input;
-                        tab.loadSearchResult(GroupDialog.class, res.getResult());
+                        tab.loadSearchResult(res.get_class(), res.getResult());
                     }
+
 
                     // Wait for GUI to load before receive new response
                     Thread.sleep(20);

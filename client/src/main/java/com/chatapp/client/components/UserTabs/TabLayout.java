@@ -5,6 +5,7 @@ import com.chatapp.client.components.ConversationBox.ConversationBox;
 import com.chatapp.client.components.FriendBox.FriendBox;
 import com.chatapp.client.components.FriendBox.PendingFriendBox;
 import com.chatapp.client.components.GroupDialog.GroupDialog;
+import com.chatapp.client.components.FriendBox.FriendBoxType;
 import com.chatapp.client.components.FriendDialog.FriendDialog;
 import com.chatapp.client.components.MessageContainer.MessageContainer;
 import com.chatapp.client.workers.UserSocketService;
@@ -32,16 +33,22 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.util.Pair;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Synchronized;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class TabLayout extends GridPane {
-    @Setter private int LIMIT = 5;
-    @Setter @Getter
+    @Setter
+    private int LIMIT = 5;
+    @Setter
+    @Getter
     private int offset = 0;
     @FXML
     private BorderPane chatContent;
@@ -77,11 +84,11 @@ public class TabLayout extends GridPane {
         loader.setRoot(this);
         loader.setController(this);
 
-        try{
+        try {
             loader.load();
             initGUI();
             setUpProperty();
-        }catch (IOException exc) {
+        } catch (IOException exc) {
             throw new RuntimeException(exc);
         }
     }
@@ -94,7 +101,7 @@ public class TabLayout extends GridPane {
 
     private void setUpProperty() {
         chatAvatar.imageProperty().addListener(((observable, oldValue, newValue) -> {
-            if(!newValue.equals(oldValue)) {
+            if (!newValue.equals(oldValue)) {
                 chatAvatar.setImage(newValue);
             }
         }));
@@ -108,8 +115,10 @@ public class TabLayout extends GridPane {
             Platform.runLater(() -> {
                 messageContainer.clear();
                 if (newValue == null) return;
+                if (newValue.equals(oldValue)) return;
                 offset = 0;
                 sendChatHistoryRequest();
+                System.out.println("Load");
                 chatScrollPane.setVvalue(1.0f);
             });
         });
@@ -160,6 +169,7 @@ public class TabLayout extends GridPane {
     public void activeStyleToggle(Node ins) {
         Node oldActive = (Node) ins.getParent().lookup(".is-active");
         if (oldActive != null) {
+            System.out.println(ins.getStyleClass());
             ins.getStyleClass().remove("unseen-message");
 
             if (oldActive.equals(ins)) {
@@ -288,6 +298,9 @@ public class TabLayout extends GridPane {
                     .build()
             );
         }
+//        else {
+//            loadFriendTab();
+//        }
     }
 
     @Synchronized
@@ -297,6 +310,10 @@ public class TabLayout extends GridPane {
                 groupDialog.loadSearchResult(result);
             }
         }
+        else
+           if(friendDialog != null) {
+               friendDialog.loadSearchResult((User) result);
+           }
     }
 
     @Synchronized
@@ -308,21 +325,29 @@ public class TabLayout extends GridPane {
 
     @Synchronized
     public void loadFriendTab(String title, List<User> users) {
-        if (users == null) return;
         Platform.runLater(() -> {
-            tabTitle.setText(title);
             tabContent.getChildren().clear();
-
-            if (title.equals("Lời mời kết bạn")){
+            if (users == null) return;
+            tabTitle.setText(title);
+            if (title.equals("Lời mời kết bạn")) {
                 loadPendingFriendsTab(users);
                 return;
             }
             users.forEach(friend -> {
-                FriendBox ins = FriendBox.toFriendBox(friend);
+                PendingFriendBox ins = PendingFriendBox.toPendingFriendBox(friend, FriendBoxType.UNFRIEND);
                 ins.setOnMouseClicked(e -> {
                     onFriendBoxClicked(ins);
                 });
                 tabContent.getChildren().add(0, ins);
+                ins.setCancelBtnAction((e) -> {
+                    socketService.addRequest(
+                            FriendRequest.builder()
+                                    .action(Action.UNFRIEND)
+                                    .body(ins.getUserId())
+                                    .build()
+                    );
+                    tabContent.getChildren().remove(ins);
+                });
             });
         });
     }
@@ -373,7 +398,7 @@ public class TabLayout extends GridPane {
             sortedMap.forEach((conversation, message) -> {
                 ConversationBox ins = ConversationBox.toConversationBox(conversation);
                 String lastMessage = message.getMessage();
-                if (message.getSenderId() == currUserId){
+                if (message.getSenderId() == currUserId) {
                     lastMessage = "Bạn: " + lastMessage;
                 }
                 ins.setMessage(lastMessage);
@@ -453,7 +478,7 @@ public class TabLayout extends GridPane {
                                     .build()
                     );
                 }
-                while(currConversationId.getValue() == null) {
+                while (currConversationId.getValue() == null) {
                     System.out.println("Wait result");
                 };
                 return null;

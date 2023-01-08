@@ -140,10 +140,13 @@ public class UserHandler extends ClientHandler {
     public void handleFriendRequest(FriendRequest req) throws IOException {
         switch (req.getAction()) {
             case ADD_FRIEND:
-//                userService.acceptFriendRequest(loggedUser.getId(), (int) req.getBody());
+                userService.acceptFriendRequest(loggedUser.getId(), (int) req.getBody());
                 break;
             case REMOVE_ADD_FRIEND:
                 userService.cancelFriendRequest(loggedUser.getId(), (int) req.getBody());
+                break;
+            case UNFRIEND:
+                userService.unfriend(loggedUser.getId(), (int) req.getBody());
                 break;
             case GET_ALL_FRIENDS:
                 List<User> users = userService.getAllFriends(loggedUser.getId());
@@ -165,26 +168,62 @@ public class UserHandler extends ClientHandler {
                                 .build()
                 );
                 break;
+            case ADD_PENDING_FRIEND:
+                int result = userService.addToPendingFriend(loggedUser.getId(), (int) req.getBody());
+                System.out.println(result);
+                break;
         }
     }
 
     public void handleSearchRequest(SearchRequest req) throws IOException {
         switch (req.getAction()) {
-            case SEARCH_FRIEND:
+            case SEARCH_USER:
                 Properties params = req.getParams();
                 String keyword = (String) params.get("keyword");
                 User user = userService.getUserByUsername(keyword);
                 System.out.println(keyword);
 
-                // Trùng với bản thân
-                if (user != null && user.getId() == loggedUser.getId())
-                    user = null;
-                sendResponse(
-                        SearchResponse.builder()
-                                .statusCode(user != null ? StatusCode.OK : StatusCode.BAD_REQUEST)
-                                .result(user)
-                                .build()
-                );
+                try {
+                    List<User> frList = userService.getAllFriends(loggedUser.getId());
+                    List<User> pendingList = userService.getPendingFriends(user.getId());
+                    List<User> loggedUserPendingList = userService.getPendingFriends(loggedUser.getId());
+
+
+                    if (user != null && (user.getId() == loggedUser.getId()))
+                        user = null;
+                    if(user != null && (frList != null && (frList.indexOf(user) != -1)))
+                        user = null;
+                    if (user != null && (pendingList != null && pendingList.stream().anyMatch((u) -> u.getId() == loggedUser.getId())))
+                    {
+                        user = null;
+                    }
+                    final User finalUser = user;
+                    if (user != null && (loggedUserPendingList != null && loggedUserPendingList.stream().anyMatch((u) -> u.getId() == finalUser.getId()))){
+                        user = null;
+                    }
+
+
+//                    if (user != null && (user.getId() == loggedUser.getId() ||
+//                            (frList != null && frList.stream().anyMatch((u) -> u.getId() == finalUser.getId())) ||
+//                            (pendingList != null && pendingList.stream().anyMatch((u) -> u.getId() == loggedUser.getId()))))
+//                        user = null;
+                    sendResponse(
+                            SearchResponse.builder()
+                                    .statusCode(user != null ? StatusCode.OK : StatusCode.BAD_REQUEST)
+                                    .result(user)
+                                    ._class(req.get_class())
+                                    .build()
+                    );
+                }catch(Exception e){
+                    e.printStackTrace();
+                    sendResponse(
+                            SearchResponse.builder()
+                                    .statusCode(StatusCode.BAD_REQUEST)
+                                    .result(user)
+                                    ._class(req.get_class())
+                                    .build());
+                }
+
                 break;
 
         }
@@ -193,7 +232,7 @@ public class UserHandler extends ClientHandler {
 
     public void handleMessageRequest(MessageRequest req) throws IOException {
         switch (req.getAction()) {
-            case GET_CHAT_HISTORY:
+                case GET_CHAT_HISTORY:
                 Properties body = (Properties) req.getBody();
                 List<Message> messageList = messageService.getMessageFromConversation(
                         (int) body.get("conId"),

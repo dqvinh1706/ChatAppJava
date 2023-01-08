@@ -157,11 +157,11 @@ public class LoginController implements Initializable {
         signInBtn.setOnAction(null);
 
         Properties formData = new Properties();
-//        formData.put("username", username.getText());
-//        formData.put("password", password.getText());
+        formData.put("username", username.getText());
+        formData.put("password", password.getText());
 
-        formData.put("username", "thquan");
-        formData.put("password", "12345678");
+//        formData.put("username", "thquan");
+//        formData.put("password", "12345678");
         try{
             SocketClient socketClient = SocketClient.getInstance();
 

@@ -52,9 +52,12 @@ public class UserService {
     public List<User> getPendingFriends(int userId) {
         return userDao.getPendingFriends(userId);
     }
+    public int addToPendingFriend(int userId, int friendId) {
+        return userDao.addToPendingFriend(userId, friendId);
+    }
 
     public List<User> getUsersInConversation(int conversationId) {
-        return userDao.getUsersInConversation(conversationId);
+            return userDao.getUsersInConversation(conversationId);
     }
 
     public int acceptFriendRequest(int userId, int friendId) {
@@ -64,5 +67,13 @@ public class UserService {
 
     public int cancelFriendRequest(int userId, int friendId) {
         return userDao.removeFriendRequest(userId, friendId);
+    }
+
+    public void unfriend(int userId, int friendId) {
+        userDao.unfriend(userId, friendId);
+    }
+
+    public boolean updateUser(User user) {
+        return userDao.updateUser(user);
     }
 }

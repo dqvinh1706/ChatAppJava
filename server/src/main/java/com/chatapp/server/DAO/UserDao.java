@@ -4,10 +4,12 @@ import com.chatapp.commons.models.User;
 import com.chatapp.commons.utils.TimestampUtil;
 import lombok.Synchronized;
 
+import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class UserDao extends DAO<User> {
@@ -90,16 +92,20 @@ public class UserDao extends DAO<User> {
 
         return this.executeQuery(sql, conversationId);
     }
-
+    public int addToPendingFriend(int userId, int friendId) {
+        String sql = "INSERT INTO [pending_add_friend](creator_id, user_id, created_at) VALUES(?, ?, ?)";
+        return this.executeUpdate(sql, userId, friendId, TimestampUtil.getCurrentTime()).intValue();
+    }
     public int saveFriend(int userId, int friendId) {
-        String sql = "INSERT INTO [friends_list](user_id, friend_id, created_at) VALUES (?, ?, ?)";
-        Timestamp currTime = TimestampUtil.getCurrentTime();
-        this.executeUpdate(sql, userId, friendId , currTime);
-        return this.executeUpdate(sql, friendId, userId , currTime).intValue();
+        String sql = "INSERT INTO [friends_list](user_id, friend_id) VALUES (?, ?)";
+        this.executeUpdate(sql, userId, friendId);
+        return this.executeUpdate(sql, friendId, userId).intValue();
     }
 
-    public boolean unfriend(int userId, int friendId) {
-        return true;
+    public void unfriend(int userId, int friendId) {
+        String sql = "DELETE FROM [friends_list]WHERE user_id = ? AND friend_id = ?";
+        this.executeUpdate(sql, userId, friendId);
+        this.executeUpdate(sql, friendId, userId);
     }
 
     public int removeFriendRequest(int userId, int friendId) {
@@ -107,18 +113,25 @@ public class UserDao extends DAO<User> {
         return this.executeUpdate(sql, userId, friendId).intValue();
     }
 
-//    public boolean updateUser(User user) {
-//        String sql = "UPDATE [user](username, password, email, created_at, updated_at) " +
-//                "VALUES (?, ?, ?, ?, ?)";
-//        int result = this.executeUpdate(
-//                sql,
-//                user.getUsername(),
-//                user.getPassword(),
-//                user.getEmail(),
-//                user.getCreatedAt(),
-//                user.getUpdatedAt()
-//        );
-//
-//        return result == -1 ? false : true;
-//    }
+    public boolean updateUser(User user) {
+        String sql = "UPDATE [user] SET username=?, full_name=?, password=?, email=?, gender=?, address=?, DOB=?, is_blocked=?, is_active=?, is_admin=?, updated_at=?" +
+                " WHERE id=?";
+        int result = this.executeUpdate(
+                sql,
+                user.getUsername(),
+                user.getFullName(),
+                user.getPassword(),
+                user.getEmail(),
+                user.getGender(),
+                user.getAddress(),
+                user.getDOB(),
+                user.getIsBlocked(),
+                user.getIsActive(),
+                user.getIsAdmin(),
+                TimestampUtil.getCurrentTime(),
+                user.getId()
+        ).intValue();
+
+        return result == -1 ? false : true;
+    }
 }

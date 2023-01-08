@@ -1,12 +1,15 @@
 package com.chatapp.client.controllers;
 
+import com.chatapp.client.Main;
 import com.chatapp.client.SocketClient;
 import com.chatapp.client.components.Avatar.Avatar;
 import com.chatapp.client.components.FriendDialog.FriendDialog;
 import com.chatapp.client.components.UserTabs.UserTabs;
 import com.chatapp.client.workers.UserSocketService;
+import com.chatapp.commons.enums.Action;
 import com.chatapp.commons.models.User;
 
+import com.chatapp.commons.request.InformationRequest;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -36,12 +39,15 @@ public class UserController implements Initializable {
     private StackPane mainContainer;
     private final UserTabs userTabs = new UserTabs();
 
-    public UserController() {}
+    public UserController() {
+    }
+
+    UserSocketService userSocketService = null;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        UserSocketService userSocketService = UserSocketService.getInstance();
-        userSocketService.start();
+        userSocketService = UserSocketService.getInstance();
+        userSocketService.restart();
         mainContainer.getChildren().add(userTabs);
 
         currUser.set(userSocketService.getLoggedUser());
@@ -69,7 +75,7 @@ public class UserController implements Initializable {
     private void activeStyleToggle(Node ins) {
         Node oldActive = (Node) ins.getParent().lookup(".is-active");
         if (oldActive != null) {
-            if(oldActive.equals(ins)){
+            if (oldActive.equals(ins)) {
                 return;
             }
             oldActive.getStyleClass().remove("is-active");
@@ -105,6 +111,13 @@ public class UserController implements Initializable {
 
     @FXML
     public void onLogout(ActionEvent e) {
-
+        userSocketService.addRequest(InformationRequest.builder().action(Action.DISCONNECT).build());
+            FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/LoginView.fxml"));
+            try {
+                accountBtn.getScene().setRoot(loader.load());
+            } catch (IOException err) {
+                throw new RuntimeException(err);
+            }
+        userSocketService.cancel();
     }
 }

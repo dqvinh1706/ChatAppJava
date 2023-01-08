@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+
 public class FriendBox extends HBox implements Initializable {
     @FXML
     private BorderPane avatarContainer;
@@ -36,11 +37,11 @@ public class FriendBox extends HBox implements Initializable {
         this.setUserId(user.getId());
         this.setActive(user.getIsActive());
         try {
-            Blob dbAvatar = user.getAvatar();
-            if (dbAvatar != null && dbAvatar.length() == 0) {
-                Image avatar = new Image(dbAvatar.getBinaryStream());
-                this.setAvatar(avatar);
-            }
+//            Blob dbAvatar = user.getAvatar();
+//            if (dbAvatar != null && dbAvatar.length() == 0) {
+//                Image avatar = new Image(dbAvatar.getBinaryStream());
+//                this.setAvatar(avatar);
+//            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -1,6 +1,8 @@
 package com.chatapp.client.workers;
 
 import com.chatapp.client.SocketClient;
+import com.chatapp.commons.enums.Action;
+import com.chatapp.commons.request.InformationRequest;
 import com.chatapp.commons.request.Request;
 import com.chatapp.commons.response.Response;
 import javafx.application.Platform;
@@ -34,6 +36,12 @@ public abstract class SocketService extends Service {
         isAlive.bind(Bindings.notEqual(stateProperty(), State.CANCELLED));
     }
 
+    public void close() {
+        this.socketClient.close();
+        Platform.runLater(() -> {this.cancel();
+            System.out.println("cancel thread");});
+    }
+
     public void addRequest(Request req) {
         try {
             // Prevent duplicate request
@@ -56,11 +64,14 @@ public abstract class SocketService extends Service {
     protected void listenRequest() throws InterruptedException, IOException {
         Request req = reqQueue.take();
         System.out.println(req);
-        if (req == null) {
-            this.cancel();
-            return;
-        }
+
         socketClient.sendRequest(req);
+        if (req.getAction() == Action.DISCONNECT) {
+                        Platform.runLater(this::cancel);
+
+            socketClient.close();
+
+        }
     }
 
     ;
@@ -78,7 +89,6 @@ public abstract class SocketService extends Service {
                         listenRequest();
                     }
                 } catch (Exception err) {
-                    cancel();
                     err.printStackTrace();
                 }
                 return null;

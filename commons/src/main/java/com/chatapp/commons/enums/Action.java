@@ -20,6 +20,8 @@ public enum Action {
     GET_ALL_FRIENDS,
     GET_PENDING_ADD_FRIEND,
     REMOVE_ADD_FRIEND,
+    ADD_PENDING_FRIEND,
+    UNFRIEND,
 
 
     // -> CRUD Message
@@ -27,7 +29,7 @@ public enum Action {
     SEND_MESSAGE,
 
     // Group chat
-    CREATE_GROUP_CHAT, SEARCH_FRIEND, CHANGE_TITLE,
+    CREATE_GROUP_CHAT, SEARCH_USER, CHANGE_TITLE,
 
     // Admin action
 }

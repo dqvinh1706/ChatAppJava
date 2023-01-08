@@ -30,6 +30,8 @@ public class SocketClient {
     public final static SocketClient getInstance() throws IOException {
         if (INSTANCE == null) {
             INSTANCE = new SocketClient();
+            System.out.println("new INSTANCE");
+            System.out.println(INSTANCE);
         }
         return INSTANCE;
     }
@@ -68,6 +70,8 @@ public class SocketClient {
             if (socketClient != null) {
                 socketClient.close();
             }
+            INSTANCE = null;
+
         } catch (IOException e) {
             e.printStackTrace();
         }
