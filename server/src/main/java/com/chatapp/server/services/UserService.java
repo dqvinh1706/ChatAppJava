@@ -29,9 +29,7 @@ public class UserService {
 
     @Synchronized
     public boolean deleteUserById(int id) {
-        if(userDao.deleteLoginHistory(id))
-            return userDao.deleteUser(id);
-        else return false;
+        return userDao.deleteUser(id);
     }
 
     public boolean lockUser(int id) {return userDao.lockUser(id); }

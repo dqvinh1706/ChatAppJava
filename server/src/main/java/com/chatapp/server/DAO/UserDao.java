@@ -97,15 +97,6 @@ public class UserDao extends DAO<User> {
         return result != -1;
     }
 
-    public boolean deleteLoginHistory(int id) {
-        String sql = "DELETE from [login_history] where user_id = ?";
-        long result = this.executeUpdate(
-                sql, id
-        );
-
-        return result != -1;
-    }
-
     public boolean lockUser(int id) {
         String sql = "UPDATE [user] SET is_blocked = 1 WHERE id = ?";
         long result = this.executeUpdate(
