@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ButtonType?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="420.0" prefWidth="360.0" type="DialogPane" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+   <header>
+      <Label text="Danh sách thành viên">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+         <padding>
+            <Insets left="16.0" />
+         </padding>
+      </Label>
+   </header>
+   <content>
+      <VBox alignment="CENTER_LEFT" spacing="8.0" style="-fx-border-style: hidden hidden solid hidden; -fx-border-width: 1px; -fx-border-color: #dedfe0;">
+         <children>
+            <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" maxHeight="100.0" minHeight="120.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="120.0">
+               <content>
+                  <VBox fx:id="addedPanel" alignment="TOP_CENTER" nodeOrientation="LEFT_TO_RIGHT" />
+               </content>
+            </ScrollPane>
+            <Label text="Thêm thành viên mới">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Label>
+            <HBox alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" prefHeight="32.0" styleClass="search-global">
+               <children>
+                  <FontIcon iconColor="GREY" iconLiteral="mdi2m-magnify" iconSize="24" />
+                  <TextField fx:id="searchFriend" maxHeight="1.7976931348623157E308" promptText="Tìm bạn bè" HBox.hgrow="ALWAYS" />
+               </children>
+               <padding>
+                  <Insets left="4.0" right="24.0" />
+               </padding>
+            </HBox>
+            <StackPane fx:id="stackContent" alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+               <children>
+                  <BorderPane fx:id="notFound" prefHeight="200.0" prefWidth="200.0">
+                     <center>
+                        <Label text="Không tìm thấy" BorderPane.alignment="CENTER">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Label>
+                     </center>
+                  </BorderPane>
+                  <ScrollPane fitToHeight="true" fitToWidth="true">
+                     <content>
+                        <VBox fx:id="searchResult" />
+                     </content>
+                  </ScrollPane>
+               </children>
+            </StackPane>
+         </children>
+      </VBox>
+   </content>
+   <padding>
+      <Insets top="16.0" />
+   </padding>
+   <stylesheets>
+      <URL value="@../../css/User.css" />
+      <URL value="@GroupMemberDialog.css" />
+   </stylesheets>
+   <buttonTypes>
+      <ButtonType fx:constant="CANCEL" />
+   </buttonTypes>
+</fx:root>

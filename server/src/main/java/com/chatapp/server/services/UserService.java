@@ -60,6 +60,10 @@ public class UserService {
         return userDao.getFriendsOfUser(userId);
     }
 
+    public List<User> getAdminFromGroup(int conId) {
+        return userDao.getAdminFromGroup(conId);
+    }
+
     public List<User> getPendingFriends(int userId) {
         return userDao.getPendingFriends(userId);
     }
