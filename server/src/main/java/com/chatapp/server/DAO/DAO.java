@@ -9,11 +9,11 @@ import java.util.Date;
 import java.util.List;
 
 public abstract class DAO<T> {
-    private static String DB_PREFIX = "jdbc:sqlserver://localhost";
+    private static String DB_PREFIX = "jdbc:sqlserver://localhost\\EXPRESS";
     private static String DB_PORT = "1433";
     private static String DB_NAME = "Chatapp";
     private static String USERNAME = "sa";
-    private static String PASSWORD = "Thq17062002";
+    private static String PASSWORD = "dqv1";
 
     @Synchronized
     public Connection getConnection() {

@@ -157,11 +157,11 @@ public class LoginController implements Initializable {
         signInBtn.setOnAction(null);
 
         Properties formData = new Properties();
-        formData.put("username", username.getText());
-        formData.put("password", password.getText());
+//        formData.put("username", username.getText());
+//        formData.put("password", password.getText());
 
-//        formData.put("username", "thquan");
-//        formData.put("password", "12345678");
+        formData.put("username", "thquan");
+        formData.put("password", "12345678");
         try{
             SocketClient socketClient = SocketClient.getInstance();
 
@@ -186,7 +186,12 @@ public class LoginController implements Initializable {
                     userSocketService.setLoggedUser(res.getUser());
 
                     Platform.runLater(() -> {
-                        FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/UserView.fxml"));
+                        FXMLLoader loader = null;
+                        if (res.getUser().getIsAdmin()){
+                            loader = new FXMLLoader(Main.class.getResource("views/AdminView.fxml"));
+                        }
+                        else loader = new FXMLLoader(Main.class.getResource("views/UserView.fxml"));
+
                         try {
                             signUpBtn.getScene().setRoot(loader.load());
                         } catch (IOException err) {

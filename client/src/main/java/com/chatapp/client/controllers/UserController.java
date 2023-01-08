@@ -1,4 +1,4 @@
-package com.chatapp.client.controllers;
+package com.chatapp.client.components.Avatar.controllers;
 
 import com.chatapp.client.Main;
 import com.chatapp.client.SocketClient;

@@ -74,7 +74,6 @@ public abstract class SocketService extends Service {
         }
     }
 
-    ;
 
     @Override
     protected Task createTask() {
@@ -89,6 +88,9 @@ public abstract class SocketService extends Service {
                         listenRequest();
                     }
                 } catch (Exception err) {
+//                    cancel();
+                    System.out.println("Cancel listener");
+//                    err.printStackTrace();
                     err.printStackTrace();
                 }
                 return null;

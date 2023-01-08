@@ -44,8 +44,8 @@ public class UserTabs extends StackPane {
     public void loadConversationTab() {
         System.out.println("SEND LOAD CON");
         socketService.addRequest(ConversationRequest.builder()
-                        .action(Action.GET_ALL_CONVERSATION)
-                        .build()
+                .action(Action.GET_ALL_CONVERSATION)
+                .build()
         );
     }
 

@@ -20,7 +20,13 @@ public class AdminController {
 
     @FXML
     void goToChatList(ActionEvent event) {
+        FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/AdminGroupManagerView.fxml"));
 
+        try {
+            scenePane.getScene().setRoot(loader.load());
+        } catch (IOException err) {
+            throw new RuntimeException(err);
+        }
     }
 
     @FXML

@@ -32,6 +32,7 @@ public final class User implements Serializable {
     private String address;
     private Boolean isActive;
     private Boolean isBlocked;
+    private Blob avatar;
     private Date DOB;
     private Boolean isAdmin;
 
@@ -45,6 +46,31 @@ public final class User implements Serializable {
         setUsername(username);
         setPassword(password);
         setEmail(email);
+    }
+    public User(
+            String username,
+            String password,
+            String name,
+            String address,
+            String email,
+            String gender,
+            Date dob,
+            Timestamp createdDay,
+            Timestamp updatedDay
+    ){
+        this.username = username;
+        this.password = password;
+        this.address = address;
+        this.email = email;
+        this.gender = gender;
+        this.DOB = dob;
+        this.createdAt = createdDay;
+        this.updatedAt = updatedDay;
+        this.fullName = name;
+    }
+    public User(int id, String password){
+        this.id = id;
+        this.password = password;
     }
     public User getUser(){ return this; }
 

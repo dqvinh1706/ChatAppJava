@@ -1,5 +1,7 @@
 package com.chatapp.server.DAO;
 
+import com.chatapp.commons.models.Group;
+import com.chatapp.commons.models.LoginHistory;
 import com.chatapp.commons.models.User;
 import com.chatapp.commons.utils.TimestampUtil;
 import lombok.Synchronized;
@@ -43,6 +45,24 @@ public class UserDao extends DAO<User> {
         return result == null ? null : result.get(0);
     }
 
+    public List<User> getFriendById(int userId){
+        return this.executeQuery("SELECT u.*\n" +
+                "FROM friends_list fl join [user] u on u.id = fl.friend_id\n" +
+                "WHERE fl.user_id = ?", userId);
+    }
+
+    public List<User> getAdminByGroupID(int GroupID){
+        return this.executeQuery("select *\n" +
+                "from [user] join admin_list al on [user].id = al.admin_id\n" +
+                "where al.conversation_id = ?", GroupID);
+    }
+
+    public boolean setLogin(User user){
+        long result = this.executeUpdate("insert into login_history(user_id, created_at)\n" +
+                "values (?, ?)", user.getId(), TimestampUtil.getCurrentTime());
+        return result != -1;
+    }
+
     public User getUserByUsername(String username) {
         List<User> result = this.executeQuery("SELECT * FROM [user] WHERE username = ?", username);
         return result == null ? null : result.get(0);
@@ -52,20 +72,46 @@ public class UserDao extends DAO<User> {
         return this.executeQuery("SELECT * FROM [user]");
     }
 
-    public boolean createUser(User user) {
-        String sql = "INSERT INTO [user](username, password, email, created_at, updated_at) " +
-                        "VALUES (?, ?, ?, ?, ?)";
-//        int result = this.executeUpdate(
-//                                        sql,
-//                                        user.getUsername(),
-//                                        user.getPassword(),
-//                                        user.getEmail(),
-//                                        user.getCreatedAt(),
-//                                        user.getUpdatedAt()
-//                                    );
+    public List<Group> getAllGroups() {
+        System.out.println(this.executeQuery("SELECT * FROM [group]"));
+        return null;
+    }
 
-//        return result == -1 ? false : true;
-        return false;
+    public boolean addNewUser(User user) {
+        String sql = "INSERT INTO [user](username, password, full_name, address, email, gender, DOB, created_at, updated_at) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        long result = this.executeUpdate(
+                                        sql,
+                                        user.getUsername(),
+                                        user.getPassword(),
+                                        user.getFullName(),
+                                        user.getAddress(),
+                                        user.getEmail(),
+                                        user.getGender(),
+                                        user.getDOB(),
+                                        user.getCreatedAt(),
+                                        user.getUpdatedAt()
+                                    );
+
+        return result != -1;
+    }
+
+    public boolean deleteUser(int id) {
+        String sql = "DELETE from [user] where id = ?";
+        long result = this.executeUpdate(
+                sql, id
+        );
+
+        return result != -1;
+    }
+
+    public boolean lockUser(int id) {
+        String sql = "UPDATE [user] SET is_blocked = 1 WHERE id = ?";
+        long result = this.executeUpdate(
+                sql, id
+        );
+
+        return result != -1;
     }
 
     public List<User> getFriendsOfUser(int userId) {
@@ -113,6 +159,30 @@ public class UserDao extends DAO<User> {
         return this.executeUpdate(sql, userId, friendId).intValue();
     }
 
+    public boolean changePassword(User userAndPassword) {
+
+        String sql = "UPDATE [user] " +
+                "SET password = ? " +
+                "WHERE id = ?";
+        System.out.println(userAndPassword.getPassword());
+        System.out.println(userAndPassword.getId());
+        Long result = this.executeUpdate(
+                sql,
+                userAndPassword.getPassword(),
+                userAndPassword.getId()
+        );
+
+        return result != -1;
+    }
+
+    public List<User> getAllMembers(int id) {
+        String sql = "SELECT U.* FROM [conversation] C, [user] U, [participant] P " +
+                "WHERE P.users_id = U.id and P.conversation_id = C.id and C.is_group = 1 and C.id = ?";
+
+        return this.executeQuery(
+                sql, id
+        );
+    }
     public boolean updateUser(User user) {
         String sql = "UPDATE [user] SET username=?, full_name=?, password=?, email=?, gender=?, address=?, DOB=?, is_blocked=?, is_active=?, is_admin=?, updated_at=?" +
                 " WHERE id=?";

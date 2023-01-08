@@ -498,6 +498,4 @@ public class TabLayout extends GridPane {
         th.setDaemon(true);
         th.start();
     }
-
-
 }
