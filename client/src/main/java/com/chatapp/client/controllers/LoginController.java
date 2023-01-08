@@ -148,7 +148,7 @@ public class LoginController implements Initializable {
     }
     @FXML
     public void onLogin() {
-//        if (!validator.validate()) return;
+        if (!validator.validate()) return;
 
         ProgressIndicator progressBar = new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS);
         progressBar.setMaxSize(36,  36);
