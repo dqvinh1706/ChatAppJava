@@ -164,8 +164,8 @@ public class LoginController implements Initializable {
         //formData.put("username", username.getText());
         //formData.put("password", password.getText());
 
-        formData.put("username", "admin");
-        formData.put("password", "12345678");
+        formData.put("username", "hqb203");
+        formData.put("password", "123456789");
 
         try{
             SocketClient socketClient = SocketClient.getInstance();

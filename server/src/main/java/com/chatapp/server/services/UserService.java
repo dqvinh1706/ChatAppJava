@@ -1,5 +1,6 @@
 package com.chatapp.server.services;
 
+import com.chatapp.commons.models.Group;
 import com.chatapp.commons.models.LoginHistory;
 import com.chatapp.server.DAO.UserDao;
 import com.chatapp.commons.models.User;
@@ -45,9 +46,15 @@ public class UserService {
         return userDao.getUserById(userId);
     }
 
+    public List<User> getFriendByID(int userID){
+        return userDao.getFriendById(userID);
+    }
+
     public List<User> getAllUsers() {
         return userDao.getAllUsers();
     }
+
+    public List<Group> getAllGroups(){return userDao.getAllGroups();}
 
     public Boolean addNewUser(User newUser){return userDao.addNewUser(newUser);}
 
@@ -66,7 +73,6 @@ public class UserService {
     public Boolean changePassword(User userAndPassword){
         return userDao.changePassword(userAndPassword);
     }
-
     public int acceptFriendRequest(int userId, int friendId) {
         userDao.saveFriend(userId, friendId);
         return userDao.removeFriendRequest(userId, friendId);
