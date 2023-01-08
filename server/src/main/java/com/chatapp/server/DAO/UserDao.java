@@ -1,5 +1,6 @@
 package com.chatapp.server.DAO;
 
+import com.chatapp.commons.models.Group;
 import com.chatapp.commons.models.LoginHistory;
 import com.chatapp.commons.models.User;
 import com.chatapp.commons.utils.TimestampUtil;
@@ -56,6 +57,11 @@ public class UserDao extends DAO<User> {
 
     public List<User> getAllUsers() {
         return this.executeQuery("SELECT * FROM [user]");
+    }
+
+    public List<Group> getAllGroups() {
+        System.out.println(this.executeQuery("SELECT * FROM [group]"));
+        return null;
     }
 
     public boolean addNewUser(User user) {

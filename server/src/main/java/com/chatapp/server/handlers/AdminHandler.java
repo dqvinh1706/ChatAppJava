@@ -2,15 +2,15 @@ package com.chatapp.server.handlers;
 
 
 import com.chatapp.commons.enums.StatusCode;
+import com.chatapp.commons.models.Group;
 import com.chatapp.commons.models.LoginHistory;
 import com.chatapp.commons.models.User;
 import com.chatapp.commons.request.*;
 import com.chatapp.commons.response.ActionResponse;
 import com.chatapp.commons.response.AllUsersResponse;
 import com.chatapp.commons.response.FriendListResponse;
-import com.chatapp.commons.response.LoginListRespone;
+import com.chatapp.commons.response.LoginListResponse;
 import com.chatapp.commons.response.*;
-import com.chatapp.server.services.LoginHistoryService;
 import javafx.concurrent.Task;
 import lombok.Getter;
 import lombok.Setter;
@@ -156,6 +156,15 @@ public class AdminHandler extends ClientHandler{
                                     .build()
                     );
                 }
+                break;
+            case GET_ALL_GROUPS:
+                List<Group> allGroups = groupService.getAllGroups();
+                sendResponse(
+                        AllGroupsResponse.builder()
+                                .statusCode(StatusCode.OK)
+                                .allGroups(allGroups)
+                                .build()
+                );
                 break;
         }
     }

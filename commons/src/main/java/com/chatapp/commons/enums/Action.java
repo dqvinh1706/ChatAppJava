@@ -35,4 +35,5 @@ public enum Action {
     GET_FRIEND_BY_ID,
     LOCK_USER,
     SHOW_LOGIN_HISTORY,
+    GET_ALL_GROUPS,
 }
