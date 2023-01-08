@@ -70,7 +70,7 @@ public class AuthHandler extends ClientHandler {
         String rawPassword = (String) data.get("password");
         try {
             user = userService.getUserByUsername(username);
-            if (user == null /*|| !PasswordUtil.checkMatch(rawPassword, user.getPassword())*/) {
+            if (user == null || !PasswordUtil.checkMatch(rawPassword, user.getPassword())) {
                 errorText = new Exception("Username or password is incorrect");
                 isAuthenticated = StatusCode.UNAUTHENTICATED;
             } else {
