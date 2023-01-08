@@ -33,7 +33,7 @@ public class AuthHandler extends ClientHandler {
     private void resetData() {
         errorText = null;
         user = null;
-        isAuthenticated = null;
+        isAuthenticated = StatusCode.UNAUTHENTICATED;
     }
 
     public AuthHandler(Socket socket, Map<String, ClientHandler> clientHandlers) throws IOException {
@@ -74,10 +74,16 @@ public class AuthHandler extends ClientHandler {
                 errorText = new Exception("Username or password is incorrect");
                 isAuthenticated = StatusCode.UNAUTHENTICATED;
             } else {
-                isAuthenticated = StatusCode.AUTHENTICATED;
-                user.setIsActive(true);
-                userService.updateUser(user);
-                userService.setLogin(user);
+                if (clientHandlers.get(user.getUsername()) != null) {
+                    isAuthenticated = StatusCode.UNAUTHENTICATED;
+                    errorText = new Exception("Account already logged");
+                }
+                else {
+                    isAuthenticated = StatusCode.AUTHENTICATED;
+                    user.setIsActive(true);
+                    userService.updateUser(user);
+                    userService.setLogin(user);
+                }
             }
         } catch (Exception err) {
             err.printStackTrace();
@@ -107,7 +113,6 @@ public class AuthHandler extends ClientHandler {
         try{
             ClientHandler clientHandler = null;
             if (user.getIsAdmin()) {
-
                 // Admin role handler
                 clientHandler = new AdminHandler(getClientSocket(), clientHandlers);
                 clientHandler.setIn(this.in);
@@ -138,7 +143,15 @@ public class AuthHandler extends ClientHandler {
                 try {
                     while (!isCancelled()) {
                         System.out.println("Wait req");
-                        if (isAuthenticated.equals(StatusCode.AUTHENTICATED)) cancel();
+                        System.out.println(isAuthenticated);
+                        if (isAuthenticated != null && isAuthenticated == StatusCode.AUTHENTICATED) {
+                            System.out.println("DN");
+                            cancel();
+                            break;
+                        }
+                        else {
+                            resetData();
+                        }
                         System.out.println("Wait req1");
 
                         Object input = receiveRequest();
@@ -147,8 +160,6 @@ public class AuthHandler extends ClientHandler {
                             switch (req.getAction()) {
                                 case LOGIN:
                                     login(req);
-                                    checkAuthenticate();
-                                    resetData();
                                     break;
                                 case SIGNUP:
                                     signUp(req);
@@ -168,6 +179,7 @@ public class AuthHandler extends ClientHandler {
                                 default:
                                     break;
                             }
+                            checkAuthenticate();
                         }
                     }
 

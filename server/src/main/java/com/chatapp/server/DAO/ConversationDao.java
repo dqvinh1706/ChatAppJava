@@ -139,4 +139,8 @@ public class ConversationDao extends DAO<Conversation>{
                     type
             ).intValue();
     }
+
+    public List<Conversation> getALlGroup(){
+        return this.executeQuery("SELECT * FROM conversation WHERE is_group = 1");
+    }
 }
