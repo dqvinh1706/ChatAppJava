@@ -3,7 +3,6 @@ package com.chatapp.server.handlers;
 
 import com.chatapp.commons.enums.StatusCode;
 import com.chatapp.commons.models.Conversation;
-import com.chatapp.commons.models.Group;
 import com.chatapp.commons.models.LoginHistory;
 import com.chatapp.commons.models.User;
 import com.chatapp.commons.request.*;

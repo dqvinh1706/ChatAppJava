@@ -37,9 +37,9 @@
                 <RowConstraints maxHeight="71.0" minHeight="10.0" prefHeight="71.0" valignment="CENTER" vgrow="SOMETIMES" />
               </rowConstraints>
             </GridPane>
-                <Button fx:id="signUpBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" focusTraversable="true" mnemonicParsing="false" onAction="#onSignUp" prefHeight="44.0" prefWidth="243.0" text="Sign up">
+                <Button fx:id="signInBtn" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" focusTraversable="true" mnemonicParsing="false" onAction="#onSignUp" prefHeight="44.0" prefWidth="243.0" text="Sign up">
                     <VBox.margin>
-                        <Insets top="10.0" />
+                        <Insets top="40.0" />
                     </VBox.margin>
                 </Button>
             </children>
@@ -58,7 +58,7 @@
                         <Insets bottom="8.0" />
                     </VBox.margin>
                 </Label>
-                  <Button fx:id="signInBtn" alignment="CENTER" focusTraversable="false" mnemonicParsing="false" onAction="#goToLogin" prefHeight="44.0" prefWidth="180.0" text="Sign in">
+                  <Button fx:id="signUpBtn" alignment="CENTER" focusTraversable="false" mnemonicParsing="false" onAction="#goToLogin" prefHeight="44.0" prefWidth="180.0" text="Sign in">
                       <font>
                           <Font size="16.0" />
                       </font>

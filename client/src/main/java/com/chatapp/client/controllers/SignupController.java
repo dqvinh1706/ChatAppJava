@@ -7,13 +7,11 @@ import com.chatapp.client.components.CustomTextField.CustomTextField;
 import com.chatapp.client.validations.EmailValidator;
 import com.chatapp.client.validations.PasswordValidator;
 import com.chatapp.client.validations.UsernameValidator;
-import com.chatapp.client.workers.UserSocketService;
 import com.chatapp.commons.enums.Action;
 import com.chatapp.commons.enums.StatusCode;
 import com.chatapp.commons.request.AuthRequest;
 import com.chatapp.commons.response.AuthResponse;
 import com.chatapp.commons.response.Response;
-import com.chatapp.commons.utils.PasswordUtil;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -31,9 +29,6 @@ import net.synedra.validatorfx.Validator;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.*;
-import java.util.Calendar;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
