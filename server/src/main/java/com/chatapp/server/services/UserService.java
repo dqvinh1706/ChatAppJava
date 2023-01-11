@@ -80,6 +80,7 @@ public class UserService {
     }
 
     public boolean changePassword(User userAndPassword){
+
         return userDao.changePassword(userAndPassword);
     }
     public List<User> getAdminByGroupID(int GroupID){ return userDao.getAdminByGroupID(GroupID);}

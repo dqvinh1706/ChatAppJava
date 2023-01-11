@@ -9,6 +9,7 @@ import com.chatapp.commons.response.LoginHistoryResponse;
 import com.chatapp.commons.response.LoginListResponse;
 import com.chatapp.commons.response.Response;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -28,6 +29,8 @@ import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -68,12 +71,11 @@ public class AdminLoginHistoryController implements Initializable {
             List<LoginHistory> loginHistories =  res.getLoginHistories();
             if (loginHistories != null) {
                 for (LoginHistory loginHistory : loginHistories) {
-                    String createdAt = Date2String(loginHistory.getCreatedAt());
                     data.add(new AdminLoginHistoryController.LoginHistoryClone(
                             loginHistory.getId(),
                             loginHistory.getUsername(),
                             loginHistory.getName(),
-                            createdAt
+                            loginHistory.getCreatedAt()
                     ));
                 }
             }
@@ -96,12 +98,12 @@ public class AdminLoginHistoryController implements Initializable {
         TableColumn<LoginHistoryClone, Integer> userIDColumn = new TableColumn<LoginHistoryClone, Integer>("User ID");
         TableColumn<LoginHistoryClone, String> userNameColumn = new TableColumn<LoginHistoryClone, String>("Username");
         TableColumn<LoginHistoryClone, String> nameColumn = new TableColumn<LoginHistoryClone, String>("Full name");
-        TableColumn<LoginHistoryClone, String> loginAtColumn = new TableColumn<LoginHistoryClone, String>("Login at");
+        TableColumn<LoginHistoryClone, Timestamp> loginAtColumn = new TableColumn<LoginHistoryClone, Timestamp>("Login at");
 
         userIDColumn.setCellValueFactory(new PropertyValueFactory<LoginHistoryClone, Integer>("id"));
         userNameColumn.setCellValueFactory(new PropertyValueFactory<LoginHistoryClone, String>("username"));
         nameColumn.setCellValueFactory(new PropertyValueFactory<LoginHistoryClone, String>("name"));
-        loginAtColumn.setCellValueFactory(new PropertyValueFactory<LoginHistoryClone, String>("createdAt"));
+        loginAtColumn.setCellValueFactory(new PropertyValueFactory<LoginHistoryClone, Timestamp>("createdAt"));
 
         userIDColumn.setMinWidth(240.0);
         userNameColumn.setMinWidth(240.0);
@@ -117,17 +119,19 @@ public class AdminLoginHistoryController implements Initializable {
         public SimpleIntegerProperty id;
         public SimpleStringProperty username;
         public SimpleStringProperty name;
-        public SimpleStringProperty createdAt;
+        public SimpleObjectProperty<Timestamp> createdAt;
 
         private Date String2Date(String date) throws Exception{
             return new SimpleDateFormat("dd/MM/yyyy").parse(date);
         }
 
-        public LoginHistoryClone(int ID, String username, String name,  String createdAt){
+        public LoginHistoryClone(int ID, String username, String name, Timestamp createdAt){
             this.id = new SimpleIntegerProperty(ID);
             this.username = new SimpleStringProperty(username);
             this.name = new SimpleStringProperty(name);
-            this.createdAt = new SimpleStringProperty(createdAt);
+
+            this.createdAt = new SimpleObjectProperty<Timestamp>();
+            this.createdAt.set(createdAt);
         }
 
         public int getId() {
@@ -139,7 +143,7 @@ public class AdminLoginHistoryController implements Initializable {
         }
         public String getName() {return  name.get(); }
 
-        public String getCreatedAt() {
+        public Timestamp getCreatedAt() {
             return createdAt.get();
         }
     }

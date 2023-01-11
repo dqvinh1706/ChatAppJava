@@ -76,7 +76,6 @@ public class AdminLoginListController implements Initializable {
             List<LoginHistory> loginList =  res.getLoginList();
             if (loginList != null) {
                 for (LoginHistory loginHistory : loginList) {
-                    //String createdAt = Date2String(loginHistory.getCreatedAt());
                     data.add(new AdminLoginListController.LoginHistoryClone(
                             loginHistory.getId(),
                             loginHistory.getUsername(),

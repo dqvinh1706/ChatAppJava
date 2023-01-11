@@ -77,7 +77,12 @@ public class AuthHandler extends ClientHandler {
                 if (clientHandlers.get(user.getUsername()) != null) {
                     isAuthenticated = StatusCode.UNAUTHENTICATED;
                     errorText = new Exception("Account already logged");
-                } else {
+                }
+                else if (user.getIsBlocked()) {
+                    isAuthenticated = StatusCode.UNAUTHENTICATED;
+                    errorText = new Exception("Account blocked");
+                }
+                else {
                     isAuthenticated = StatusCode.AUTHENTICATED;
                     user.setIsActive(true);
                     userService.updateUser(user);

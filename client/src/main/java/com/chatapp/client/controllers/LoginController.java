@@ -124,7 +124,6 @@ public class LoginController implements Initializable {
         };
     }
 
-
     @FXML
     public void goToSignupView(ActionEvent e) {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("views/SignupView.fxml"));

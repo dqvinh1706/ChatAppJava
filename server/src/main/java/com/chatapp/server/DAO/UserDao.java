@@ -179,11 +179,11 @@ public class UserDao extends DAO<User> {
         String sql = "UPDATE [user] " +
                 "SET password = ? " +
                 "WHERE id = ?";
-        System.out.println(userAndPassword.getPassword());
-        System.out.println(userAndPassword.getId());
+        String rawPass = userAndPassword.getPassword();
+        String newPass = PasswordUtil.encode(rawPass);
         Long result = this.executeUpdate(
                 sql,
-                userAndPassword.getPassword(),
+                newPass,
                 userAndPassword.getId()
         );
 

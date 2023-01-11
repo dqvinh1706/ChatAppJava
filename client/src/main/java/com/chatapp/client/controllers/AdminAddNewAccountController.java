@@ -64,12 +64,12 @@ public class AdminAddNewAccountController implements Initializable {
     @FXML
     private void submitClick(){
         String username = userNameInput.getText();
-        if (username.length() > 50 || username.length() == 0) {
+        if (username.length() > 50 || username.length() < 5) {
             ResultText.setText("Can't input empty username or username with length over 50 characters.");
             return;
         }
         String password = passwordInput.getText();
-        if (password.length() > 255 || password.length() == 0) {
+        if (password.length() > 255 || password.length() < 8) {
             ResultText.setText("Can't input empty password or password with length over 255 characters.");
             return;
         }

@@ -12,6 +12,7 @@ import com.chatapp.commons.response.AllUsersResponse;
 import com.chatapp.commons.response.FriendListResponse;
 import com.chatapp.commons.response.LoginListResponse;
 import com.chatapp.commons.response.*;
+import com.chatapp.commons.utils.PasswordUtil;
 import com.chatapp.server.services.GroupService;
 import javafx.concurrent.Task;
 import lombok.Getter;
@@ -45,8 +46,10 @@ public class AdminHandler extends ClientHandler{
                 break;
 
             case ADD_NEW_USER:
-                User newUser = (User) req.getBody();
                 User findUser = null;
+                String rawPass = ((User) req.getBody()).getPassword();
+                User newUser = (User) req.getBody();
+                newUser.setPassword(PasswordUtil.encode(rawPass));
                 findUser = userService.getUserByUsername(newUser.getUsername());
                 if (findUser != null){
                     sendResponse(
